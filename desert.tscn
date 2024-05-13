@@ -1,0 +1,34 @@
+[gd_scene load_steps=7 format=3 uid="uid://dl034o85mv51e"]
+
+[ext_resource type="Script" path="res://DesertMesh.gd" id="1_cyp5x"]
+[ext_resource type="Script" path="res://Camera.gd" id="2_okddd"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qa2sg"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_ryn1v"]
+sky_material = SubResource("ProceduralSkyMaterial_qa2sg")
+
+[sub_resource type="Environment" id="Environment_n5om7"]
+background_mode = 2
+sky = SubResource("Sky_ryn1v")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_7ewjq"]
+
+[node name="Desert" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_n5om7")
+
+[node name="Desert" type="MeshInstance3D" parent="."]
+mesh = SubResource("ArrayMesh_7ewjq")
+script = ExtResource("1_cyp5x")
+noise_multiplier = 30.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
+fov = 91.6406
+script = ExtResource("2_okddd")
