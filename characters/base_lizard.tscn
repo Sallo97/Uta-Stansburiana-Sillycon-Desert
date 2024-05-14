@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://vadflgd751f"]
+
+[ext_resource type="Script" path="res://characters/base_lizard.gd" id="1_0ponp"]
+[ext_resource type="PackedScene" uid="uid://4jye85yefmur" path="res://assets/3D_Models/base_lizard/lizard.gltf" id="1_3hwmd"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_epgmm"]
+size = Vector3(2.27747, 1.88388, 4.63422)
+
+[node name="baseLizard" type="CharacterBody3D"]
+script = ExtResource("1_0ponp")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="lizard" parent="Pivot" instance=ExtResource("1_3hwmd")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.168474, 0.259344, 0.645639)
+shape = SubResource("BoxShape3D_epgmm")
