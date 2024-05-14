@@ -13,4 +13,4 @@ config_version=5
 config/name="[CMCS]Rock-Paper-Scissor Lizard"
 run/main_scene="res://desert.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://assets/project_icon.png"
