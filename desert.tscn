@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://dl034o85mv51e"]
+[gd_scene load_steps=9 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://DesertMesh.gd" id="1_cyp5x"]
+[ext_resource type="Texture2D" uid="uid://ujvxxh1h33lp" path="res://Terrain.png" id="1_qfdbt"]
 [ext_resource type="Script" path="res://Camera.gd" id="2_okddd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qa2sg"]
@@ -16,6 +17,11 @@ sky = SubResource("Sky_ryn1v")
 tonemap_mode = 2
 glow_enabled = true
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ovbfq"]
+diffuse_mode = 1
+albedo_texture = ExtResource("1_qfdbt")
+uv1_scale = Vector3(3, 3, 3)
+
 [sub_resource type="ArrayMesh" id="ArrayMesh_7ewjq"]
 
 [node name="Desert" type="Node3D"]
@@ -24,6 +30,7 @@ glow_enabled = true
 environment = SubResource("Environment_n5om7")
 
 [node name="Desert" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_ovbfq")
 mesh = SubResource("ArrayMesh_7ewjq")
 script = ExtResource("1_cyp5x")
 noise_multiplier = 30.0
@@ -32,3 +39,6 @@ noise_multiplier = 30.0
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
 fov = 91.6406
 script = ExtResource("2_okddd")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-1, 2.70151e-08, 8.3144e-08, 0, 0.951057, -0.309017, -8.74228e-08, -0.309017, -0.951057, 0, 100, 0)

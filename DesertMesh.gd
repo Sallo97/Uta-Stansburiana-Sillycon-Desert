@@ -18,15 +18,18 @@ func generate_noise_map():
 	noise.fractal_gain = 0
 	# noise.get_noise_2d(0,0)
 	var img = noise.get_image(size.x + 2, size.y + 2, false, false, false)
+	ResourceSaver.save(mesh, "res://noise.png", ResourceSaver.FLAG_COMPRESS)
 	return img
 
 
 # https://www.reddit.com/r/godot/comments/kf9ikv/comment/gg7j6t8/?utm_source=share&utm_medium=web2x&context=3
 func generatePlaneMeshXZ(noise_img):
 	var vertices := PackedVector3Array()
+	var uv := PackedVector3Array()
 	var xVertexCount := 2 + size.x
 	var zVertexCount := 2 + size.y
 	vertices.resize(xVertexCount * zVertexCount)
+	uv.resize(vertices.size())
 	var i := 0
 	for zIdx in range(zVertexCount):
 		var tz := zIdx / float(zVertexCount - 1)
@@ -35,6 +38,7 @@ func generatePlaneMeshXZ(noise_img):
 			var height = noise_img.get_pixel(xIdx, zIdx)[0] * noise_multiplier
 			var vertexPosition := Vector3((tx - 0.5) * size.x, height, (tz - 0.5) * size.y)
 			vertices[i] = vertexPosition
+			uv[i] = Vector3((tx - 0.5), (tz - 0.5), 0.0)
 			i += 1
 	
 	var indices := PackedInt32Array()
@@ -88,6 +92,7 @@ func generatePlaneMeshXZ(noise_img):
 	arrays.resize(ArrayMesh.ARRAY_MAX)
 	arrays[ArrayMesh.ARRAY_VERTEX] = vertices
 	arrays[ArrayMesh.ARRAY_INDEX] = indices
+	arrays[ArrayMesh.ARRAY_TEX_UV] = uv
 	computeNormals(arrays)
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 
