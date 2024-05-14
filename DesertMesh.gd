@@ -2,23 +2,51 @@ extends MeshInstance3D
 
 @export var size: Vector2i = Vector2i(300, 300)
 @export var noise_multiplier: float = 10.0
+@export var colour: Color
 
 
 func _ready():
-	generatePlaneMeshXZ(generate_noise_map())
+	generatePlaneMeshXZ(generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2)))
+	var texture = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
+	multiply_image(texture, 0.5, 0.5)
+	texture.save_png("res://plane.png")
+	#get_material_override().set("albedo_texture", texture)
+	var mat = preload("res://desertMaterial.tres")
+	var tex = ImageTexture.create_from_image(texture)
+	mat.set("albedo_texture", tex)
+	mesh.surface_set_material(0, mat)
+	#ResourceSaver.save(get_material_override(), "res://desertMaterial.tres", ResourceSaver.FLAG_COMPRESS)
 	ResourceSaver.save(mesh, "res://plane.tres", ResourceSaver.FLAG_COMPRESS)
+	var timer = Timer.new()
+	add_child(timer)
+	timer.autostart = true
+	timer.one_shot = false
+	timer.wait_time = 0.1
+	timer.start()
+	timer.timeout.connect(set_pixel)
 
+func set_pixel():
+	var tex: Texture = mesh.surface_get_material(0).get("albedo_texture")
+	var x = randi_range(0, size.x + 2)
+	var y = randi_range(0, size.y + 2)
+	var i = tex.get_image()
+	i.set_pixel(x, y, Color.RED)
+	tex.set_image(i)
+
+func multiply_image(img: Image, factor: float, shift: float):
+	for x in img.get_size().x:
+		for y in img.get_size().y:
+			img.set_pixel(x, y, (img.get_pixel(x, y) * factor + ((1 - factor) * Color.GAINSBORO) + colour))
 
 # https://medium.com/@cece9200/godot-4-c-generating-terrain-with-simplex-noise-a3150a6e393f
-func generate_noise_map():
+func generate_noise_map(seed, octaves, gain, size):
 	var noise = FastNoiseLite.new()
-	noise.seed = 10
+	noise.seed = seed
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
-	noise.fractal_octaves = 10
-	noise.fractal_gain = 0
+	noise.fractal_octaves = octaves
+	noise.fractal_gain = gain
 	# noise.get_noise_2d(0,0)
-	var img = noise.get_image(size.x + 2, size.y + 2, false, false, false)
-	ResourceSaver.save(mesh, "res://noise.png", ResourceSaver.FLAG_COMPRESS)
+	var img = noise.get_image(size.x, size.y, false, false, false)
 	return img
 
 
@@ -38,7 +66,7 @@ func generatePlaneMeshXZ(noise_img):
 			var height = noise_img.get_pixel(xIdx, zIdx)[0] * noise_multiplier
 			var vertexPosition := Vector3((tx - 0.5) * size.x, height, (tz - 0.5) * size.y)
 			vertices[i] = vertexPosition
-			uv[i] = Vector3((tx - 0.5), (tz - 0.5), 0.0)
+			uv[i] = Vector3(float(xIdx) / xVertexCount, float(zIdx) / zVertexCount, 0.0)
 			i += 1
 	
 	var indices := PackedInt32Array()
