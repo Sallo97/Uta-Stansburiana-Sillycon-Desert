@@ -1,7 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://dl034o85mv51e"]
+[gd_scene load_steps=14 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://scenes/desert/DesertMesh.gd" id="1_cyp5x"]
 [ext_resource type="Script" path="res://scenes/desert/Camera.gd" id="2_okddd"]
+[ext_resource type="Script" path="res://addons/goutte.camera.trackball/trackball_camera.gd" id="2_37e03"]
+[ext_resource type="Script" path="res://SimpleFreeLookCamera/camera.gd" id="2_hx1cu"]
+[ext_resource type="Script" path="res://CameraRestrict.gd" id="3_b8dbk"]
 [ext_resource type="Script" path="res://Grid.gd" id="3_yj18j"]
 [ext_resource type="Script" path="res://DistanceCalculator.gd" id="4_5yb8h"]
 
@@ -23,6 +26,7 @@ glow_enabled = true
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ll45d"]
 transparency = 1
 shading_mode = 0
+albedo_color = Color(1, 1, 1, 0.258824)
 albedo_texture = SubResource("ImageTexture_yy71y")
 texture_filter = 0
 
@@ -42,10 +46,31 @@ mesh = SubResource("ArrayMesh_7ewjq")
 script = ExtResource("1_cyp5x")
 noise_multiplier = 30.0
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Node3D" type="Node3D" parent="Desert"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
+
+[node name="TrackballCamera" type="Camera3D" parent="Desert"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
+current = true
+script = ExtResource("2_37e03")
+stabilize_horizon = true
+zoom_strength = 4.0
+zoom_minimum = 50.0
+zoom_maximum = 200.0
+enable_pitch_limit = true
+pitch_top_limit = 0.86
+pitch_bottom_limit = 0.215
+
+[node name="Camera3D" type="Camera3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
+visible = false
 fov = 91.6406
-script = ExtResource("2_okddd")
+script = ExtResource("2_hx1cu")
+
+[node name="CameraRestrict" type="Node" parent="Camera3D"]
+script = ExtResource("3_b8dbk")
+min_height = 30.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-1, 2.70151e-08, 8.3144e-08, 0, 0.951057, -0.309017, -8.74228e-08, -0.309017, -0.951057, 0, 100, 0)

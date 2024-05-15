@@ -44,4 +44,4 @@ func get_cells_within_distance(center: Vector2i, distance: float) -> Array[Vecto
 	return out
 
 func get_traversal_difficulty(cell: Vector2i) -> float:
-	return (((%Grid.get_cell_heightv(cell) * 2) - 0.9) * 5) + 0.9
+	return (((%Grid.get_cell_heightv(cell) * 2) - 0.9) * 4) + 0.9

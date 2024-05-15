@@ -3,6 +3,7 @@ extends MeshInstance3D
 @export var size: Vector2i = Vector2i(300, 300)
 @export var noise_multiplier: float = 10.0
 @export var territory_colours: Array[Color]
+@export var model_height: bool = false
 
 var overlay_material: StandardMaterial3D
 var overlay_image: Image
@@ -47,7 +48,7 @@ func reset():
 	var timer: Timer = Timer.new()
 	add_child(timer)
 	timer.autostart = true
-	timer.one_shot = false
+	timer.one_shot = true
 	timer.wait_time = 0.1
 	timer.start()
 	timer.timeout.connect(set_random_pixel)
@@ -62,17 +63,18 @@ func test():
 func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
-	# while %DistanceCalculator.distance(Vector2i(x, y), Vector2i.ZERO) > 200:
-	# 	x = randi_range(0, overlay_image.get_size().x - 1)
-	# 	y = randi_range(0, overlay_image.get_size().y - 1)
-	# set_overlay_pixel(x, y, Color.RED)
-
+	
 	draw_territory(Vector2i(x, y), 10, [Color.ORANGE, Color.YELLOW, Color.BLUE][randi_range(0,2)])
 
 
 func set_overlay_pixel(x: int, y: int, color: Color):
 	overlay_image.set_pixel(x, y, color)
 	overlay_texture.set_image(overlay_image)
+
+func draw_pixel_array(cells: Array[Vector2i], color: Color):
+	for c in cells:
+		overlay_image.set_pixelv(c, color)
+		overlay_texture.set_image(overlay_image)
 
 
 func draw_territory(pos: Vector2i, distance: float, color: Color):
@@ -95,7 +97,7 @@ func generate_noise_map(seed: int, octaves: int, gain: float, size: Vector2i):
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
 	noise.fractal_octaves = octaves
 	noise.fractal_gain = gain
-	# noise.get_noise_2d(0,0)
+	
 	var img = noise.get_image(size.x, size.y, false, false, false)
 	return img
 
@@ -113,8 +115,8 @@ func generatePlaneMeshXZ(_noise_img):
 		var tz := zIdx / float(zVertexCount - 1)
 		for xIdx in range(xVertexCount):
 			var tx := xIdx / float(xVertexCount - 1)
-			# var height = noise_img.get_pixel(xIdx, zIdx)[0] * noise_multiplier
-			var vertexPosition := Vector3((tx - 0.5) * size.x, 0.0, (tz - 0.5) * size.y)
+			var height = _noise_img.get_pixel(xIdx, zIdx)[0] * noise_multiplier
+			var vertexPosition := Vector3((tx - 0.5) * size.x, height if model_height else 0, (tz - 0.5) * size.y)
 			vertices[i] = vertexPosition
 			uv[i] = Vector3(float(xIdx) / xVertexCount, float(zIdx) / zVertexCount, 0.0)
 			i += 1
