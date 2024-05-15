@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dl034o85mv51e"]
+[gd_scene load_steps=10 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://DesertMesh.gd" id="1_cyp5x"]
 [ext_resource type="Script" path="res://Camera.gd" id="2_okddd"]
@@ -16,6 +16,12 @@ sky = SubResource("Sky_ryn1v")
 tonemap_mode = 2
 glow_enabled = true
 
+[sub_resource type="ImageTexture" id="ImageTexture_yy71y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ll45d"]
+transparency = 1
+albedo_texture = SubResource("ImageTexture_yy71y")
+
 [sub_resource type="ArrayMesh" id="ArrayMesh_7ewjq"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_qd6xp"]
@@ -26,10 +32,10 @@ glow_enabled = true
 environment = SubResource("Environment_n5om7")
 
 [node name="Desert" type="MeshInstance3D" parent="."]
+material_overlay = SubResource("StandardMaterial3D_ll45d")
 mesh = SubResource("ArrayMesh_7ewjq")
 script = ExtResource("1_cyp5x")
 noise_multiplier = 30.0
-colour = Color(0.737255, 0.643137, 0, 1)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)

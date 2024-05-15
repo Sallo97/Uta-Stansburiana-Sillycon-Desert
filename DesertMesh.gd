@@ -2,45 +2,58 @@ extends MeshInstance3D
 
 @export var size: Vector2i = Vector2i(300, 300)
 @export var noise_multiplier: float = 10.0
-@export var colour: Color
+@export var territory_colours: Array[Color]
 
+var overlay_material: StandardMaterial3D
+var overlay_image: Image
+var overlay_texture: ImageTexture
 
 func _ready():
 	generatePlaneMeshXZ(generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2)))
-	var texture = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
-	multiply_image(texture, 0.5, 0.5)
-	texture.save_png("res://plane.png")
-	#get_material_override().set("albedo_texture", texture)
-	var mat = preload("res://desertMaterial.tres")
-	var tex = ImageTexture.create_from_image(texture)
+	var noise_image: Image = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
+	multiply_image(noise_image, 0.5, 0.5)
+	noise_image.save_png("res://plane.png")
+	#get_material_override().set("albedo_texture", noise_image)
+	var mat: StandardMaterial3D = preload("res://desertMaterial.tres")
+	var tex: ImageTexture = ImageTexture.create_from_image(noise_image)
 	mat.set("albedo_texture", tex)
 	mesh.surface_set_material(0, mat)
+	
 	#ResourceSaver.save(get_material_override(), "res://desertMaterial.tres", ResourceSaver.FLAG_COMPRESS)
+	
+	# Initialize overlay texture
 	ResourceSaver.save(mesh, "res://plane.tres", ResourceSaver.FLAG_COMPRESS)
-	var timer = Timer.new()
+	overlay_material = get_material_overlay()
+	overlay_image = Image.create(size.x + 2, size.y + 2, false, Image.FORMAT_RGBA8)
+	overlay_texture = ImageTexture.create_from_image(overlay_image)
+	overlay_material.set("albedo_texture", overlay_texture)
+	
+	# Start timer that sets random pixels to red
+	var timer: Timer = Timer.new()
 	add_child(timer)
 	timer.autostart = true
 	timer.one_shot = false
 	timer.wait_time = 0.1
 	timer.start()
-	timer.timeout.connect(set_pixel)
+	timer.timeout.connect(set_random_pixel)
 
-func set_pixel():
-	var tex: Texture = mesh.surface_get_material(0).get("albedo_texture")
+func set_random_pixel():
 	var x = randi_range(0, size.x + 2)
 	var y = randi_range(0, size.y + 2)
-	var i = tex.get_image()
-	i.set_pixel(x, y, Color.RED)
-	tex.set_image(i)
+	set_overlay_pixel(x, y, Color.RED)
+	
+func set_overlay_pixel(x: int, y: int, color: Color):
+	overlay_image.set_pixel(x, y, color)
+	overlay_texture.set_image(overlay_image)
 
 func multiply_image(img: Image, factor: float, shift: float):
 	for x in img.get_size().x:
 		for y in img.get_size().y:
-			img.set_pixel(x, y, (img.get_pixel(x, y) * factor + ((1 - factor) * Color.GAINSBORO) + colour))
+			img.set_pixel(x, y, (img.get_pixel(x, y) * factor + ((1 - factor) * Color.GAINSBORO)))
 
 # https://medium.com/@cece9200/godot-4-c-generating-terrain-with-simplex-noise-a3150a6e393f
 func generate_noise_map(seed, octaves, gain, size):
-	var noise = FastNoiseLite.new()
+	var noise := FastNoiseLite.new()
 	noise.seed = seed
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
 	noise.fractal_octaves = octaves
