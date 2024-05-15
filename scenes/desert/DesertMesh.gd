@@ -8,23 +8,38 @@ var overlay_material: StandardMaterial3D
 var overlay_image: Image
 var overlay_texture: ImageTexture
 
+var material: StandardMaterial3D
+var texture: ImageTexture
+var height_map: Image
+
+
 func _ready():
-	generatePlaneMeshXZ(generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2)))
+	material = preload("res://assets/3D/materials/desertMaterial.tres")
+	texture  = ImageTexture.new()
+	reset()
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta):
+	pass
+
+
+func reset():
 	var noise_image: Image = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
-	multiply_image(noise_image, 0.5, 0.5)
+	generatePlaneMeshXZ(noise_image)
+	height_map = Image.new()
+	height_map.copy_from(noise_image)
+	ResourceSaver.save(mesh, "res://plane.tres", ResourceSaver.FLAG_COMPRESS)
+	multiply_image(noise_image, 0.5)
 	noise_image.save_png("res://plane.png")
-	#get_material_override().set("albedo_texture", noise_image)
-	var mat: StandardMaterial3D = preload("res://assets/3D/materials/desertMaterial.tres")
-	var tex: ImageTexture = ImageTexture.create_from_image(noise_image)
-	mat.set("albedo_texture", tex)
-	mesh.surface_set_material(0, mat)
 	
-	#ResourceSaver.save(get_material_override(), "res://desertMaterial.tres", ResourceSaver.FLAG_COMPRESS)
+	texture.set_image(noise_image)
+	material.set("albedo_texture", texture)
+	mesh.surface_set_material(0, material)
 	
 	# Initialize overlay texture
-	ResourceSaver.save(mesh, "res://plane.tres", ResourceSaver.FLAG_COMPRESS)
 	overlay_material = get_material_overlay()
-	overlay_image = Image.create(size.x + 2, size.y + 2, false, Image.FORMAT_RGBA8)
+	overlay_image = Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
 	overlay_texture = ImageTexture.create_from_image(overlay_image)
 	overlay_material.set("albedo_texture", overlay_texture)
 	
@@ -36,23 +51,45 @@ func _ready():
 	timer.wait_time = 0.1
 	timer.start()
 	timer.timeout.connect(set_random_pixel)
+	call_deferred("test")
+
+
+func test():
+	# draw_territory(Vector2i(100, 100), 10, Color.GREEN)
+	pass
+
 
 func set_random_pixel():
-	var x = randi_range(0, size.x + 2)
-	var y = randi_range(0, size.y + 2)
-	set_overlay_pixel(x, y, Color.RED)
-	
+	var x = randi_range(0, overlay_image.get_size().x - 1)
+	var y = randi_range(0, overlay_image.get_size().y - 1)
+	# while %DistanceCalculator.distance(Vector2i(x, y), Vector2i.ZERO) > 200:
+	# 	x = randi_range(0, overlay_image.get_size().x - 1)
+	# 	y = randi_range(0, overlay_image.get_size().y - 1)
+	# set_overlay_pixel(x, y, Color.RED)
+
+	draw_territory(Vector2i(x, y), 10, [Color.ORANGE, Color.YELLOW, Color.BLUE][randi_range(0,2)])
+
+
 func set_overlay_pixel(x: int, y: int, color: Color):
 	overlay_image.set_pixel(x, y, color)
 	overlay_texture.set_image(overlay_image)
 
-func multiply_image(img: Image, factor: float, shift: float):
+
+func draw_territory(pos: Vector2i, distance: float, color: Color):
+	var cells: Array[Vector2i] = %DistanceCalculator.get_cells_within_distance(pos, distance)
+	for c in cells:
+		set_overlay_pixel(c.x, c.y, color)
+
+
+func multiply_image(img: Image, factor: float):
 	for x in img.get_size().x:
 		for y in img.get_size().y:
 			img.set_pixel(x, y, (img.get_pixel(x, y) * factor + ((1 - factor) * Color.GAINSBORO)))
 
+
 # https://medium.com/@cece9200/godot-4-c-generating-terrain-with-simplex-noise-a3150a6e393f
-func generate_noise_map(seed, octaves, gain, size):
+@warning_ignore("shadowed_global_identifier", "shadowed_variable")
+func generate_noise_map(seed: int, octaves: int, gain: float, size: Vector2i):
 	var noise := FastNoiseLite.new()
 	noise.seed = seed
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
@@ -64,7 +101,7 @@ func generate_noise_map(seed, octaves, gain, size):
 
 
 # https://www.reddit.com/r/godot/comments/kf9ikv/comment/gg7j6t8/?utm_source=share&utm_medium=web2x&context=3
-func generatePlaneMeshXZ(noise_img):
+func generatePlaneMeshXZ(_noise_img):
 	var vertices := PackedVector3Array()
 	var uv := PackedVector3Array()
 	var xVertexCount := 2 + size.x
@@ -76,8 +113,8 @@ func generatePlaneMeshXZ(noise_img):
 		var tz := zIdx / float(zVertexCount - 1)
 		for xIdx in range(xVertexCount):
 			var tx := xIdx / float(xVertexCount - 1)
-			var height = noise_img.get_pixel(xIdx, zIdx)[0] * noise_multiplier
-			var vertexPosition := Vector3((tx - 0.5) * size.x, height, (tz - 0.5) * size.y)
+			# var height = noise_img.get_pixel(xIdx, zIdx)[0] * noise_multiplier
+			var vertexPosition := Vector3((tx - 0.5) * size.x, 0.0, (tz - 0.5) * size.y)
 			vertices[i] = vertexPosition
 			uv[i] = Vector3(float(xIdx) / xVertexCount, float(zIdx) / zVertexCount, 0.0)
 			i += 1
@@ -164,8 +201,3 @@ func computeNormals(surface_arrays):
 		normals[i] = normals[i].normalized()
 
 	surface_arrays[ArrayMesh.ARRAY_NORMAL] = normals
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	pass

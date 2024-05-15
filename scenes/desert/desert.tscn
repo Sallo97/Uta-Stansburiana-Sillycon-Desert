@@ -1,7 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://b38f3eegm7iav"]
+[gd_scene load_steps=12 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://scenes/desert/DesertMesh.gd" id="1_cyp5x"]
 [ext_resource type="Script" path="res://scenes/desert/Camera.gd" id="2_okddd"]
+[ext_resource type="Script" path="res://Grid.gd" id="3_yj18j"]
+[ext_resource type="Script" path="res://DistanceCalculator.gd" id="4_5yb8h"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qa2sg"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -20,7 +22,9 @@ glow_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ll45d"]
 transparency = 1
+shading_mode = 0
 albedo_texture = SubResource("ImageTexture_yy71y")
+texture_filter = 0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_7ewjq"]
 
@@ -32,6 +36,7 @@ albedo_texture = SubResource("ImageTexture_yy71y")
 environment = SubResource("Environment_n5om7")
 
 [node name="Desert" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
 material_overlay = SubResource("StandardMaterial3D_ll45d")
 mesh = SubResource("ArrayMesh_7ewjq")
 script = ExtResource("1_cyp5x")
@@ -50,3 +55,13 @@ transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, 0, 0, 0)
 visible = false
 mesh = SubResource("PlaneMesh_qd6xp")
 skeleton = NodePath("../Desert")
+
+[node name="Scripts" type="Node" parent="."]
+
+[node name="Grid" type="Node" parent="Scripts"]
+unique_name_in_owner = true
+script = ExtResource("3_yj18j")
+
+[node name="DistanceCalculator" type="Node" parent="Scripts"]
+unique_name_in_owner = true
+script = ExtResource("4_5yb8h")
