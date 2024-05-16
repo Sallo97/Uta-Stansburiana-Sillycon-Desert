@@ -5,10 +5,10 @@ extends MeshInstance3D
 
 @export var size: Vector2i = Vector2i(300, 300)
 @export var noise_multiplier: float = 10.0
-@export var territory_colours: Array[Color]
 @export var model_height: bool = false
 
 @export var noise_texture_multiplier: float = 1.0
+@export var noise_texture_scale: float = 1.0
 @export var desert_texture: Resource
 @export var desert_texture_scale: float = 2.0
 
@@ -40,6 +40,7 @@ func reset():
 	multiply_image(noise_image, noise_texture_multiplier)
 	noise_image.save_png("res://assets/2D/textures/plane.png")
 	
+	noise_image.resize(noise_image.get_size().x * noise_texture_scale, noise_image.get_size().y * noise_texture_scale, Image.INTERPOLATE_BILINEAR)
 	combine_images(noise_image, Image.load_from_file(desert_texture.resource_path), desert_texture_scale)
 	texture.set_image(noise_image)
 	material.set("albedo_texture", texture)
@@ -71,7 +72,7 @@ func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
 	
-	var territory: Territory = Territory.new(self, {"position": Vector2i(x, y)})
+	var territory: Territory = Territory.new(self, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
 	#territory.delete()
 	
 	#draw_territory(Vector2i(x, y), 10, territory_colours[randi_range(0, territory_colours.size() - 1)])

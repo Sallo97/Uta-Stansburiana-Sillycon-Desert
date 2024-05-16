@@ -9,7 +9,7 @@ func _init(desert_ref, owner):
 	# owner.get_color()
 	owner_lizard = owner
 	size = 10
-	color = [Color.ORANGE, Color.BLUE, Color.YELLOW][randi_range(0, 2)]
+	color = Constants.Color_Values.ret_color(owner_lizard["morph"])
 	desert = desert_ref
 	draw()
 
