@@ -8,7 +8,9 @@ extends MeshInstance3D
 @export var territory_colours: Array[Color]
 @export var model_height: bool = false
 
-
+@export var noise_texture_multiplier: float = 1.0
+@export var desert_texture: Resource
+@export var desert_texture_scale: float = 2.0
 
 var overlay_material: StandardMaterial3D
 var overlay_image: Image
@@ -35,9 +37,10 @@ func reset():
 	height_map = Image.new()
 	height_map.copy_from(noise_image)
 	ResourceSaver.save(mesh, "res://assets/2D/textures/plane.tres", ResourceSaver.FLAG_COMPRESS)
-	multiply_image(noise_image, 0.5)
+	multiply_image(noise_image, noise_texture_multiplier)
 	noise_image.save_png("res://assets/2D/textures/plane.png")
 	
+	combine_images(noise_image, Image.load_from_file(desert_texture.resource_path), desert_texture_scale)
 	texture.set_image(noise_image)
 	material.set("albedo_texture", texture)
 	mesh.surface_set_material(0, material)
@@ -68,7 +71,7 @@ func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
 	
-	draw_territory(Vector2i(x, y), 10, [Color.ORANGE, Color.YELLOW, Color.BLUE][randi_range(0,2)])
+	draw_territory(Vector2i(x, y), 10, territory_colours[randi_range(0, territory_colours.size() - 1)])
 
 
 func set_overlay_pixel(x: int, y: int, color: Color):
@@ -92,6 +95,11 @@ func multiply_image(img: Image, factor: float):
 		for y in img.get_size().y:
 			img.set_pixel(x, y, (img.get_pixel(x, y) * factor + ((1 - factor) * Color.GAINSBORO)))
 
+func combine_images(img1: Image, img2: Image, scale):
+	for x in img1.get_size().x:
+		for y in img1.get_size().y:
+			var img2Coords: Vector2i = Vector2i(int(x * scale) % img2.get_size().x, int(y * scale) % img2.get_size().y)
+			img1.set_pixel(x, y, (img1.get_pixel(x, y) * img2.get_pixelv(img2Coords)))
 
 # https://medium.com/@cece9200/godot-4-c-generating-terrain-with-simplex-noise-a3150a6e393f
 @warning_ignore("shadowed_global_identifier", "shadowed_variable")

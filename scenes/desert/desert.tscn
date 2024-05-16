@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/desert/DesertMesh.gd" id="1_cyp5x"]
 [ext_resource type="Script" path="res://scenes/desert/main_desert.gd" id="1_nj645"]
 [ext_resource type="Script" path="res://addons/goutte.camera.trackball/trackball_camera.gd" id="2_37e03"]
+[ext_resource type="Texture2D" uid="uid://ujvxxh1h33lp" path="res://assets/2D/textures/Terrain.png" id="2_h2hmk"]
 [ext_resource type="Script" path="res://SimpleFreeLookCamera/camera.gd" id="2_hx1cu"]
 [ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_y5bvo"]
 [ext_resource type="Script" path="res://scripts/CameraRestrict.gd" id="3_b8dbk"]
@@ -58,7 +59,8 @@ mesh = SubResource("ArrayMesh_7ewjq")
 skeleton = NodePath("../..")
 script = ExtResource("1_cyp5x")
 noise_multiplier = 30.0
-model_height = true
+territory_colours = Array[Color]([Color(0.818115, 0.462914, 0, 1), Color(0, 0, 1, 1), Color(1, 1, 0, 1)])
+desert_texture = ExtResource("2_h2hmk")
 
 [node name="TrackballCamera" type="Camera3D" parent="Desert/Desert"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
