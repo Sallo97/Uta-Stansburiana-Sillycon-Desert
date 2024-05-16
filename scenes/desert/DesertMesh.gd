@@ -47,7 +47,7 @@ func reset():
 	multiply_image(noise_image, noise_texture_multiplier)
 	noise_image.save_png("res://assets/2D/textures/plane.png")
 	
-	noise_image.resize(noise_image.get_size().x * noise_texture_scale, noise_image.get_size().y * noise_texture_scale, Image.INTERPOLATE_BILINEAR)
+	noise_image.resize(int(noise_image.get_size().x * noise_texture_scale), int(noise_image.get_size().y * noise_texture_scale), Image.INTERPOLATE_BILINEAR)
 	combine_images(noise_image, Image.load_from_file(desert_texture.resource_path), desert_texture_scale)
 	texture.set_image(noise_image)
 	material.set("albedo_texture", texture)
@@ -79,7 +79,7 @@ func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
 	
-	var territory: Territory = Territory.new(self, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
+	var _territory: Territory = Territory.new(self, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
 	#territory.delete()
 	
 	#draw_territory(Vector2i(x, y), 10, territory_colours[randi_range(0, territory_colours.size() - 1)])
@@ -129,7 +129,8 @@ func multiply_image(img: Image, factor: float):
 		for y in img.get_size().y:
 			img.set_pixel(x, y, (img.get_pixel(x, y) * factor + ((1 - factor) * Color.GAINSBORO)))
 
-func combine_images(img1: Image, img2: Image, scale):
+@warning_ignore("shadowed_variable_base_class")
+func combine_images(img1: Image, img2: Image, scale: float):
 	for x in img1.get_size().x:
 		for y in img1.get_size().y:
 			var img2Coords: Vector2i = Vector2i(int(x * scale) % img2.get_size().x, int(y * scale) % img2.get_size().y)
