@@ -71,23 +71,49 @@ func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
 	
-	draw_territory(Vector2i(x, y), 10, territory_colours[randi_range(0, territory_colours.size() - 1)])
+	var territory: Territory = Territory.new(self, {"position": Vector2i(x, y)})
+	#territory.delete()
+	
+	#draw_territory(Vector2i(x, y), 10, territory_colours[randi_range(0, territory_colours.size() - 1)])
 
 
-func set_overlay_pixel(x: int, y: int, color: Color):
-	overlay_image.set_pixel(x, y, color)
+func set_overlay_pixel(x: int, y: int, color: Color, delete = false):
+	var original_color := overlay_image.get_pixel(x, y)
+	var new_color: Color
+	if !delete:
+		if original_color == Color(0,0,0,0):
+			new_color = color
+		else:
+			new_color = original_color * color
+	else:
+		if original_color == color:
+			new_color = Color(0,0,0,0)
+		else:
+			new_color = original_color / color
+	overlay_image.set_pixel(x, y, new_color)
 	overlay_texture.set_image(overlay_image)
 
-func draw_pixel_array(cells: Array[Vector2i], color: Color):
+func draw_pixel_array(cells: Array[Vector2i], color: Color, delete = false):
 	for c in cells:
-		overlay_image.set_pixelv(c, color)
-		overlay_texture.set_image(overlay_image)
+		var original_color := overlay_image.get_pixelv(c)
+		var new_color: Color
+		if !delete:
+			if original_color == Color(0,0,0,0):
+				new_color = color
+			else:
+				new_color = original_color * color
+		else:
+			if original_color == color:
+				new_color = Color(0,0,0,0)
+			else:
+				new_color = original_color / color
+		overlay_image.set_pixelv(c, new_color)
+	overlay_texture.set_image(overlay_image)
 
 
-func draw_territory(pos: Vector2i, distance: float, color: Color):
+func draw_territory(pos: Vector2i, distance: float, color: Color, delete = false):
 	var cells: Array[Vector2i] = %DistanceCalculator.get_cells_within_distance(pos, distance)
-	for c in cells:
-		set_overlay_pixel(c.x, c.y, color)
+	draw_pixel_array(cells, color, delete)
 
 
 func multiply_image(img: Image, factor: float):
