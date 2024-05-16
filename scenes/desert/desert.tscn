@@ -1,16 +1,17 @@
-[gd_scene load_steps=20 format=3 uid="uid://dl034o85mv51e"]
+[gd_scene load_steps=21 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://scenes/desert/DesertMesh.gd" id="1_cyp5x"]
 [ext_resource type="Script" path="res://scenes/desert/main_desert.gd" id="1_nj645"]
 [ext_resource type="Script" path="res://addons/goutte.camera.trackball/trackball_camera.gd" id="2_37e03"]
 [ext_resource type="Script" path="res://SimpleFreeLookCamera/camera.gd" id="2_hx1cu"]
-[ext_resource type="Texture2D" uid="uid://c6nlutbu2sm6h" path="res://assets/2D/textures/sand_1.jpg" id="2_oie7t"]
+[ext_resource type="Texture2D" uid="uid://b0rw8r4fohhyv" path="res://assets/2D/textures/sand_1.jpg" id="2_oie7t"]
 [ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_y5bvo"]
 [ext_resource type="Texture2D" uid="uid://clxk34tq8y8q" path="res://assets/environment_maps/desert.jpg" id="3_7xv5x"]
 [ext_resource type="Script" path="res://scripts/CameraRestrict.gd" id="3_b8dbk"]
 [ext_resource type="Script" path="res://scripts/Grid.gd" id="3_yj18j"]
 [ext_resource type="Script" path="res://scripts/DistanceCalculator.gd" id="4_5yb8h"]
 [ext_resource type="Script" path="res://scenes/desert/CameraManager.gd" id="8_utya6"]
+[ext_resource type="Script" path="res://scenes/desert/generate_spawn_path.gd" id="12_pg1n2"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nbowp"]
 panorama = ExtResource("3_7xv5x")
@@ -36,14 +37,14 @@ texture_filter = 0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_7ewjq"]
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_qd6xp"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_l77fp"]
 
 [sub_resource type="Curve3D" id="Curve3D_4yunh"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 99.7726, 0.0111771, 39.6091, 0, 0, 0, 0, 0, 0, 98.8585, 15.5042, -22.4398, 0, 0, 0, 0, 0, 0, -54.3485, 19.3454, -25.784, 0, 0, 0, 0, 0, 0, -111.107, 4.10847, 39.7771, 0, 0, 0, 0, 0, 0, 99.7726, 0.0111771, 39.6091),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -0.963677, 0, 97.9088, 0, 0, 0, 0, 0, 0, 4.96072, 0, 97.899, 0, 0, 0, 0, 0, 0, 5.01009, 0, 101.868, 0, 0, 0, 0, 0, 0, -1.05254, 0, 101.918, 0, 0, 0, 0, 0, 0, -0.963677, 0, 97.9088, 0, 0, 0, 0, 0, 0, -112.976, 187.515, 197.932, 0, 0, 0, 0, 0, 0, -123.162, 187.131, 190.398),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
 }
-point_count = 5
+point_count = 7
 
 [node name="Main" type="Node"]
 script = ExtResource("1_nj645")
@@ -68,12 +69,6 @@ desert_texture_scale = 1.0
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Desert"]
 transform = Transform3D(-1, 2.70151e-08, 8.3144e-08, 0, 0.951057, -0.309017, -8.74228e-08, -0.309017, -0.951057, 0, 100, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Desert"]
-transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, 0, 0, 0)
-visible = false
-mesh = SubResource("PlaneMesh_qd6xp")
-skeleton = NodePath("../Desert")
-
 [node name="Scripts" type="Node" parent="Desert"]
 
 [node name="Grid" type="Node" parent="Desert/Scripts"]
@@ -95,7 +90,6 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
 fov = 91.6406
 script = ExtResource("2_hx1cu")
-_vel_multiplier = 10
 
 [node name="CameraRestrict" type="Node" parent="Desert/CameraManager/Camera3D"]
 script = ExtResource("3_b8dbk")
@@ -113,12 +107,22 @@ enable_pitch_limit = true
 pitch_top_limit = 0.86
 pitch_bottom_limit = 0.215
 
+[node name="Area3D" type="Area3D" parent="Desert"]
+
+[node name="Death_plane" type="CollisionShape3D" parent="Desert/Area3D"]
+transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, -0.243507, -150.923, 0.343155)
+shape = SubResource("BoxShape3D_l77fp")
+
 [node name="Timer" type="Timer" parent="."]
-wait_time = 2.0
+wait_time = 0.5
 autostart = true
 
 [node name="SpawnPath" type="Path3D" parent="."]
 curve = SubResource("Curve3D_4yunh")
+script = ExtResource("12_pg1n2")
 
+[connection signal="ready" from="Desert/Desert" to="SpawnPath" method="_on_desert_ready"]
+[connection signal="visibility_changed" from="Desert/Desert" to="SpawnPath" method="_on_desert_visibility_changed"]
+[connection signal="body_entered" from="Desert/Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="Timer" to="Desert/Desert" method="_on_timer_timeout"]
