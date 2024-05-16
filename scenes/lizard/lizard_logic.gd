@@ -2,6 +2,12 @@ extends CharacterBody3D
 #-----------SCRIPTS--------------------
 var scpt = load("res://scenes/lizard/constants.gd")
 
+#------------NODES---------------------------------
+@onready var lizard_node : Node3D = get_node("Pivot/lizard")
+@onready var body_node : MeshInstance3D = lizard_node.get_node("Body")
+@onready var lips_node : MeshInstance3D = lizard_node.get_node("Lips")
+@onready var ribbon_node : MeshInstance3D = lizard_node.get_node("Ribbon")
+
 
 #---------CONSTANTS----------------------------------
 
@@ -21,11 +27,6 @@ var fall_acceleration = 75
 var sex
 var morph
 var size : int
-
-
-# Nodes
-@onready var lizard_node : Node3D = get_node("Pivot/lizard")
-@onready var body_node : MeshInstance3D = lizard_node.get_node("Body")
 
 #---------SETTING FUNC--------------------
 
@@ -76,6 +77,17 @@ func set_lizard_size():
 	var scale_value : float = float(size) / float(min_size) # 1 : 20 = scale_value : size 
 	lizard_node.global_scale( Vector3(scale_value,scale_value,scale_value) )
 
+# This function removes the ribbon and the lips from the mesh
+# if the current lizard is male
+func male_mesh():
+	if (sex == scpt.Sex.MALE) :
+		if(lips_node == null):
+			print("porcodio")
+		if(ribbon_node == null):
+			print("porcodio")
+		lips_node.hide()
+		ribbon_node.hide()
+
 #------------MOVEMENT FUNC----------------------------------------
 
 func _physics_process(delta):
@@ -96,6 +108,7 @@ func _ready():
 	sex = randomSex()
 	morph = randomMorph()
 	size = randomSize()
+	male_mesh()
 
 	set_body_color()
 	set_lizard_size()
