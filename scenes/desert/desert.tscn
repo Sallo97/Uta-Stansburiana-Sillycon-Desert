@@ -1,12 +1,11 @@
 [gd_scene load_steps=14 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://scenes/desert/DesertMesh.gd" id="1_cyp5x"]
-[ext_resource type="Script" path="res://scenes/desert/Camera.gd" id="2_okddd"]
 [ext_resource type="Script" path="res://addons/goutte.camera.trackball/trackball_camera.gd" id="2_37e03"]
 [ext_resource type="Script" path="res://SimpleFreeLookCamera/camera.gd" id="2_hx1cu"]
-[ext_resource type="Script" path="res://CameraRestrict.gd" id="3_b8dbk"]
-[ext_resource type="Script" path="res://Grid.gd" id="3_yj18j"]
-[ext_resource type="Script" path="res://DistanceCalculator.gd" id="4_5yb8h"]
+[ext_resource type="Script" path="res://scripts/CameraRestrict.gd" id="3_b8dbk"]
+[ext_resource type="Script" path="res://scripts/Grid.gd" id="3_yj18j"]
+[ext_resource type="Script" path="res://scripts/DistanceCalculator.gd" id="4_5yb8h"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qa2sg"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -45,9 +44,7 @@ material_overlay = SubResource("StandardMaterial3D_ll45d")
 mesh = SubResource("ArrayMesh_7ewjq")
 script = ExtResource("1_cyp5x")
 noise_multiplier = 30.0
-
-[node name="Node3D" type="Node3D" parent="Desert"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
+model_height = true
 
 [node name="TrackballCamera" type="Camera3D" parent="Desert"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)

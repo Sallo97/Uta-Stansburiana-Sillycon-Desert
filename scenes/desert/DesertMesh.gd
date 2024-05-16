@@ -30,9 +30,9 @@ func reset():
 	generatePlaneMeshXZ(noise_image)
 	height_map = Image.new()
 	height_map.copy_from(noise_image)
-	ResourceSaver.save(mesh, "res://plane.tres", ResourceSaver.FLAG_COMPRESS)
+	ResourceSaver.save(mesh, "res://assets/2D/textures/plane.tres", ResourceSaver.FLAG_COMPRESS)
 	multiply_image(noise_image, 0.5)
-	noise_image.save_png("res://plane.png")
+	noise_image.save_png("res://assets/2D/textures/plane.png")
 	
 	texture.set_image(noise_image)
 	material.set("albedo_texture", texture)
