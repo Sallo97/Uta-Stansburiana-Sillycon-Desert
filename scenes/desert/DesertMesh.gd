@@ -48,7 +48,7 @@ func reset():
 	var timer: Timer = Timer.new()
 	add_child(timer)
 	timer.autostart = true
-	timer.one_shot = true
+	timer.one_shot = false
 	timer.wait_time = 0.1
 	timer.start()
 	timer.timeout.connect(set_random_pixel)
