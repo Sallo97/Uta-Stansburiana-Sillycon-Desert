@@ -10,7 +10,7 @@
 [ext_resource type="Script" path="res://scripts/CameraRestrict.gd" id="3_b8dbk"]
 [ext_resource type="Script" path="res://scripts/Grid.gd" id="3_yj18j"]
 [ext_resource type="Script" path="res://scripts/DistanceCalculator.gd" id="4_5yb8h"]
-[ext_resource type="Script" path="res://scenes/desert/CameraManager.gd" id="8_utya6"]
+[ext_resource type="Script" path="res://scripts/CameraManager.gd" id="8_utya6"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nbowp"]
 panorama = ExtResource("3_7xv5x")
@@ -85,7 +85,7 @@ script = ExtResource("2_hx1cu")
 
 [node name="CameraRestrict" type="Node" parent="Desert/CameraManager/Camera3D"]
 script = ExtResource("3_b8dbk")
-min_height = -30.0
+min_height = -20.0
 
 [node name="TrackballCamera" type="Camera3D" parent="Desert/CameraManager"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)

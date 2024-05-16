@@ -10,6 +10,7 @@ func _on_timer_timeout():
 	lizard.position = sample_point()
 	lizard.initialize()
 	add_child(lizard)
+	Graphs.lizard_spawned(lizard)
 	#print("nuova lucertola generata")
 
 # Returns a random point within the generated mesh.
