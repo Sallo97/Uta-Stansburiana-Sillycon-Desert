@@ -1,9 +1,14 @@
+
+
+
 extends MeshInstance3D
 
 @export var size: Vector2i = Vector2i(300, 300)
 @export var noise_multiplier: float = 10.0
 @export var territory_colours: Array[Color]
 @export var model_height: bool = false
+
+
 
 var overlay_material: StandardMaterial3D
 var overlay_image: Image
@@ -12,7 +17,6 @@ var overlay_texture: ImageTexture
 var material: StandardMaterial3D
 var texture: ImageTexture
 var height_map: Image
-
 
 func _ready():
 	material = preload("res://assets/3D/materials/desertMaterial.tres")

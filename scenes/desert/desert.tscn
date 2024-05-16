@@ -1,8 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://dl034o85mv51e"]
+[gd_scene load_steps=17 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://scenes/desert/DesertMesh.gd" id="1_cyp5x"]
+[ext_resource type="Script" path="res://scenes/desert/main_desert.gd" id="1_nj645"]
 [ext_resource type="Script" path="res://addons/goutte.camera.trackball/trackball_camera.gd" id="2_37e03"]
 [ext_resource type="Script" path="res://SimpleFreeLookCamera/camera.gd" id="2_hx1cu"]
+[ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_y5bvo"]
 [ext_resource type="Script" path="res://scripts/CameraRestrict.gd" id="3_b8dbk"]
 [ext_resource type="Script" path="res://scripts/Grid.gd" id="3_yj18j"]
 [ext_resource type="Script" path="res://scripts/DistanceCalculator.gd" id="4_5yb8h"]
@@ -33,20 +35,32 @@ texture_filter = 0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_qd6xp"]
 
-[node name="Desert" type="Node3D"]
+[sub_resource type="Curve3D" id="Curve3D_4yunh"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 99.7726, 0.0111771, 39.6091, 0, 0, 0, 0, 0, 0, 98.8585, 15.5042, -22.4398, 0, 0, 0, 0, 0, 0, -54.3485, 19.3454, -25.784, 0, 0, 0, 0, 0, 0, -111.107, 4.10847, 39.7771, 0, 0, 0, 0, 0, 0, 99.7726, 0.0111771, 39.6091),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+}
+point_count = 5
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="Main" type="Node"]
+script = ExtResource("1_nj645")
+lizard_scene = ExtResource("2_y5bvo")
+
+[node name="Desert" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Desert"]
 environment = SubResource("Environment_n5om7")
 
-[node name="Desert" type="MeshInstance3D" parent="."]
+[node name="Desert" type="MeshInstance3D" parent="Desert"]
 unique_name_in_owner = true
 material_overlay = SubResource("StandardMaterial3D_ll45d")
 mesh = SubResource("ArrayMesh_7ewjq")
+skeleton = NodePath("../..")
 script = ExtResource("1_cyp5x")
 noise_multiplier = 30.0
 model_height = true
 
-[node name="TrackballCamera" type="Camera3D" parent="Desert"]
+[node name="TrackballCamera" type="Camera3D" parent="Desert/Desert"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
 current = true
 script = ExtResource("2_37e03")
@@ -58,32 +72,42 @@ enable_pitch_limit = true
 pitch_top_limit = 0.86
 pitch_bottom_limit = 0.215
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="Desert"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100, 0)
 visible = false
 fov = 91.6406
 script = ExtResource("2_hx1cu")
 
-[node name="CameraRestrict" type="Node" parent="Camera3D"]
+[node name="CameraRestrict" type="Node" parent="Desert/Camera3D"]
 script = ExtResource("3_b8dbk")
 min_height = 30.0
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Desert"]
 transform = Transform3D(-1, 2.70151e-08, 8.3144e-08, 0, 0.951057, -0.309017, -8.74228e-08, -0.309017, -0.951057, 0, 100, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Desert"]
 transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, 0, 0, 0)
 visible = false
 mesh = SubResource("PlaneMesh_qd6xp")
 skeleton = NodePath("../Desert")
 
-[node name="Scripts" type="Node" parent="."]
+[node name="Scripts" type="Node" parent="Desert"]
 
-[node name="Grid" type="Node" parent="Scripts"]
+[node name="Grid" type="Node" parent="Desert/Scripts"]
 unique_name_in_owner = true
 script = ExtResource("3_yj18j")
 
-[node name="DistanceCalculator" type="Node" parent="Scripts"]
+[node name="DistanceCalculator" type="Node" parent="Desert/Scripts"]
 unique_name_in_owner = true
 script = ExtResource("4_5yb8h")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+autostart = true
+
+[node name="SpawnPath" type="Path3D" parent="."]
+curve = SubResource("Curve3D_4yunh")
+
+[connection signal="timeout" from="Timer" to="Desert/Desert" method="_on_timer_timeout"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
