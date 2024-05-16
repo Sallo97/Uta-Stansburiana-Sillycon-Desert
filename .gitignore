@@ -86,3 +86,11 @@ Temporary Items
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/godot,visualstudiocode,linux,macos
+noise.png
+noise.png.import
+plane.png
+plane.png.import
+plane.tres
+scrap.gd
+sphere.tres
+.vscode/settings.json
