@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://vadflgd751f"]
+[gd_scene load_steps=5 format=3 uid="uid://dlvj0454qpqrx"]
 
 [ext_resource type="Script" path="res://scenes/lizard/lizard_logic.gd" id="1_is8mx"]
 [ext_resource type="PackedScene" uid="uid://4jye85yefmur" path="res://assets/3D/mesh/lizard/lizard.gltf" id="2_6e1sj"]
