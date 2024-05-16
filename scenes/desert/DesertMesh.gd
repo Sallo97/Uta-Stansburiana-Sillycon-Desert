@@ -34,6 +34,7 @@ func _process(_delta):
 func reset():
 	var noise_image: Image = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
 	generatePlaneMeshXZ(noise_image)
+	create_trimesh_collision()
 	height_map = Image.new()
 	height_map.copy_from(noise_image)
 	ResourceSaver.save(mesh, "res://assets/2D/textures/plane.tres", ResourceSaver.FLAG_COMPRESS)

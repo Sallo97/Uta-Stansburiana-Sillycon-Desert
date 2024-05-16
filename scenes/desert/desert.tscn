@@ -1,11 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://dl034o85mv51e"]
+[gd_scene load_steps=18 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://scenes/desert/DesertMesh.gd" id="1_cyp5x"]
 [ext_resource type="Script" path="res://scenes/desert/main_desert.gd" id="1_nj645"]
 [ext_resource type="Script" path="res://addons/goutte.camera.trackball/trackball_camera.gd" id="2_37e03"]
 [ext_resource type="Script" path="res://SimpleFreeLookCamera/camera.gd" id="2_hx1cu"]
-[ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_y5bvo"]
 [ext_resource type="Texture2D" uid="uid://c6nlutbu2sm6h" path="res://assets/2D/textures/sand_1.jpg" id="2_oie7t"]
+[ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_y5bvo"]
 [ext_resource type="Script" path="res://scripts/CameraRestrict.gd" id="3_b8dbk"]
 [ext_resource type="Script" path="res://scripts/Grid.gd" id="3_yj18j"]
 [ext_resource type="Script" path="res://scripts/DistanceCalculator.gd" id="4_5yb8h"]
@@ -58,10 +58,8 @@ material_overlay = SubResource("StandardMaterial3D_ll45d")
 mesh = SubResource("ArrayMesh_7ewjq")
 skeleton = NodePath("../..")
 script = ExtResource("1_cyp5x")
-size = Vector2i(1000, 1000)
 noise_multiplier = 50.0
 model_height = true
-noise_texture_scale = 4.0
 desert_texture = ExtResource("2_oie7t")
 desert_texture_scale = 1.0
 
@@ -114,5 +112,5 @@ autostart = true
 [node name="SpawnPath" type="Path3D" parent="."]
 curve = SubResource("Curve3D_4yunh")
 
-[connection signal="timeout" from="Timer" to="Desert/Desert" method="_on_timer_timeout"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="Timer" to="Desert/Desert" method="_on_timer_timeout"]
