@@ -7,6 +7,8 @@ extends MeshInstance3D
 @export var noise_multiplier: float = 10.0
 @export var model_height: bool = false
 
+@export var collision_offset: Vector3 = Vector3.UP
+
 @export var noise_texture_multiplier: float = 1.0
 @export var noise_texture_scale: float = 1.0
 @export var desert_texture: Resource
@@ -35,6 +37,10 @@ func reset():
 	var noise_image: Image = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
 	generatePlaneMeshXZ(noise_image)
 	create_trimesh_collision()
+	var static_body: StaticBody3D = get_node("./Desert_col")
+	static_body.translate(collision_offset)
+	print(static_body.transform.origin)
+	
 	height_map = Image.new()
 	height_map.copy_from(noise_image)
 	ResourceSaver.save(mesh, "res://assets/2D/textures/plane.tres", ResourceSaver.FLAG_COMPRESS)

@@ -10,7 +10,7 @@ func _on_timer_timeout():
 	lizard.position = get_random_position()
 	lizard.initialize()
 	add_child(lizard)
-	print("nuova lucertola generata")
+	#print("nuova lucertola generata")
 
 # Returns a random position within the Path3D
 func get_random_position() -> Vector3:
@@ -23,4 +23,5 @@ func get_random_position() -> Vector3:
 	return result
 
 func _ready():
-	print("main_desert è stato caricato yuppi!!")
+	#print("main_desert è stato caricato yuppi!!")
+	pass
