@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://vadflgd751f"]
+
+[ext_resource type="Script" path="res://scenes/lizard/lizard_logic.gd" id="1_is8mx"]
+[ext_resource type="PackedScene" uid="uid://4jye85yefmur" path="res://assets/3D/mesh/lizard/lizard.gltf" id="2_6e1sj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_48rmp"]
+albedo_color = Color(0.934676, 0.662862, 0.999245, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_epgmm"]
+size = Vector3(2.27747, 1.88388, 4.63422)
+
+[node name="baseLizard" type="CharacterBody3D"]
+script = ExtResource("1_is8mx")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="lizard" parent="Pivot" instance=ExtResource("2_6e1sj")]
+
+[node name="Cube" parent="Pivot/lizard" index="0"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="Body" parent="Pivot/lizard" index="1"]
+transform = Transform3D(0.2, 0, 0, 0, -8.74228e-09, -0.2, 0, 0.2, -8.74228e-09, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_48rmp")
+
+[node name="Eyes" parent="Pivot/lizard" index="2"]
+transform = Transform3D(0.2, 0, 0, 0, -8.74228e-09, -0.2, 0, 0.2, -8.74228e-09, 0, 0, 0)
+
+[node name="Wheels" parent="Pivot/lizard" index="3"]
+transform = Transform3D(0.2, 0, 0, 0, -8.74228e-09, -0.2, 0, 0.2, -8.74228e-09, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.173078, 0.00442153, 0.170525)
+shape = SubResource("BoxShape3D_epgmm")
+
+[editable path="Pivot/lizard"]
