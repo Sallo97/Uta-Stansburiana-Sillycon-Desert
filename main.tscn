@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://mrq255dufqlv"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_c64ho"]
-[ext_resource type="Texture2D" path="res://assets/2D_Assets/sand_texture.jpg" id="1_e8glg"]
+[ext_resource type="Texture2D" uid="uid://ujvxxh1h33lp" path="res://assets/2D/textures/Terrain.png" id="1_e8glg"]
 [ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_lumkg"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rcmqy"]
@@ -15,10 +15,10 @@ albedo_texture = ExtResource("1_e8glg")
 material = SubResource("StandardMaterial3D_didwj")
 size = Vector3(60, 2, 60)
 
-[sub_resource type="Curve3D" id="Curve3D_q2amw"]
+[sub_resource type="Curve3D" id="Curve3D_q81kq"]
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -22.4066, -0.0477943, -0.13898, 0, 0, 0, 0, 0, 0, 24.9295, -0.0137177, 1.9198, 0, 0, 0, 0, 0, 0, 22.6686, 0.0090065, -17.4108, 0, 0, 0, 0, 0, 0, -22.4961, -0.0158234, -19.8108, 0, 0, 0, 0, 0, 0, -23.7014, -0.0641174, 20.4632),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -8.46892, 0.735752, -5.52486, 0, 0, 0, 0, 0, 0, 19.818, 1.44565, -3.66531, 0, 0, 0, 0, 0, 0, 23.802, -3.81852, 23.1404, 0, 0, 0, 0, 0, 0, -9.03706, -3.90904, 24.0895, 0, 0, 0, 0, 0, 0, -8.46892, 0.735752, -5.52486),
+"tilts": PackedFloat32Array(0, 0, 0, -2.8472, 0)
 }
 point_count = 5
 
@@ -28,39 +28,30 @@ lizard_scene = ExtResource("2_lumkg")
 
 [node name="Ground" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 1)
-metadata/_edit_lock_ = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
 shape = SubResource("BoxShape3D_rcmqy")
-metadata/_edit_lock_ = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 mesh = SubResource("BoxMesh_g462j")
-metadata/_edit_lock_ = true
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 2.18168e-08, 1, 0, -1, 2.18168e-08, 0, 20, 0)
 shadow_enabled = true
-metadata/_edit_lock_ = true
 
 [node name="CameraPivot" type="Marker3D" parent="."]
-transform = Transform3D(1, -6.97574e-16, -1.5246e-23, -1.5246e-23, -4.37114e-08, 1, -6.97574e-16, -1, -4.37114e-08, 0, 20.863, 3.52675)
-metadata/_edit_lock_ = true
+transform = Transform3D(1, -6.97574e-16, -1.5246e-23, -1.5246e-23, -4.37114e-08, 1, -6.97574e-16, -1, -4.37114e-08, -1.49886, 40.7664, 1.10769)
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot"]
-transform = Transform3D(1, 5.30509e-24, 1.24303e-23, -7.54257e-24, 1, -2.33814e-08, 1.24303e-23, 2.85562e-08, 1, 0, 0, 0)
-metadata/_edit_lock_ = true
-
-[node name="SpawnPath" type="Path3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.325138, -0.156193, 5.7967)
-curve = SubResource("Curve3D_q2amw")
-
-[node name="SpawnLocation" type="PathFollow3D" parent="SpawnPath"]
-transform = Transform3D(-0.0434517, -0.000718527, -0.999055, 2.91038e-11, 1, -0.000719206, 0.999055, -3.12508e-05, -0.0434517, -22.4066, -0.0477943, -0.13898)
+transform = Transform3D(1, 0, -1.24302e-23, 0, 1, -2.85562e-08, 1.24303e-23, 2.85562e-08, 1, 0, 0, 0)
 
 [node name="SpawnTimer" type="Timer" parent="."]
 wait_time = 2.0
 autostart = true
+
+[node name="SpawnPath" type="Path3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.34784, 1.99579, -1.43604)
+curve = SubResource("Curve3D_q81kq")
 
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]

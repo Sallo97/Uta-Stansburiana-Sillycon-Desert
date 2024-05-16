@@ -10,6 +10,9 @@ const max_size : int = 30
 const min_speed = 2
 const max_speed = 4
 
+# Downward acceleration when in the air, in meters per seconds squared.
+var fall_acceleration = 75
+
 # Morph type (it depends on the color of the lizard)
 enum Morph {ORANGE = 0, YELLOW = 1, BLUE = 2}
 
@@ -72,7 +75,6 @@ func randomSize():
 		baseSize = 60
 	return baseSize
 
-
 #--------------MODIFY MESH FUNC------------
 
 # This function sets the color of the body 
@@ -91,9 +93,13 @@ func set_lizard_size():
 #------------MOVEMENT FUNC----------------------------------------
 
 func _physics_process(delta):
+	# Vertical Velocity
+	# If in the air, fall toward the floor
+	if not is_on_floor():
+		velocity.y = velocity.y - (fall_acceleration * delta)
 	move_and_slide()
 
-func initialize(start_position):
+func initialize():
 	rotate_y(randf_range(-PI / 4, PI / 4))
 	var random_speed = randi_range(min_speed, max_speed)
 	velocity = Vector3.FORWARD * random_speed

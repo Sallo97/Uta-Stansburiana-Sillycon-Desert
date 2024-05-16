@@ -9,7 +9,7 @@ albedo_color = Color(0.934676, 0.662862, 0.999245, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_epgmm"]
 size = Vector3(2.27747, 1.88388, 4.63422)
 
-[node name="baseLizard" type="CharacterBody3D"]
+[node name="baseLizard2" type="CharacterBody3D"]
 script = ExtResource("1_is8mx")
 
 [node name="Pivot" type="Node3D" parent="."]

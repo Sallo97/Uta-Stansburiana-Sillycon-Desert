@@ -162,7 +162,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_n5qf2")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_epgmm"]
-size = Vector3(3, 1.88388, 9)
+size = Vector3(2.39264, 1.88388, 5.50573)
 
 [node name="baseLizard" type="CharacterBody3D"]
 script = ExtResource("1_0ponp")
