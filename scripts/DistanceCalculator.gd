@@ -1,6 +1,7 @@
 extends Node
 
 const MAX_ITERATIONS = 200
+const SLOPE_MULTIPLIER = 50
 
 func _ready():
 	pass # Replace with function body.
@@ -15,7 +16,7 @@ func get_cells_within_distance(center: Vector2i, distance: float) -> Array[Vecto
 	var queue := Queue.new()
 	var visited: Array[Vector2i] = []
 	out.append(center)
-	queue.enqueue([center, distance - get_traversal_difficulty(center)])
+	queue.enqueue([center, distance - get_traversal_difficulty_slope(center, center)])
 	# print_debug(%Grid.get_cell_heightv(center))
 	visited.append(center)
 
@@ -34,7 +35,7 @@ func get_cells_within_distance(center: Vector2i, distance: float) -> Array[Vecto
 		for cell in adjacentCells:
 			if (cell.x < 0) || (cell.x >= %Grid.size.x) || (cell.y < 0) || (cell.y >= %Grid.size.y) || (visited.has(cell)):
 				continue
-			var newDist: float = currentDistance - get_traversal_difficulty(cell)
+			var newDist: float = currentDistance - get_traversal_difficulty_slope(cell, currentPos)
 			# print(%Grid.get_cell_heightv(cell))
 			if newDist >= 0:
 				out.append(cell)
@@ -45,3 +46,6 @@ func get_cells_within_distance(center: Vector2i, distance: float) -> Array[Vecto
 
 func get_traversal_difficulty(cell: Vector2i) -> float:
 	return (((%Grid.get_cell_heightv(cell) * 2) - 0.9) * 4) + 0.9
+
+func get_traversal_difficulty_slope(cell: Vector2i, from: Vector2i) -> float:
+	return randf_range(0.7, 1.3) + ((%Grid.get_cell_heightv(cell) - %Grid.get_cell_heightv(from)) * SLOPE_MULTIPLIER)
