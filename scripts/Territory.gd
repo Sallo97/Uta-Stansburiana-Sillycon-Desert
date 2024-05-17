@@ -4,17 +4,22 @@ var owner_lizard
 var size: float
 var color: Color
 var desert
+var distance_calculator
+var grid
+var cells: Array[Vector2i]
 
-func _init(desert_ref, owner):
-	# owner.get_color()
+func _init(desert_ref, distance_calculator_ref, grid_ref, owner):
 	owner_lizard = owner
 	size = 10
-	color = Constants.Color_Values.ret_color(owner_lizard["morph"])
+	color = Constants.Color_Values.ret_color(owner_lizard.morph)
 	desert = desert_ref
+	distance_calculator = distance_calculator_ref
+	grid = grid_ref
+	cells = distance_calculator.get_cells_within_distance(grid.get_grid_position(owner_lizard.position), size)
 	draw()
 
 func draw():
-	desert.draw_territory(owner_lizard["position"], size, color)
+	desert.draw_pixel_array(cells, color)
 
 func delete():
-	desert.draw_territory(owner_lizard["position"], size, color, true)	
+	desert.draw_pixel_array(cells, color, true)	

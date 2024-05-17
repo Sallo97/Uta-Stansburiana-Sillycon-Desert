@@ -11,6 +11,7 @@ func _on_timer_timeout():
 	lizard.initialize()
 	add_child(lizard)
 	Graphs.lizard_spawned(lizard)
+	%Grid.create_territory(lizard)
 	#print("nuova lucertola generata")
 
 # Returns a random point within the generated mesh.

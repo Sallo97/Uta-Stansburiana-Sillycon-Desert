@@ -60,29 +60,21 @@ func reset():
 	overlay_material.set("albedo_texture", overlay_texture)
 	
 	# Start timer that sets random pixels to red
-	var timer: Timer = Timer.new()
-	add_child(timer)
-	timer.autostart = true
-	timer.one_shot = false
-	timer.wait_time = 0.1
-	timer.start()
-	timer.timeout.connect(set_random_pixel)
-	call_deferred("test")
-
-
-func test():
-	# draw_territory(Vector2i(100, 100), 10, Color.GREEN)
-	pass
+	# var timer: Timer = Timer.new()
+	# add_child(timer)
+	# timer.autostart = true
+	# timer.one_shot = false
+	# timer.wait_time = 0.1
+	# timer.start()
+	# timer.timeout.connect(set_random_pixel)
 
 
 func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
 	
-	var _territory: Territory = Territory.new(self, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
+	var _territory: Territory = Territory.new(self, %DistanceCalculator, %Grid, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
 	#territory.delete()
-	
-	#draw_territory(Vector2i(x, y), 10, territory_colours[randi_range(0, territory_colours.size() - 1)])
 
 
 func set_overlay_pixel(x: int, y: int, color: Color, delete = false):
