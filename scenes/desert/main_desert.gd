@@ -20,15 +20,22 @@ func sample_point() -> Vector3:
 
 	# Get the size of the desert	
 	var aabb_node = %Desert.get_aabb()
-	var max_x = absf(aabb_node.position.x) - 20  # -20 is done in order
-	var max_z = absf(aabb_node.position.z) - 20  # to prevent that the lizard
-	var max_y = absf(aabb_node.position.y) + 50  # falls off
+	# -border_offset is done in order to prevent that the lizard falls off
+	const border_offset = 20
 
-	var point_x = randi_range(-max_x, max_x) 
-	var point_z = randi_range(-max_z, max_z)
+	var min_x = aabb_node.position.x + border_offset
+	var min_z = aabb_node.position.z + border_offset
+
+	var max_x = aabb_node.end.x - border_offset
+	var max_z = aabb_node.end.z - border_offset
+
+	var point_y = aabb_node.end.y + 5
+
+	var point_x = randi_range(min_x, max_x) 
+	var point_z = randi_range(min_z, max_z)
 	
 	# print("generating lizard at x = ", point_x, " z = ", point_z)
-	return Vector3(point_x, max_y, point_z)
+	return Vector3(point_x, point_y, point_z)
 
 func _ready():
 	#print("main_desert è stato caricato yuppi!!")
