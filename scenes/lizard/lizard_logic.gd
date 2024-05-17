@@ -81,10 +81,6 @@ func set_lizard_size():
 # if the current lizard is male
 func male_mesh():
 	if (sex == scpt.Sex.MALE) :
-		if(lips_node == null):
-			print("porcodio")
-		if(ribbon_node == null):
-			print("porcodio")
 		lips_node.hide()
 		ribbon_node.hide()
 
@@ -98,13 +94,14 @@ func _physics_process(delta):
 	move_and_slide()
 
 func initialize():
-	rotate_y(randf_range(-PI / 4, PI / 4))
+	rotate_y(randf_range(-2 * PI, 2 * PI))
 	var random_speed = randi_range(min_speed, max_speed)
 	velocity = Vector3.FORWARD * random_speed
 	velocity = velocity.rotated(Vector3.UP, rotation.y)
 
 #---------------READY FUNC-------------------------------
 func _ready():
+	print("Sto costruendo la lucertola")
 	sex = randomSex()
 	morph = randomMorph()
 	size = randomSize()
