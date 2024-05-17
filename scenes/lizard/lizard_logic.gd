@@ -16,8 +16,8 @@ const min_size : int = 20
 const max_size : int = 30
 
 # Speed of the lizard is in meters per second
-const min_speed = 2
-const max_speed = 4
+const min_speed = 50
+const max_speed = 50
 
 # Downward acceleration when in the air, in meters per seconds squared.
 var fall_acceleration = 75
@@ -101,7 +101,6 @@ func initialize():
 
 #---------------READY FUNC-------------------------------
 func _ready():
-	print("Sto costruendo la lucertola")
 	sex = randomSex()
 	morph = randomMorph()
 	size = randomSize()

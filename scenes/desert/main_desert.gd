@@ -1,8 +1,6 @@
 extends Node
 
 @export var lizard_scene : PackedScene
-
-@onready var spawnPath_node : Path3D = get_node("SpawnPath")
 @onready var aabb_node = %Desert.get_aabb()
 
 # Every time the timer ticks it instantiate a new lizard
@@ -19,9 +17,8 @@ func _on_timer_timeout():
 # A lizard will always spawn from the sky, thus
 # the y-coordinate is a constant
 func sample_point() -> Vector3:
-
-	# Get the size of the desert	
 	var aabb_node = %Desert.get_aabb()
+
 	# -border_offset is done in order to prevent that the lizard falls off
 	const border_offset = 20
 
@@ -38,11 +35,6 @@ func sample_point() -> Vector3:
 	
 	# print("generating lizard at x = ", point_x, " z = ", point_z)
 	return Vector3(point_x, point_y, point_z)
-
-# func _ready():
-	#print("main_desert è stato caricato yuppi!!")
-	#generate_walls()
-
 
 func _on_area_3d_body_entered(body):
 	body.queue_free()

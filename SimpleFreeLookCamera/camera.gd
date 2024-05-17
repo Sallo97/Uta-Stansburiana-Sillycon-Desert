@@ -76,7 +76,7 @@ func _update_movement(delta):
 		+ _velocity.normalized() * _deceleration * _vel_multiplier * delta
 	
 	# Compute modifiers' speed multiplier
-	var speed_multi = 1
+	var speed_multi = 10
 	if _shift: speed_multi *= SHIFT_MULTIPLIER
 	if _alt: speed_multi *= ALT_MULTIPLIER
 	
