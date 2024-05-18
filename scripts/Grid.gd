@@ -45,6 +45,6 @@ func get_grid_position(absolute_position: Vector3) -> Vector2i:
 
 	var out = (position_relative_to_desert / desert_size) * Vector2(size)
 	out = Vector2i(floor(out.x), floor(out.y))
-	print_debug(obj_pos_2d)
-	print_debug(out)
+	#print_debug(obj_pos_2d)
+	#print_debug(out)
 	return out
