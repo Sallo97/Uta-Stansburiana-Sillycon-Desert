@@ -73,8 +73,11 @@ func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
 	
-	var _territory: Territory = Territory.new(self, %DistanceCalculator, %Grid, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
+	# var _territory: Territory = Territory.new(self, %DistanceCalculator, %Grid, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
 	#territory.delete()
+	var circle: Array[Vector2i] = %DistanceCalculator.rasterize_circle(Vector2i(x, y), 10)
+	draw_pixel_array(circle, Color.ALICE_BLUE)
+	set_overlay_pixelv(%DistanceCalculator.max_height(circle)[0], Color.REBECCA_PURPLE)
 
 
 func set_overlay_pixel(x: int, y: int, color: Color, delete = false):
@@ -92,6 +95,9 @@ func set_overlay_pixel(x: int, y: int, color: Color, delete = false):
 			new_color = original_color / color
 	overlay_image.set_pixel(x, y, new_color)
 	overlay_texture.set_image(overlay_image)
+
+func set_overlay_pixelv(point: Vector2i, color: Color, delete = false):
+	set_overlay_pixel(point.x, point.y, color, delete)
 
 func draw_pixel_array(cells: Array[Vector2i], color: Color, delete = false):
 	for c in cells:
