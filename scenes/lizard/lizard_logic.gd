@@ -20,14 +20,14 @@ const min_speed = 50
 const max_speed = 50
 
 # Downward acceleration when in the air, in meters per seconds squared.
-var fall_acceleration = 75
+var fall_acceleration = 100
 			
 #--------VARIABLES--------------------------------
 
 var sex
 var morph
 var size : int
-
+var falling: bool = true
 #---------SETTING FUNC--------------------
 
 # It chooses randomly the sex of the lizard.
@@ -87,10 +87,23 @@ func male_mesh():
 #------------MOVEMENT FUNC----------------------------------------
 
 func _physics_process(delta):
-	# Vertical Velocity
-	# If in the air, fall toward the floor
+	if falling:
+		velocity.y = velocity.y - (fall_acceleration * delta)
+		velocity.x = 0
+		velocity.z = 0
+		move_and_slide()
+	else :
+		velocity = Vector3.FORWARD * randi_range(min_speed,max_speed)
+		velocity = velocity.rotated(Vector3.UP, rotation.y)
+		if not is_on_floor():
+			velocity.y = velocity.y - (fall_acceleration * delta)
+
+	if is_on_floor_only():
+		falling = false
+	
 	if not is_on_floor():
 		velocity.y = velocity.y - (fall_acceleration * delta)
+		
 	move_and_slide()
 
 func initialize():

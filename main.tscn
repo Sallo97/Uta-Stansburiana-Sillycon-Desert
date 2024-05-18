@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0bb63rabc10t"]
+
+[ext_resource type="PackedScene" uid="uid://dl034o85mv51e" path="res://scenes/desert/desert.tscn" id="1_o56lj"]
+[ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_nx60v"]
+
+[node name="Main" type="Node"]
+
+[node name="MainDesert" parent="." instance=ExtResource("1_o56lj")]
+
+[node name="baseLizard" parent="." instance=ExtResource("2_nx60v")]
