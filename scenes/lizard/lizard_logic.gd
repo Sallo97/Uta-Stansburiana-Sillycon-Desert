@@ -1,4 +1,5 @@
 extends CharacterBody3D
+class_name Lizard
 #-----------SCRIPTS--------------------
 var scpt = load("res://scenes/lizard/constants.gd")
 
@@ -16,8 +17,8 @@ const min_size : int = 20
 const max_size : int = 30
 
 # Speed of the lizard is in meters per second
-const min_speed = 100
-const max_speed = 100
+const min_speed = 50
+const max_speed = 50
 
 # Downward acceleration when in the air, in meters per seconds squared.
 var fall_acceleration = 100
@@ -92,30 +93,28 @@ func _physics_process(delta):
 		
 	move_and_slide()
 
-func initialize():
-	rotate_y(randf_range(-2 * PI, 2 * PI))
-	var random_speed = randi_range(min_speed, max_speed)
-	velocity = Vector3.FORWARD * random_speed
-	velocity = velocity.rotated(Vector3.UP, rotation.y)
+func initialize(other_lizard:Lizard = null):
+	if other_lizard == null:
+		rotate_y(randf_range(-2 * PI, 2 * PI))
+	else:
+		look_at_from_position(self.position, other_lizard.position, Vector3.UP)
+	
 
 #---------------READY FUNC-------------------------------
 func _ready():
-	sex = randomSex()
+	sex = Constants.Sex.MALE #remember to change it into randomSex()
 	morph = randomMorph()
 	size = randomSize()
 	male_mesh()
-
 	set_body_color()
 	set_lizard_size()
 	change_velocity_state()
-
-
-func _on_area_3d_body_entered(body):
-	print("Collided with ", body)
+	self.add_to_group("Lizards")
+	
 
 func _process(delta: float) -> void:
 	var raycast = $RayCast3D
-	if raycast.is_colliding() and falling:
+	if falling and raycast.is_colliding():
 		falling = false
 		change_velocity_state()
 		
@@ -127,3 +126,8 @@ func change_velocity_state():
 		velocity = Vector3.FORWARD * randi_range(min_speed,max_speed)
 		velocity = velocity.rotated(Vector3.UP, rotation.y)
 		
+
+#
+#func _on_checking_collision_lizards_body_entered(body):
+	#if (body.is_in_group("Lizards") and body != self):
+		#print(self, "e' stato toccato da ", body)

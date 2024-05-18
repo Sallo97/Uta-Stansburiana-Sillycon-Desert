@@ -5,13 +5,22 @@ extends Node
 
 #-------------GLOBAL VARIABLES-------------------------
 var count_lizard = 4 # will set the number of lizard that will spanw
+@onready var group_lizards
 
 # Every time the timer ticks it instantiate a new lizard
 func _on_timer_timeout():
+	group_lizards = get_tree().get_nodes_in_group("Lizards")
+	# print("number of lizards = ",group_lizards.size())
 	if count_lizard > 0:
 		var lizard = lizard_scene.instantiate()
 		lizard.position = sample_point()
-		lizard.initialize()
+
+		if group_lizards.size() > 0:
+			# print("Sono qui")
+			var random_idx = randi_range(0, group_lizards.size() - 1)
+			lizard.initialize(group_lizards[0])
+		else:
+			lizard.initialize()	
 		add_child(lizard)
 		Graphs.lizard_spawned(lizard)
 		%Grid.create_territory(lizard)
