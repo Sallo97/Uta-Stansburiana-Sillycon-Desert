@@ -16,8 +16,8 @@ const min_size : int = 20
 const max_size : int = 30
 
 # Speed of the lizard is in meters per second
-const min_speed = 50
-const max_speed = 50
+const min_speed = 100
+const max_speed = 100
 
 # Downward acceleration when in the air, in meters per seconds squared.
 var fall_acceleration = 100
@@ -87,20 +87,6 @@ func male_mesh():
 #------------MOVEMENT FUNC----------------------------------------
 
 func _physics_process(delta):
-	if falling:
-		velocity.y = velocity.y - (fall_acceleration * delta)
-		velocity.x = 0
-		velocity.z = 0
-		move_and_slide()
-	else :
-		velocity = Vector3.FORWARD * randi_range(min_speed,max_speed)
-		velocity = velocity.rotated(Vector3.UP, rotation.y)
-		if not is_on_floor():
-			velocity.y = velocity.y - (fall_acceleration * delta)
-
-	if is_on_floor_only():
-		falling = false
-	
 	if not is_on_floor():
 		velocity.y = velocity.y - (fall_acceleration * delta)
 		
@@ -121,3 +107,23 @@ func _ready():
 
 	set_body_color()
 	set_lizard_size()
+	change_velocity_state()
+
+
+func _on_area_3d_body_entered(body):
+	print("Collided with ", body)
+
+func _process(delta: float) -> void:
+	var raycast = $RayCast3D
+	if raycast.is_colliding() and falling:
+		falling = false
+		change_velocity_state()
+		
+func change_velocity_state():
+	if falling == true:
+		velocity.x = 0
+		velocity.z = 0
+	else:
+		velocity = Vector3.FORWARD * randi_range(min_speed,max_speed)
+		velocity = velocity.rotated(Vector3.UP, rotation.y)
+		

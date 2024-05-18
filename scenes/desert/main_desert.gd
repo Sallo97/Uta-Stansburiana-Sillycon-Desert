@@ -3,15 +3,20 @@ extends Node
 @export var lizard_scene : PackedScene
 @onready var aabb_node = %Desert.get_aabb()
 
+#-------------GLOBAL VARIABLES-------------------------
+var count_lizard = 4 # will set the number of lizard that will spanw
+
 # Every time the timer ticks it instantiate a new lizard
 func _on_timer_timeout():
-	var lizard = lizard_scene.instantiate()
-	lizard.position = sample_point()
-	lizard.initialize()
-	add_child(lizard)
-	Graphs.lizard_spawned(lizard)
-	%Grid.create_territory(lizard)
-	#print("nuova lucertola generata")
+	if count_lizard > 0:
+		var lizard = lizard_scene.instantiate()
+		lizard.position = sample_point()
+		lizard.initialize()
+		add_child(lizard)
+		Graphs.lizard_spawned(lizard)
+		%Grid.create_territory(lizard)
+		#print("nuova lucertola generata")
+		count_lizard -= 1
 
 # Returns a random point within the generated mesh.
 # A lizard will always spawn from the sky, thus
