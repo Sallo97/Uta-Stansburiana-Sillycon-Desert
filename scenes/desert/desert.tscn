@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://dl034o85mv51e"]
+[gd_scene load_steps=21 format=3 uid="uid://dl034o85mv51e"]
 
 [ext_resource type="Script" path="res://scenes/desert/DesertMesh.gd" id="1_cyp5x"]
 [ext_resource type="Script" path="res://scenes/desert/main_desert.gd" id="1_nj645"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/Grid.gd" id="3_yj18j"]
 [ext_resource type="Script" path="res://scripts/DistanceCalculator.gd" id="4_5yb8h"]
 [ext_resource type="Script" path="res://scripts/CameraManager.gd" id="8_utya6"]
+[ext_resource type="Script" path="res://scripts/LizardInteractions.gd" id="12_erbqx"]
 [ext_resource type="Script" path="res://scenes/desert/InvisibleWalls.gd" id="12_w3lrv"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nbowp"]
@@ -106,6 +107,10 @@ pitch_bottom_limit = 0.215
 [node name="Death_plane" type="CollisionShape3D" parent="Desert/Area3D"]
 transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, -0.243507, -150.923, 0.343155)
 shape = SubResource("BoxShape3D_l77fp")
+
+[node name="LizardInteracting" type="Node3D" parent="Desert"]
+unique_name_in_owner = true
+script = ExtResource("12_erbqx")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5

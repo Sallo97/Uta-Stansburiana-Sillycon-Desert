@@ -1,7 +1,7 @@
 extends CharacterBody3D
 class_name Lizard
 #-----------SCRIPTS--------------------
-var scpt = load("res://scenes/lizard/constants.gd")
+var constants_scpt = preload("res://scenes/lizard/constants.gd")
 
 #------------NODES---------------------------------
 @onready var lizard_node : Node3D = get_node("Pivot/lizard")
@@ -43,9 +43,9 @@ func randomSex():
 func randomMorph():
 	var rand : int = 0
 	match (sex):
-		scpt.Sex.MALE:
+		constants_scpt.Sex.MALE:
 			rand = randi_range(0,2)
-		scpt.Sex.FEMALE:
+		constants_scpt.Sex.FEMALE:
 			rand = randi_range(0,1)
 	return rand
 
@@ -55,9 +55,9 @@ func randomMorph():
 # size cannot be > 60
 func randomSize():
 	var baseSize : int = randi_range(min_size, max_size) 
-	if(sex == scpt.Sex.MALE):
+	if(sex == constants_scpt.Sex.MALE):
 		baseSize += 10
-	if (morph == scpt.Morph.ORANGE):
+	if (morph == constants_scpt.Morph.ORANGE):
 		baseSize += 10
 	if (baseSize > 60):
 		baseSize = 60
@@ -69,7 +69,7 @@ func randomSize():
 # ONLY on THIS instance of the lizard
 func set_body_color():
 	var material = StandardMaterial3D.new()
-	material.albedo_color = scpt.Color_Values.ret_color(morph)
+	material.albedo_color = constants_scpt.Color_Values.ret_color(morph)
 	body_node.material_override = material
 
 # This function sets the size of the ONLY
@@ -81,7 +81,7 @@ func set_lizard_size():
 # This function removes the ribbon and the lips from the mesh
 # if the current lizard is male
 func male_mesh():
-	if (sex == scpt.Sex.MALE) :
+	if (sex == constants_scpt.Sex.MALE) :
 		lips_node.hide()
 		ribbon_node.hide()
 
@@ -127,7 +127,8 @@ func change_velocity_state():
 		velocity = velocity.rotated(Vector3.UP, rotation.y)
 		
 
-#
-#func _on_checking_collision_lizards_body_entered(body):
-	#if (body.is_in_group("Lizards") and body != self):
-		#print(self, "e' stato toccato da ", body)
+
+
+func _on_area_3d_body_entered(body):
+	if(body != self and body.is_in_group("Lizards")):
+		%LizardInteracting.start_interaction(self, body)

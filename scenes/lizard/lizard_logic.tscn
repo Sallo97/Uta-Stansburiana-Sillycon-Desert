@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ddafgqxbgv4yr"]
+[gd_scene load_steps=21 format=3 uid="uid://ddafgqxbgv4yr"]
 
 [ext_resource type="Script" path="res://scenes/lizard/lizard_logic.gd" id="1_0ponp"]
 
@@ -228,9 +228,12 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_1m8a3")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_epgmm"]
-size = Vector3(2.39264, 1.88388, 5.50573)
+size = Vector3(4.28883, 1.57233, 5.26079)
 
-[node name="baseLizard" type="CharacterBody3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_de37r"]
+size = Vector3(7.84947, 10.5933, 21.3093)
+
+[node name="baseLizard" type="CharacterBody3D" groups=["Lizards"]]
 script = ExtResource("1_0ponp")
 
 [node name="Pivot" type="Node3D" parent="."]
@@ -270,16 +273,15 @@ mesh = SubResource("ArrayMesh_iefhc")
 skeleton = NodePath("")
 
 [node name="CollisionDesert" type="CollisionShape3D" parent="."]
-transform = Transform3D(1.99873, 0.0711945, 0, -0.0711945, 1.99873, 0, 0, 0, 2, -0.0129957, 0.0557708, 0.0735673)
+transform = Transform3D(1.99873, 0.0711945, 0, -0.0711945, 1.99873, 0, 0, 0, 2, 0, 0, 0.561718)
 visible = false
 shape = SubResource("BoxShape3D_epgmm")
 
 [node name="Area3D" type="Area3D" parent="."]
-visible = false
 
-[node name="CollisionShape" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1.99873, 0.0711945, 0, -0.0711945, 1.99873, 0, 0, 0, 2, -0.0129957, 0.0557708, 0.0735673)
-shape = SubResource("BoxShape3D_epgmm")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00499201, 0, 2.00963)
+shape = SubResource("BoxShape3D_de37r")
 
 [node name="RayCast3D" type="RayCast3D" parent="."]
 unique_name_in_owner = true

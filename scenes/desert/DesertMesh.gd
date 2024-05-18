@@ -3,7 +3,7 @@
 
 extends MeshInstance3D
 
-@export var size: Vector2i = Vector2i(300, 300)
+@export var size: Vector2i = Vector2i(100, 100)
 @export var noise_multiplier: float = 10.0
 @export var model_height: bool = false
 

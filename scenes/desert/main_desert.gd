@@ -4,8 +4,9 @@ extends Node
 @onready var aabb_node = %Desert.get_aabb()
 
 #-------------GLOBAL VARIABLES-------------------------
-var count_lizard = 4 # will set the number of lizard that will spanw
+var count_lizard = 2 # will set the number of lizard that will spanw
 @onready var group_lizards
+var lizard_interacting := []
 
 # Every time the timer ticks it instantiate a new lizard
 func _on_timer_timeout():
@@ -22,6 +23,7 @@ func _on_timer_timeout():
 		else:
 			lizard.initialize()	
 		add_child(lizard)
+		lizard.add_to_group("Lizards")
 		Graphs.lizard_spawned(lizard)
 		%Grid.create_territory(lizard)
 		#print("nuova lucertola generata")
@@ -53,4 +55,3 @@ func sample_point() -> Vector3:
 func _on_area_3d_body_entered(body):
 	body.queue_free()
 	print(body, " fell off!, I removed it")
-
