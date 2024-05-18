@@ -18,6 +18,7 @@ config/icon="res://assets/2D/project_icon.png"
 [autoload]
 
 Graphs="*res://scripts/Graphs.gd"
+SceneData="*res://scripts/SceneData.gd"
 
 [display]
 

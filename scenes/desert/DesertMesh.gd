@@ -25,6 +25,7 @@ var height_map: Image
 func _ready():
 	material = preload("res://assets/3D/materials/desertMaterial.tres")
 	texture  = ImageTexture.new()
+	size = SceneData.get_desert_size(size)
 	reset()
 
 
