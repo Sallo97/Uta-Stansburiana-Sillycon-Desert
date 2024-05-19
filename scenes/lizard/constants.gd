@@ -25,9 +25,69 @@ class Color_Values:
 			Morph.ORANGE : return orange_color
 			Morph.YELLOW : return yellow_color
 			Morph.BLUE : return blue_color
-
+class Alleles_Comb:
+	const orange_comb =[ 
+					[Allele.O, Allele.O], [Allele.O, Allele.B],
+					[Allele.O, Allele.Y], [Allele.B, Allele.O],
+					[Allele.Y, Allele.O] ]
+	const blue_comb = [ 
+					[Allele.B, Allele.B] ]
+	const yellow_comb = [ 
+					[Allele.Y, Allele.Y], [Allele.Y, Allele.B],
+					[Allele.B, Allele.Y] ]
+	
+	static func ret_morph(comb):
+		if(orange_comb.find(comb)):
+			return Morph.ORANGE
+		elif(blue_comb.find(comb)):
+			return Morph.BLUE
+		elif(yellow_comb.find(comb)):
+			return Morph.YELLOW
+			
 # Morph type (it depends on the color of the lizard)
 enum Morph {ORANGE = 0, YELLOW = 1, BLUE = 2}
 
 # Sex type
 enum Sex {MALE = 0, FEMALE = 1}
+
+# Allele type
+enum Allele {O = 0, B = 1, Y = 2}
+
+#------------FUNC----------------------------
+
+# It determines the alleles depending on the
+# morph of the lizard
+static func set_random_alleles(morph:Constants.Morph,
+			prob_o = 0.5, prob_b = 0.5, prob_y = 0.5):
+	var allele_1:Constants.Allele
+	var allele_2:Constants.Allele
+	
+	var is_orange:bool = randf() <= prob_o
+	var is_blue:bool = randf() <= prob_b
+	var is_yellow:bool = randf() <= prob_y
+
+	if (morph == Constants.Morph.ORANGE):
+		allele_1 = Constants.Allele.O
+		if(is_orange):
+			allele_2 = Constants.Allele.O
+		elif(is_blue):
+			allele_2 = Constants.Allele.B
+		elif(is_yellow):
+			allele_2 = Constants.Allele.Y
+	
+	elif (morph == Constants.Morph.BLUE):
+		allele_1 = Constants.Allele.B
+		allele_2 = Constants.Allele.B
+	
+	elif (morph == Constants.Morph.YELLOW):
+		allele_1 = Constants.Allele.Y
+		if(is_blue):
+			allele_2 = Constants.Allele.B
+		elif(is_yellow):
+			allele_2 = Constants.Allele.Y
+	return [allele_1, allele_2]
+	
+static func set_alleles(al_1, al_2):
+	var idx1 = randi_range(0,1)
+	var idx2 = randi_range(0,1)
+	return [al_1[idx1], al_2[idx2]]

@@ -4,7 +4,12 @@ extends Node
 @onready var aabb_node = %Desert.get_aabb()
 
 #-------------GLOBAL VARIABLES-------------------------
-var count_lizard = 2 # will set the number of lizard that will spanw
+var num_lizard:int = 100
+var prob_orange:float = 0.5
+var prob_blue:float = 0.5
+var prob_yellow:float = 0.5
+var prob_sex:float = 0.5
+
 @onready var group_lizards
 var lizard_interacting := []
 
@@ -12,22 +17,25 @@ var lizard_interacting := []
 func _on_timer_timeout():
 	group_lizards = get_tree().get_nodes_in_group("Lizards")
 	# print("number of lizards = ",group_lizards.size())
-	if count_lizard > 0:
-		var lizard = lizard_scene.instantiate()
-		lizard.position = sample_point()
-
-		if group_lizards.size() > 0:
-			# print("Sono qui")
-			var random_idx = randi_range(0, group_lizards.size() - 1)
-			lizard.initialize(group_lizards[0])
-		else:
-			lizard.initialize()	
-		add_child(lizard)
-		lizard.add_to_group("Lizards")
-		Graphs.lizard_spawned(lizard)
-		%Grid.create_territory(lizard)
-		#print("nuova lucertola generata")
-		count_lizard -= 1
+	if num_lizard > 0:
+		
+		#var lizard = lizard_scene.instantiate()
+		#lizard.position = sample_point()
+#
+		#if group_lizards.size() > 0:
+			## print("Sono qui")
+			#var random_idx = randi_range(0, group_lizards.size() - 1)
+			#lizard.initialize(group_lizards[0])
+		#else:
+			#lizard.initialize()	
+		#add_child(lizard)
+		#lizard.add_to_group("Lizards")
+		#Graphs.lizard_spawned(lizard)
+		#%Grid.create_territory(lizard)
+		num_lizard -= 1
+		
+func set_lizard(liz:Lizard):
+	
 
 # Returns a random point within the generated mesh.
 # A lizard will always spawn from the sky, thus
@@ -55,3 +63,11 @@ func sample_point() -> Vector3:
 func _on_area_3d_body_entered(body):
 	body.queue_free()
 	print(body, " fell off!, I removed it")
+	
+# In reads from the menu all the values
+# regarning num of lizards and probability of morph
+#func get_from_menu():
+	#num_lizard = get_num_lizards()
+	#prob_orange = get_prob_orange()
+	#prob_blue = get_prob_blue()
+	#prob_yellow = get_prob_yellow()
