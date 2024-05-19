@@ -56,6 +56,9 @@ func __spawn() -> Lizard:
 
 
 func despawn(lizard: Lizard) -> void:
+	__despawn_deferred.bind(lizard).call_deferred()
+
+func __despawn_deferred(lizard: Lizard) -> void:
 	if __instances.size() >= MAX_COUNT:
 		lizard.free()
 	else:

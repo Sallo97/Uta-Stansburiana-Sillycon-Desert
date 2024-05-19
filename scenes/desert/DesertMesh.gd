@@ -3,12 +3,13 @@ extends MeshInstance3D
 @export var size: Vector2i = Vector2i(100, 100)
 @export var noise_multiplier: float = 10.0
 @export var model_height: bool = false
+@export var mesh_simplification: int = 4
 
 @export var collision_offset: Vector3 = Vector3.UP
 
 @export var noise_texture_multiplier: float = 1.0
 @export var noise_texture_scale: float = 1.0
-@export var desert_texture: Resource
+@export var desert_texture: CompressedTexture2D
 @export var desert_texture_scale: float = 2.0
 
 var overlay_material: StandardMaterial3D
@@ -43,12 +44,12 @@ func reset():
 	
 	height_map = Image.new()
 	height_map.copy_from(noise_image)
-	ResourceSaver.save(mesh, "res://assets/2D/textures/plane.tres", ResourceSaver.FLAG_COMPRESS)
+	# ResourceSaver.save(mesh, "res://assets/2D/textures/plane.tres", ResourceSaver.FLAG_COMPRESS)
 	multiply_image(noise_image, noise_texture_multiplier)
-	noise_image.save_png("res://assets/2D/textures/plane.png")
+	# noise_image.save_png("res://assets/2D/textures/plane.png")
 	
 	noise_image.resize(int(noise_image.get_size().x * noise_texture_scale), int(noise_image.get_size().y * noise_texture_scale), Image.INTERPOLATE_BILINEAR)
-	combine_images(noise_image, Image.load_from_file(desert_texture.resource_path), desert_texture_scale)
+	combine_images(noise_image, desert_texture.get_image(), desert_texture_scale)
 	texture.set_image(noise_image)
 	material.set("albedo_texture", texture)
 	mesh.surface_set_material(0, material)
@@ -154,8 +155,11 @@ func generate_noise_map(seed: int, octaves: int, gain: float, size: Vector2i):
 func generatePlaneMeshXZ(_noise_img):
 	var vertices := PackedVector3Array()
 	var uv := PackedVector3Array()
-	var xVertexCount := 2 + size.x
-	var zVertexCount := 2 + size.y
+	@warning_ignore("integer_division")
+	var xVertexCount := 2 + (size.x / mesh_simplification)
+	@warning_ignore("integer_division")
+	var zVertexCount := 2 + (size.y / mesh_simplification)
+	var img_size: Vector2i = _noise_img.get_size() - Vector2i.ONE
 	vertices.resize(xVertexCount * zVertexCount)
 	uv.resize(vertices.size())
 	var i := 0
@@ -163,7 +167,7 @@ func generatePlaneMeshXZ(_noise_img):
 		var tz := zIdx / float(zVertexCount - 1)
 		for xIdx in range(xVertexCount):
 			var tx := xIdx / float(xVertexCount - 1)
-			var height = _noise_img.get_pixel(xIdx, zIdx)[0] * noise_multiplier
+			var height = _noise_img.get_pixel(min(xIdx * mesh_simplification, img_size.x), min(zIdx * mesh_simplification, img_size.y) )[0] * noise_multiplier
 			var vertexPosition := Vector3((tx - 0.5) * size.x, height if model_height else 0, (tz - 0.5) * size.y)
 			vertices[i] = vertexPosition
 			uv[i] = Vector3(float(xIdx) / xVertexCount, float(zIdx) / zVertexCount, 0.0)

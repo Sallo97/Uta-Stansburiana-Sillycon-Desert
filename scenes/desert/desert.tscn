@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scenes/desert/main_desert.gd" id="1_nj645"]
 [ext_resource type="Script" path="res://addons/goutte.camera.trackball/trackball_camera.gd" id="2_37e03"]
 [ext_resource type="Script" path="res://SimpleFreeLookCamera/camera.gd" id="2_hx1cu"]
-[ext_resource type="Texture2D" uid="uid://b0rw8r4fohhyv" path="res://assets/2D/textures/sand_1.jpg" id="2_oie7t"]
+[ext_resource type="Texture2D" uid="uid://c6nlutbu2sm6h" path="res://assets/2D/textures/sand_1.jpg" id="2_oie7t"]
 [ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_y5bvo"]
 [ext_resource type="Texture2D" uid="uid://clxk34tq8y8q" path="res://assets/environment_maps/desert.jpg" id="3_7xv5x"]
 [ext_resource type="Script" path="res://scripts/Territory/Grid.gd" id="3_yj18j"]
@@ -56,8 +56,9 @@ mesh = SubResource("ArrayMesh_7ewjq")
 skeleton = NodePath("../..")
 script = ExtResource("1_cyp5x")
 size = Vector2i(50, 50)
-noise_multiplier = 2.08165e-12
+noise_multiplier = 50.0
 model_height = true
+mesh_simplification = 10
 noise_texture_scale = 8.0
 desert_texture = ExtResource("2_oie7t")
 desert_texture_scale = 1.0
