@@ -3,7 +3,7 @@
 [ext_resource type="Theme" uid="uid://b60cdgr87ovin" path="res://scenes/main_menu/main_menu_theme.tres" id="1_1ruol"]
 [ext_resource type="Script" path="res://scenes/main_menu/main_menu_script.gd" id="2_fes5d"]
 
-[node name="MainMenu" type="Control" node_paths=PackedStringArray("_orange_percentage_label", "_orange_percentage_slider", "_blue_percentage_label", "_blue_percentage_slider", "_yellow_percentage_label", "_yellow_percentage_slider", "_start_button")]
+[node name="MainMenu" type="Control" node_paths=PackedStringArray("_desert_width_spinbox", "_desert_heigth_spinbox", "_lizard_count_spinbox", "_orange_percentage_label", "_orange_percentage_slider", "_blue_percentage_label", "_blue_percentage_slider", "_yellow_percentage_label", "_yellow_percentage_slider", "_start_button")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,6 +12,9 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_1ruol")
 script = ExtResource("2_fes5d")
+_desert_width_spinbox = NodePath("VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Width")
+_desert_heigth_spinbox = NodePath("VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer/Height")
+_lizard_count_spinbox = NodePath("VBoxContainer/HBoxContainer/VBoxContainer/LineEdit")
 _orange_percentage_label = NodePath("VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/Orange Percentage")
 _orange_percentage_slider = NodePath("VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/Orange Slider")
 _blue_percentage_label = NodePath("VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer2/Blue Percentage")
@@ -22,15 +25,20 @@ _start_button = NodePath("VBoxContainer/Button")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 100.0
+offset_top = 100.0
+offset_right = -100.0
+offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 100
 alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
@@ -40,9 +48,53 @@ layout_mode = 2
 layout_mode = 2
 text = "Lizards                            "
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="LineEdit" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-text = "100"
+min_value = 10.0
+max_value = 300.0
+value = 100.0
+alignment = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DesertSizeLabel" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Desert  Size:"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Width
+"
+
+[node name="Width" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+min_value = 100.0
+max_value = 1000.0
+value = 300.0
+rounded = true
+alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Height"
+
+[node name="Height" type="SpinBox" parent="VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+min_value = 100.0
+max_value = 1000.0
+value = 300.0
+rounded = true
+alignment = 2
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2

@@ -1,14 +1,15 @@
 extends Node
 
-var cells: Array
+var cells: Array = []
 var size: Vector2i
 var territories: Array[Territory] = []
 
-func _ready():
-	setup()
+#func _ready():
+	#setup()
 
 func setup():
 	territories.clear()
+	cells.clear()
 	size = %Desert.size
 	print_debug("Initializing grid with {a}".format({"a": size}))
 	cells.resize(size.x)
@@ -16,7 +17,7 @@ func setup():
 		cells[x] = Array()
 		cells[x].resize(size.y)
 		for y in size.y:
-			cells[y] = Cell.new()
+			cells[x][y] = Cell.new()
 
 
 func get_cell_height(x: int, y: int) -> float:

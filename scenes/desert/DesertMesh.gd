@@ -22,7 +22,6 @@ var height_map: Image
 func _ready():
 	material = preload("res://assets/3D/materials/desertMaterial.tres")
 	texture  = ImageTexture.new()
-	size = SceneData.get_desert_size(size)
 	reset()
 
 
@@ -32,6 +31,9 @@ func _process(_delta):
 
 
 func reset():
+	size = SceneData.get_desert_size(size)
+	%Grid.setup()
+
 	var noise_image: Image = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
 	generatePlaneMeshXZ(noise_image)
 	create_trimesh_collision()
