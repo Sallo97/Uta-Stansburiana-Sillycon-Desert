@@ -1,6 +1,3 @@
-
-
-
 extends MeshInstance3D
 
 @export var size: Vector2i = Vector2i(100, 100)
@@ -60,14 +57,14 @@ func reset():
 	overlay_texture = ImageTexture.create_from_image(overlay_image)
 	overlay_material.set("albedo_texture", overlay_texture)
 	
-	# Start timer that sets random pixels to red
-	# var timer: Timer = Timer.new()
-	# add_child(timer)
-	# timer.autostart = true
-	# timer.one_shot = false
-	# timer.wait_time = 0.1
-	# timer.start()
-	# timer.timeout.connect(set_random_pixel)
+	# Start debug timer
+	var timer: Timer = Timer.new()
+	add_child(timer)
+	timer.autostart = true
+	timer.one_shot = false
+	timer.wait_time = 5
+	timer.start()
+	timer.timeout.connect(set_random_pixel)
 
 
 func set_random_pixel():
@@ -76,9 +73,12 @@ func set_random_pixel():
 	
 	# var _territory: Territory = Territory.new(self, %DistanceCalculator, %Grid, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
 	#territory.delete()
-	var circle: Array[Vector2i] = %DistanceCalculator.rasterize_circle(Vector2i(x, y), 10)
-	draw_pixel_array(circle, Color.ALICE_BLUE)
-	set_overlay_pixelv(%DistanceCalculator.max_height(circle)[0], Color.REBECCA_PURPLE)
+	
+	# var circle: Array[Vector2i] = %DistanceCalculator.rasterize_circle(Vector2i(x, y), 10)
+	# draw_pixel_array(circle, Color.ALICE_BLUE)
+	# set_overlay_pixelv(%DistanceCalculator.max_height(circle)[0], Color.REBECCA_PURPLE)
+
+	# print_debug((%DistanceCalculator as DistanceCalculator))
 
 
 func set_overlay_pixel(x: int, y: int, color: Color, delete = false):

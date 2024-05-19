@@ -1,7 +1,7 @@
 extends Node
 
 var _is_initialized: bool = false
-var _desert_size: Vector2i
+var _desert_size: Vector2i = Vector2i(300, 300)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.

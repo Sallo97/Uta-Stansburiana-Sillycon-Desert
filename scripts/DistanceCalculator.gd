@@ -97,3 +97,26 @@ func max_height(cells: Array[Vector2i]) -> Array:
 func max_height_in_circle(center: Vector2i, radius: int) -> Array:
 	var cells: Array[Vector2i] = rasterize_circle(center, radius)
 	return max_height(cells)
+
+
+func get_cell_at_position(absolute_position: Vector3) -> Vector2i:
+	var desert_aabb: AABB = %Desert.get_aabb()
+	var obj_pos_2d: Vector2 = Vector2(absolute_position.x, absolute_position.z)
+	var desert_pos_2d: Vector2 = Vector2(desert_aabb.position.x, desert_aabb.position.z)
+
+	var position_relative_to_desert = obj_pos_2d - desert_pos_2d
+	var desert_size: Vector2 = Vector2(desert_aabb.size.x, desert_aabb.size.z)
+
+	var out = (position_relative_to_desert / desert_size) * Vector2(%Grid.size)
+	out = Vector2i(floor(out.x), floor(out.y))
+	return out
+
+
+func get_position_of_cell(cell: Vector2i) -> Vector3:
+	var desert_aabb: AABB = %Desert.get_aabb()
+	var desert_pos_2d: Vector2 = Vector2(desert_aabb.position.x, desert_aabb.position.z)
+	var desert_size: Vector2 = Vector2(desert_aabb.size.x, desert_aabb.size.z)
+	var cell_size: Vector2 = Vector2(%Grid.size) / desert_size
+
+	var pos_2d := (Vector2(cell) * cell_size) + desert_pos_2d
+	return Vector3(pos_2d.x, %Grid.get_cell_heightv(cell), pos_2d.y)

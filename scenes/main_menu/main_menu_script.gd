@@ -14,7 +14,7 @@ func _ready():
 	_start_button.pressed.connect(_start_simulation)
 
 
-func _process(delta):
+func _process(_delta):
 	var slider_sum := _orange_percentage_slider.value + _blue_percentage_slider.value + _yellow_percentage_slider.value
 	if slider_sum == 0:
 		_orange_percentage_slider.value = 1

@@ -33,18 +33,3 @@ func get_size() -> Vector2i:
 
 func create_territory(lizard):
 	territories.append(Territory.new(%Desert, %DistanceCalculator, self, lizard))
-
-
-func get_grid_position(absolute_position: Vector3) -> Vector2i:
-	var desert_aabb: AABB = %Desert.get_aabb()
-	var obj_pos_2d: Vector2 = Vector2(absolute_position.x, absolute_position.z)
-	var desert_pos_2d: Vector2 = Vector2(desert_aabb.position.x, desert_aabb.position.z)
-
-	var position_relative_to_desert = obj_pos_2d - desert_pos_2d
-	var desert_size: Vector2 = Vector2(desert_aabb.size.x, desert_aabb.size.z)
-
-	var out = (position_relative_to_desert / desert_size) * Vector2(size)
-	out = Vector2i(floor(out.x), floor(out.y))
-	#print_debug(obj_pos_2d)
-	#print_debug(out)
-	return out
