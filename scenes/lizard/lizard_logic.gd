@@ -24,7 +24,7 @@ func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
 						prob_blue, prob_yellow)
 	alleles = Constants.set_random_alleles(morph,prob_orange,
 								 prob_blue, prob_yellow)
-	print("I arrived here with ", sex, morph, alleles)
+	# print("I arrived here with ", sex, morph, alleles)
 	main_settings()
 
 func set_lizard_fixed(new_sex:Constants.Sex, new_morph:Constants.Morph):
@@ -125,7 +125,7 @@ func initialize(other_lizard:Lizard = null):
 	if other_lizard == null:
 		rotate_y(randf_range(0, 2 * PI))
 	else:
-		print("other_lizard.position = ", other_lizard.position)
+		# print("other_lizard.position = ", other_lizard.position)
 		look_at_from_position(self.position, other_lizard.position, Vector3.UP)
 	
 

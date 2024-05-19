@@ -40,7 +40,7 @@ func reset():
 	create_trimesh_collision()
 	var static_body: StaticBody3D = get_node("./Desert_col")
 	static_body.translate(collision_offset)
-	print(static_body.transform.origin)
+	# print(static_body.transform.origin)
 	
 	height_map = Image.new()
 	height_map.copy_from(noise_image)
