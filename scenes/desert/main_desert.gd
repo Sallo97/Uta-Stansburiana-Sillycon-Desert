@@ -13,6 +13,13 @@ var prob_sex:float = 0.5
 @onready var group_lizards
 var lizard_interacting := []
 
+
+func _ready():
+	Graphs.instance().set_scene(self)
+
+func _process(delta):
+	Graphs.instance()._process(delta) # Don't ask, don't tell (_process is not called in Graphs for some reason)
+
 # Every time the timer ticks it instantiate a new lizard
 func _on_timer_timeout():
 	group_lizards = get_tree().get_nodes_in_group("Lizards")

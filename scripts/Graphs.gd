@@ -1,17 +1,38 @@
 extends Node
+class_name Graphs
+
+static var __instance: Graphs
 
 const BUFFER_SIZE = 5000
 
+
+func _init():
+	assert(__instance == null)
+	__instance = self	
+
+
+static func instance() -> Graphs:
+	if __instance == null:
+		return Graphs.new()
+	else:
+		return __instance
+
+
+func set_scene(root: Node):
+	reparent(root)
+	setup()
+
+
 var _lizards: Array[int] = [0, 0, 0]
-var _graphs_visible: bool = false
+var _graphs_visible: bool = true
 var _graph: DebugDraw2DGraph
 var _graph_orange: DebugDraw2DGraph
 var _graph_blue: DebugDraw2DGraph
 var _graph_yellow: DebugDraw2DGraph
 var _frame_graph: DebugDraw2DFPSGraph
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
+func setup():
+	print_debug("Graphs set up")
 	_graph = DebugDraw2D.create_graph("Lizards")
 	_graph.data_getter = _datagetter_total
 	_graph.line_color = Color.GAINSBORO
@@ -80,3 +101,12 @@ func lizard_spawned(lizard):
 			_lizards[1] += 1			
 		Constants.Morph.YELLOW:
 			_lizards[2] += 1			
+
+func lizard_died(lizard):
+	match lizard.morph:
+		Constants.Morph.ORANGE:
+			_lizards[0] -= 1
+		Constants.Morph.BLUE:
+			_lizards[1] -= 1			
+		Constants.Morph.YELLOW:
+			_lizards[2] -= 1	
