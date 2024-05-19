@@ -14,6 +14,7 @@ var morph:Constants.Morph = Constants.Morph.ORANGE
 var size : int = Constants.min_size
 var falling: bool = true
 var alleles = [Constants.Allele.O, Constants.Allele.O]
+var speed = randi_range(Constants.min_speed, Constants.max_speed)
 
 #---------CONSTRUCTORS-------------------------
 func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
@@ -127,21 +128,14 @@ func initialize(other_lizard:Lizard = null):
 	
 
 #---------------API FUNC-------------------------------
-	
-
-func _process(delta: float) -> void:
-	var raycast = %RayCast3D
-	if falling and raycast.is_colliding():
-		falling = false
-		change_velocity_state()
 		
 func change_velocity_state():
 	if falling == true:
-		velocity.x = 0
-		velocity.z = 0
+		stop_velocity()
 	else:
-		velocity = Vector3.FORWARD * randi_range(Constants.min_speed, Constants.max_speed)
-		velocity = velocity.rotated(Vector3.UP, rotation.y)
+		normal_velocity()
+		
+		
 
 func _on_area_3d_body_entered(body):
 	if(body != self and body.is_in_group("Lizards") ): #
@@ -150,7 +144,20 @@ func _on_area_3d_body_entered(body):
 		
 
 func _physics_process(delta):
-	if not is_on_floor():
-		velocity.y = velocity.y - (Constants.fall_acceleration * delta)
+	var raycast = %RayCast3D
+	if falling and raycast.is_colliding():
+		falling = false
+		change_velocity_state()
 		
+	velocity.y = velocity.y - (Constants.fall_acceleration * delta)
 	move_and_slide()
+	
+func stop_velocity():
+	velocity.x = 0
+	velocity.z = 0
+	# velocity y = 0
+
+func normal_velocity():
+	velocity = Vector3.FORWARD * speed
+	velocity = velocity.rotated(Vector3.UP, rotation.y)
+	

@@ -4,7 +4,7 @@ extends Node
 @onready var aabb_node = %Desert.get_aabb()
 
 #-------------GLOBAL VARIABLES-------------------------
-var num_lizard:int = SceneData.get_lizard_count(10) # Default 10
+var num_lizard:int = 2 # SceneData.get_lizard_count(10) # Default 10
 var prob_orange:float = 1/3.0
 var prob_blue:float = 1/3.0
 var prob_yellow:float = 1/3.0
@@ -33,7 +33,6 @@ func set_lizard(liz:Lizard, group_lizs:Array[Node]):
 	set_direction(liz, group_lizs)
 	%Grid.create_territory(liz)
 	
-	
 func set_direction(liz:Lizard, group_lizs: Array[Node]):
 	group_lizs = group_lizs.filter(
 		func (l):
@@ -44,8 +43,6 @@ func set_direction(liz:Lizard, group_lizs: Array[Node]):
 		liz.initialize(group_lizs[idx])
 	else:
 		liz.initialize()
-
-
 
 # Returns a random point within the generated mesh.
 # A lizard will always spawn from the sky, thus
