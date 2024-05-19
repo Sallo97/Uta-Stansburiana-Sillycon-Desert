@@ -18,23 +18,20 @@ func _on_timer_timeout():
 	group_lizards = get_tree().get_nodes_in_group("Lizards")
 	# print("number of lizards = ",group_lizards.size())
 	if num_lizard > 0:
-		
-		#var lizard = lizard_scene.instantiate()
-		#lizard.position = sample_point()
-#
-		#if group_lizards.size() > 0:
-			## print("Sono qui")
-			#var random_idx = randi_range(0, group_lizards.size() - 1)
-			#lizard.initialize(group_lizards[0])
-		#else:
-			#lizard.initialize()	
-		#add_child(lizard)
-		#lizard.add_to_group("Lizards")
-		#Graphs.lizard_spawned(lizard)
-		#%Grid.create_territory(lizard)
+		var new_liz:Lizard = lizard_scene.instantiate()
+		set_lizard(new_liz)
 		num_lizard -= 1
 		
 func set_lizard(liz:Lizard):
+	
+	liz.set_lizard_prob(prob_sex, prob_orange,
+			  	   prob_yellow, prob_blue)
+	liz.position = sample_point()
+	add_child(liz)
+	Graphs.lizard_spawned(liz)
+	%Grid.create_territory(liz)
+	
+	
 	
 
 # Returns a random point within the generated mesh.

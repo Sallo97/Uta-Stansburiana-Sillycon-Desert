@@ -9,41 +9,40 @@ class_name Lizard
 
 #--------VARIABLES--------------------------------
 
-var sex: Constants.Sex
-var morph:Constants.Morph
-var size : int
+var sex: Constants.Sex = Constants.Sex.MALE
+var morph:Constants.Morph = Constants.Morph.ORANGE
+var size : int = Constants.min_size
 var falling: bool = true
-var alleles
+var alleles = [Constants.Allele.O, Constants.Allele.O]
 
 #---------CONSTRUCTORS-------------------------
-func _init(prob_sex:float = 0.5, prob_orange:float = 0.5,
-		   prob_yellow:float = 0.5, prob_blue:float = 0.5):
+func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3,
+		   prob_yellow:float = 1/3, prob_blue:float = 1/3):
 	sex = randomSex(prob_sex)
 	morph = randomMorph(sex, prob_orange,
-						prob_blue,prob_yellow)
+						prob_blue, prob_yellow)
 	alleles = Constants.set_random_alleles(morph,prob_orange,
 								 prob_blue, prob_yellow)
-	main_settings()
+	print("I arrived here with ", sex, morph, alleles)
+	# main_settings()
 
-func _init_static(new_sex:Constants.Sex, new_morph:Constants.Morph):
+func set_lizard_fixed(new_sex:Constants.Sex, new_morph:Constants.Morph):
 	sex = new_sex
 	morph = new_morph
 	alleles = Constants.set_random_alleles(morph)
 	main_settings()
 	
-func _init_child(papa:Lizard, mama:Lizard):
+func set_lizard_child(papa:Lizard, mama:Lizard):
 	sex = randomSex()
-	alleles = Constants.set_alleles(papa.alleles, mama.alleles)
+	alleles = Constants.set_alleles(sex, papa.alleles, mama.alleles)
 	morph = Constants.Alleles_Comb.ret_morph(alleles)
-	main_settings()
-	
+	main_settings()	
 
 func main_settings():
-	male_mesh()
+	set_mesh()
 	set_body_color()
 	set_lizard_size()
 	change_velocity_state()
-	self.add_to_group("Lizards")
 
 #---------SETTING FUNC--------------------
 
@@ -65,11 +64,13 @@ static func randomMorph(sex:Constants.Sex, or_prob=0.5,
 	# Setting probabilities
 	var morph
 	var is_orange:bool = randf() <= or_prob
-	var is_yellow:bool = randf() <= yw_prob 
+	var is_yellow:bool 
 	var is_blue:bool
 	if sex == Constants.Sex.MALE:
-		is_blue = randf() <= bl_prob
+		is_yellow = randf() <= yw_prob + or_prob 
+		is_blue = true
 	else:
+		is_yellow = true
 		is_blue = false
 	
 	# Returing morph
@@ -111,7 +112,7 @@ func set_lizard_size():
 
 # This function removes the ribbon and the lips from the mesh
 # if the current lizard is male
-func male_mesh():
+func set_mesh():
 	if (sex == Constants.Sex.MALE) :
 		lips_node.hide()
 		ribbon_node.hide()
@@ -140,11 +141,11 @@ func change_velocity_state():
 	else:
 		velocity = Vector3.FORWARD * randi_range(Constants.min_speed, Constants.max_speed)
 		velocity = velocity.rotated(Vector3.UP, rotation.y)
-
-func _on_area_3d_body_entered(body):
-	if(body != self and body.is_in_group("Lizards")):
-		%LizardInteracting.start_interaction(self, body)
-		
+#
+#func _on_area_3d_body_entered(body):
+	#if(body != self and body.is_in_group("Lizards")):
+		#%LizardInteracting.start_interaction(self, body)
+		#
 
 func _physics_process(delta):
 	if not is_on_floor():
