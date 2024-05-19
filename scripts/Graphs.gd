@@ -8,7 +8,7 @@ const BUFFER_SIZE = 5000
 
 func _init():
 	assert(__instance == null)
-	__instance = self	
+	__instance = self
 
 
 static func instance() -> Graphs:
@@ -16,11 +16,6 @@ static func instance() -> Graphs:
 		return Graphs.new()
 	else:
 		return __instance
-
-
-func set_scene(root: Node):
-	reparent(root)
-	setup()
 
 
 var _lizards: Array[int] = [0, 0, 0]

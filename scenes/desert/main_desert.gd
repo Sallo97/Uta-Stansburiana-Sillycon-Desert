@@ -13,7 +13,7 @@ var lizard_interacting := []
 
 
 func _ready():
-	Graphs.instance().set_scene(self)
+	Graphs.instance().setup()
 	LizardPool.instance().set_scene(self)
 
 func _process(delta):
@@ -37,7 +37,7 @@ func set_direction(liz:Lizard, group_lizs: Array[Node]):
 	group_lizs = group_lizs.filter(
 		func (l):
 			return l != liz)
-	print("new_group_lizs = ", group_lizs.size())
+	# print("new_group_lizs = ", group_lizs.size())
 	if group_lizs.size() > 0:
 		var idx = randi_range(0, group_lizs.size() - 1)
 		liz.initialize(group_lizs[idx])
@@ -69,7 +69,7 @@ func sample_point() -> Vector3:
 
 func _on_area_3d_body_entered(body):
 	body.queue_free()
-	print(body, " fell off!, I removed it")
+	# print(body, " fell off!, I removed it")
 	
 	
 # In reads from the menu all the values

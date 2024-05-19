@@ -40,5 +40,6 @@ func _start_simulation():
 	})
 	var desert_scene := preload("res://scenes/desert/desert.tscn").instantiate()
 	get_tree().root.add_child(desert_scene)
-	call_deferred("free")
+	#call_deferred("free")
+	hide()
 
