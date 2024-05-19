@@ -7,11 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://c6nlutbu2sm6h" path="res://assets/2D/textures/sand_1.jpg" id="2_oie7t"]
 [ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_y5bvo"]
 [ext_resource type="Texture2D" uid="uid://clxk34tq8y8q" path="res://assets/environment_maps/desert.jpg" id="3_7xv5x"]
-[ext_resource type="Script" path="res://scripts/CameraRestrict.gd" id="3_b8dbk"]
-[ext_resource type="Script" path="res://scripts/Grid.gd" id="3_yj18j"]
-[ext_resource type="Script" path="res://scripts/DistanceCalculator.gd" id="4_5yb8h"]
-[ext_resource type="Script" path="res://scripts/CameraManager.gd" id="8_utya6"]
-[ext_resource type="Script" path="res://scripts/LizardInteractions.gd" id="12_erbqx"]
+[ext_resource type="Script" path="res://scripts/Territory/Grid.gd" id="3_yj18j"]
+[ext_resource type="Script" path="res://scripts/Territory/DistanceCalculator.gd" id="7_rsbhg"]
+[ext_resource type="Script" path="res://scripts/Camera/CameraManager.gd" id="8_gtwnx"]
+[ext_resource type="Script" path="res://scripts/Camera/CameraRestrict.gd" id="10_21hqv"]
+[ext_resource type="Script" path="res://scripts/Lizard/LizardInteractions.gd" id="12_3q7ep"]
 [ext_resource type="Script" path="res://scenes/desert/InvisibleWalls.gd" id="12_w3lrv"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nbowp"]
@@ -73,11 +73,11 @@ script = ExtResource("3_yj18j")
 
 [node name="DistanceCalculator" type="Node" parent="Desert/Scripts"]
 unique_name_in_owner = true
-script = ExtResource("4_5yb8h")
+script = ExtResource("7_rsbhg")
 
 [node name="CameraManager" type="Node3D" parent="Desert" node_paths=PackedStringArray("trackball_camera", "free_camera")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 0)
-script = ExtResource("8_utya6")
+script = ExtResource("8_gtwnx")
 trackball_camera = NodePath("TrackballCamera")
 free_camera = NodePath("Camera3D")
 
@@ -88,7 +88,7 @@ fov = 91.6406
 script = ExtResource("2_hx1cu")
 
 [node name="CameraRestrict" type="Node" parent="Desert/CameraManager/Camera3D"]
-script = ExtResource("3_b8dbk")
+script = ExtResource("10_21hqv")
 min_height = -20.0
 
 [node name="TrackballCamera" type="Camera3D" parent="Desert/CameraManager"]
@@ -111,7 +111,7 @@ shape = SubResource("BoxShape3D_l77fp")
 
 [node name="LizardInteracting" type="Node3D" parent="Desert"]
 unique_name_in_owner = true
-script = ExtResource("12_erbqx")
+script = ExtResource("12_3q7ep")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5
