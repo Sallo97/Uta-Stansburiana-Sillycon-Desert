@@ -1,21 +1,22 @@
-extends Node
-class_name Interactions
+class_name InteractionManager
 
-var lizard_interacting := []
+static var lizs_interacting := []
 
-func start_interaction(l1: Lizard, l2: Lizard):
+static func start_interaction(l1: Lizard, l2: Lizard):
 	print("Sono dentro start interaction con ", l1, " e ", l2)
-	if lizard_interacting.find(l1) != -1 || lizard_interacting.find(l2) != -1:
+	if lizs_interacting.find(l1) != -1 || lizs_interacting.find(l2) != -1:
 		return
-	lizard_interacting.append(l1)
-	lizard_interacting.append(l2)
+	lizs_interacting.append(l1)
+	lizs_interacting.append(l2)
 	if(l1.sex != l2.sex):
 		lizard_love(l1, l2)
-	if(l1.sex == Constants.Sex.MALE && l1.sex == l2.sex):
+	elif(l1.sex == Constants.Sex.MALE):
 		lizard_fight(l1, l2)
-		
+	lizs_interacting = lizs_interacting.filter(
+		func(l):
+			return l != l1 && l != l2)
 	
-func lizard_fight(l1:Lizard, l2:Lizard):
+static func lizard_fight(l1:Lizard, l2:Lizard):
 	print("Starting lizard fight!")
 	var prob_win_l1: float = 0.5
 	match l1.morph:
@@ -32,13 +33,13 @@ func lizard_fight(l1:Lizard, l2:Lizard):
 	
 	var win: bool = randf() <= prob_win_l1
 	if win:
-		l2.queue_free()
+		LizardPool.instance().despawn(l2)
 		print(l2, " lost, is ded =(")
 	else:
-		l1.queue_free()
+		LizardPool.instance().despawn(l1)
 		print(l1, " lost, is ded =(")
 
-func lizard_love(l1:Lizard, l2:Lizard):
+static func lizard_love(l1:Lizard, l2:Lizard):
 	print("Starting lizard love!")
 	var prob_mate: float = 0.5
 	var male

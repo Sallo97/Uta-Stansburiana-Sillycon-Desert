@@ -4,13 +4,11 @@ extends Node
 @onready var aabb_node = %Desert.get_aabb()
 
 #-------------GLOBAL VARIABLES-------------------------
-var num_lizard:int = 10
+var num_lizard:int = 2 # Default 10
 var prob_orange:float = 1/3.0
 var prob_blue:float = 1/3.0
 var prob_yellow:float = 1/3.0
 var prob_sex:float = 0.5
-
-@onready var group_lizards
 var lizard_interacting := []
 
 
@@ -23,20 +21,31 @@ func _process(delta):
 
 # Every time the timer ticks it instantiate a new lizard
 func _on_timer_timeout():
-	group_lizards = get_tree().get_nodes_in_group("Lizards")
-	# print("number of lizards = ",group_lizards.size())
+	var group_lizs: Array[Node] = get_tree().get_nodes_in_group("Lizards")
+	# print("number of lizards = ",group_lizs.size())
 	if num_lizard > 0:
 		var new_liz: Lizard = LizardPool.instance().spawn_random(prob_sex, prob_orange, prob_yellow, prob_blue)
-		set_lizard(new_liz)
+		set_lizard(new_liz, group_lizs)
 		num_lizard -= 1
 		
-func set_lizard(liz:Lizard):
-	# liz.set_lizard_prob(prob_sex, prob_orange,
-	# 		  	   prob_yellow, prob_blue)
+func set_lizard(liz:Lizard, group_lizs:Array[Node]):
 	liz.position = sample_point()
+	set_direction(liz, group_lizs)
 	%Grid.create_territory(liz)
 	
 	
+func set_direction(liz:Lizard, group_lizs: Array[Node]):
+	group_lizs = group_lizs.filter(
+		func (l):
+			return l != liz)
+	print("new_group_lizs = ", group_lizs.size())
+	if group_lizs.size() > 0:
+		var idx = randi_range(0, group_lizs.size() - 1)
+		liz.initialize(group_lizs[idx])
+	else:
+		liz.initialize()
+
+
 
 # Returns a random point within the generated mesh.
 # A lizard will always spawn from the sky, thus
@@ -64,6 +73,7 @@ func sample_point() -> Vector3:
 func _on_area_3d_body_entered(body):
 	body.queue_free()
 	print(body, " fell off!, I removed it")
+	
 	
 # In reads from the menu all the values
 # regarning num of lizards and probability of morph

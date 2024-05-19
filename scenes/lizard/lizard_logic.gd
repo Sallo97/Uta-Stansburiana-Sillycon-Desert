@@ -24,7 +24,7 @@ func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
 	alleles = Constants.set_random_alleles(morph,prob_orange,
 								 prob_blue, prob_yellow)
 	print("I arrived here with ", sex, morph, alleles)
-	# main_settings()
+	main_settings()
 
 func set_lizard_fixed(new_sex:Constants.Sex, new_morph:Constants.Morph):
 	sex = new_sex
@@ -120,8 +120,9 @@ func set_mesh():
 #------------INITIALIZE FUNC----------------------------------------
 func initialize(other_lizard:Lizard = null):
 	if other_lizard == null:
-		rotate_y(randf_range(-2 * PI, 2 * PI))
+		rotate_y(randf_range(0, 2 * PI))
 	else:
+		print("other_lizard.position = ", other_lizard.position)
 		look_at_from_position(self.position, other_lizard.position, Vector3.UP)
 	
 
@@ -141,11 +142,12 @@ func change_velocity_state():
 	else:
 		velocity = Vector3.FORWARD * randi_range(Constants.min_speed, Constants.max_speed)
 		velocity = velocity.rotated(Vector3.UP, rotation.y)
-#
-#func _on_area_3d_body_entered(body):
-	#if(body != self and body.is_in_group("Lizards")):
-		#%LizardInteracting.start_interaction(self, body)
-		#
+
+func _on_area_3d_body_entered(body):
+	if(body != self and body.is_in_group("Lizards") ): #
+		# print("mamma mi ha toccato una ", body)
+		InteractionManager.start_interaction(self, body)
+		
 
 func _physics_process(delta):
 	if not is_on_floor():
