@@ -1,6 +1,7 @@
-[gd_scene load_steps=37 format=3 uid="uid://ddafgqxbgv4yr"]
+[gd_scene load_steps=50 format=3 uid="uid://ddafgqxbgv4yr"]
 
 [ext_resource type="Script" path="res://scenes/lizard/lizard_logic.gd" id="1_0ponp"]
+[ext_resource type="Texture2D" uid="uid://dvfbhc7p4jyrw" path="res://assets/2D/textures/tingle_heart.png" id="2_7ra5k"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceo4q"]
 resource_name = "Material.001"
@@ -341,6 +342,73 @@ states/cuddle/position = Vector2(388.705, 198.088)
 transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_wg8tq"), "RESET", "attack", SubResource("AnimationNodeStateMachineTransition_t2ek1"), "attack", "RESET", SubResource("AnimationNodeStateMachineTransition_njkfc"), "cuddle", "RESET", SubResource("AnimationNodeStateMachineTransition_duanj"), "RESET", "cuddle", SubResource("AnimationNodeStateMachineTransition_646j5")]
 graph_offset = Vector2(-53.58, -27.5443)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4tpno"]
+transparency = 1
+shading_mode = 0
+albedo_texture = ExtResource("2_7ra5k")
+texture_filter = 0
+billboard_mode = 1
+billboard_keep_scale = true
+grow_amount = 16.0
+point_size = 26.4
+
+[sub_resource type="Curve" id="Curve_qerys"]
+min_value = -1.0
+_data = [Vector2(0, -0.692308), 0.0, 0.0, 0, 0, Vector2(0.251121, 0.604396), 0.0, 0.0, 0, 0, Vector2(0.497758, -0.648351), 0.0, 0.0, 0, 0, Vector2(0.748879, 0.604396), 0.0, 0.0, 0, 0, Vector2(1, -0.626374), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_lkoy0"]
+curve_x = SubResource("Curve_qerys")
+
+[sub_resource type="Curve" id="Curve_ri167"]
+min_value = 0.8
+max_value = 1.2
+_data = [Vector2(0, 0.905495), 0.0, 0.0, 0, 0, Vector2(1, 1.06374), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_0wwc5"]
+curve = SubResource("Curve_ri167")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xgcm6"]
+emission_shape = 2
+emission_sphere_radius = 6.12
+direction = Vector3(0, 1, 0)
+spread = 90.0
+directional_velocity_min = 1.0
+directional_velocity_max = 5.0
+directional_velocity_curve = SubResource("CurveXYZTexture_lkoy0")
+gravity = Vector3(0, 2, 0)
+scale_over_velocity_curve = SubResource("CurveTexture_0wwc5")
+
+[sub_resource type="QuadMesh" id="QuadMesh_u5yup"]
+size = Vector2(4, 4)
+
+[sub_resource type="Curve" id="Curve_a4dix"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.182979, 1), 0.0, 0.0, 0, 0, Vector2(0.982979, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_v2iyp"]
+curve = SubResource("Curve_a4dix")
+
+[sub_resource type="Curve" id="Curve_oy40t"]
+min_value = -1.0
+_data = [Vector2(0.00851064, -0.714286), 0.0, 0.0, 0, 0, Vector2(0.251064, 0.692308), 0.0, 0.0, 0, 0, Vector2(0.497872, -0.714286), 0.0, 0.0, 0, 0, Vector2(0.757447, 0.67033), 0.0, 0.0, 0, 0, Vector2(1, -0.714286), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_8ol7d"]
+curve_x = SubResource("Curve_oy40t")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6xkwj"]
+particle_flag_disable_z = true
+emission_shape = 2
+emission_sphere_radius = 71.75
+direction = Vector3(0, 1, 0)
+directional_velocity_min = 53.89
+directional_velocity_max = 53.89
+directional_velocity_curve = SubResource("CurveXYZTexture_8ol7d")
+gravity = Vector3(0, -60, 0)
+alpha_curve = SubResource("CurveTexture_v2iyp")
+
 [node name="baseLizard" type="CharacterBody3D" groups=["Lizards"]]
 script = ExtResource("1_0ponp")
 
@@ -417,5 +485,27 @@ anim_player = NodePath("../LizardAnimations")
 parameters/conditions/is_attacking = false
 parameters/conditions/is_cuddling = false
 parameters/conditions/is_idle = false
+
+[node name="LoveParticles" type="GPUParticles3D" parent="."]
+material_override = SubResource("StandardMaterial3D_4tpno")
+cast_shadow = 0
+emitting = false
+amount = 5
+lifetime = 2.0
+one_shot = true
+draw_order = 2
+process_material = SubResource("ParticleProcessMaterial_xgcm6")
+draw_pass_1 = SubResource("QuadMesh_u5yup")
+
+[node name="LoveParticles2D" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+process_material = SubResource("ParticleProcessMaterial_6xkwj")
+texture = ExtResource("2_7ra5k")
+lifetime = 2.0
+one_shot = true
+visibility_rect = Rect2(0, 0, 200, 200)
+local_coords = true
+draw_order = 2
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

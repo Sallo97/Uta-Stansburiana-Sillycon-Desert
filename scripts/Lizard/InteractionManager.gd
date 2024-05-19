@@ -65,6 +65,8 @@ static func lizard_love(l1:Lizard, l2:Lizard):
 	print("Starting lizard love!")
 	l1.update_animation_parameters(2)
 	l2.update_animation_parameters(2)
+	l1.get_node("LoveParticles").emitting = true
+	l2.get_node("LoveParticles").emitting = true
 	#var prob_mate: float = 0.5
 	#var male
 	#if(l1.sex == Constants.Sex.MALE):
