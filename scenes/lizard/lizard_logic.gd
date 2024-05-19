@@ -16,8 +16,8 @@ var falling: bool = true
 var alleles = [Constants.Allele.O, Constants.Allele.O]
 
 #---------CONSTRUCTORS-------------------------
-func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3,
-		   prob_yellow:float = 1/3, prob_blue:float = 1/3):
+func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
+		   prob_yellow:float = 1/3.0, prob_blue:float = 1/3.0):
 	sex = randomSex(prob_sex)
 	morph = randomMorph(sex, prob_orange,
 						prob_blue, prob_yellow)

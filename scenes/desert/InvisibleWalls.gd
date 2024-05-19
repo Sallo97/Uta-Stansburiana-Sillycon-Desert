@@ -30,7 +30,6 @@ func generate_walls():
 	shape_1.points = PackedVector3Array([p1,p2,p3,p4])
 	var wall_1 : CollisionShape3D = CollisionShape3D.new()
 	wall_1.shape = shape_1
-	wall_1.add_child(wall_1)
 
 	 # Second Wall
 	p1 =  Vector3(min_x, min_y, min_z)
@@ -43,7 +42,6 @@ func generate_walls():
 	shape_2.points = PackedVector3Array([p1,p2,p3,p4])
 	var wall_2 : CollisionShape3D = CollisionShape3D.new()
 	wall_2.shape = shape_2
-	wall_2.add_child(wall_2)
 	
 	 # Third Wall
 	p1 = Vector3(max_x, min_y, max_z)

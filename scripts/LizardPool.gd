@@ -21,7 +21,7 @@ const MIN_COUNT = 0
 var __root: Node
 var __instances: Array[Lizard]
 
-@export var lizard_scene : PackedScene
+var lizard_scene: PackedScene = preload("res://scenes/lizard/lizard_logic.tscn")
 
 func set_scene(root: Node):
 	__root = root
@@ -70,19 +70,19 @@ func despawn(lizard: Lizard) -> void:
 
 
 # Shorthands
-func spawn_random() -> Lizard:
+func spawn_random(prob_sex: float = 0.5, prob_orange: float = 1/3, prob_yellow: float = 1/3, prob_blue: float = 1/3) -> Lizard:
 	var liz: Lizard = spawn()
-	liz.set_random()
+	liz.set_lizard_prob(prob_sex, prob_orange, prob_yellow, prob_blue)
 	return liz
 
 
 func spawn_fixed(sex: Constants.Sex, morph: Constants.Morph) -> Lizard:
 	var liz: Lizard = spawn()
-	liz.set_fixed(sex, morph)
+	liz.set_lizard_fixed(sex, morph)
 	return liz
 
 
 func spawn_child(papa: Lizard, mama: Lizard) -> Lizard:
 	var liz: Lizard = spawn()
-	liz.set_child(papa, mama)
+	liz.set_lizard_child(papa, mama)
 	return liz

@@ -4,10 +4,10 @@ extends Node
 @onready var aabb_node = %Desert.get_aabb()
 
 #-------------GLOBAL VARIABLES-------------------------
-var num_lizard:int = 100
-var prob_orange:float = 0.5
-var prob_blue:float = 0.5
-var prob_yellow:float = 0.5
+var num_lizard:int = 10
+var prob_orange:float = 1/3.0
+var prob_blue:float = 1/3.0
+var prob_yellow:float = 1/3.0
 var prob_sex:float = 0.5
 
 @onready var group_lizards
@@ -16,6 +16,7 @@ var lizard_interacting := []
 
 func _ready():
 	Graphs.instance().set_scene(self)
+	LizardPool.instance().set_scene(self)
 
 func _process(delta):
 	Graphs.instance()._process(delta) # Don't ask, don't tell (_process is not called in Graphs for some reason)
@@ -25,19 +26,15 @@ func _on_timer_timeout():
 	group_lizards = get_tree().get_nodes_in_group("Lizards")
 	# print("number of lizards = ",group_lizards.size())
 	if num_lizard > 0:
-		var new_liz:Lizard = lizard_scene.instantiate()
+		var new_liz: Lizard = LizardPool.instance().spawn_random(prob_sex, prob_orange, prob_yellow, prob_blue)
 		set_lizard(new_liz)
 		num_lizard -= 1
 		
 func set_lizard(liz:Lizard):
-	
-	liz.set_lizard_prob(prob_sex, prob_orange,
-			  	   prob_yellow, prob_blue)
+	# liz.set_lizard_prob(prob_sex, prob_orange,
+	# 		  	   prob_yellow, prob_blue)
 	liz.position = sample_point()
-	add_child(liz)
-	Graphs.lizard_spawned(liz)
 	%Grid.create_territory(liz)
-	
 	
 	
 
