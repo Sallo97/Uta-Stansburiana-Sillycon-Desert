@@ -1,7 +1,8 @@
-[gd_scene load_steps=50 format=3 uid="uid://ddafgqxbgv4yr"]
+[gd_scene load_steps=54 format=3 uid="uid://ddafgqxbgv4yr"]
 
 [ext_resource type="Script" path="res://scenes/lizard/lizard_logic.gd" id="1_0ponp"]
 [ext_resource type="Texture2D" uid="uid://dvfbhc7p4jyrw" path="res://assets/2D/textures/tingle_heart.png" id="2_7ra5k"]
+[ext_resource type="Texture2D" uid="uid://cp1hx17dw5rio" path="res://assets/2D/textures/fight_cloud.png" id="3_oy0mc"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceo4q"]
 resource_name = "Material.001"
@@ -409,6 +410,21 @@ directional_velocity_curve = SubResource("CurveXYZTexture_8ol7d")
 gravity = Vector3(0, -60, 0)
 alpha_curve = SubResource("CurveTexture_v2iyp")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s2pse"]
+transparency = 1
+shading_mode = 0
+albedo_texture = ExtResource("3_oy0mc")
+billboard_mode = 1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_oqjo1"]
+spread = 180.0
+initial_velocity_min = 16.0
+initial_velocity_max = 16.0
+gravity = Vector3(0, 0, 0)
+
+[sub_resource type="QuadMesh" id="QuadMesh_flbpl"]
+size = Vector2(8, 8)
+
 [node name="baseLizard" type="CharacterBody3D" groups=["Lizards"]]
 script = ExtResource("1_0ponp")
 
@@ -507,5 +523,13 @@ one_shot = true
 visibility_rect = Rect2(0, 0, 200, 200)
 local_coords = true
 draw_order = 2
+
+[node name="FightParticles" type="GPUParticles3D" parent="."]
+material_override = SubResource("StandardMaterial3D_s2pse")
+emitting = false
+amount = 10
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_oqjo1")
+draw_pass_1 = SubResource("QuadMesh_flbpl")
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

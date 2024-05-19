@@ -40,6 +40,19 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 	print("Starting lizard fight!")
 	l1.update_animation_parameters(1)
 	l2.update_animation_parameters(1)
+	
+	l1.get_node("FightParticles").emitting = true
+	l2.get_node("FightParticles").emitting = true
+	var timer: Timer = Timer.new()
+	timer.autostart = false
+	timer.one_shot = true
+	timer.wait_time = 3
+	timer.timeout.connect((func (): 
+		l1.get_node("FightParticles").emitting = false
+		l2.get_node("FightParticles").emitting = false))
+	l1.get_tree().root.add_child(timer)
+	timer.start()
+
 	#var prob_win_l1: float = 0.5
 	#match l1.morph:
 		#Constants.Morph.ORANGE:
