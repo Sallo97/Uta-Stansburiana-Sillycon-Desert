@@ -41,7 +41,7 @@ func __make_new_lizard() -> Lizard:
 	return newLizard
 
 
-func spawn() -> Lizard:
+func __spawn() -> Lizard:
 	var liz: Lizard
 	if __instances.size() <= MIN_COUNT:
 		liz = __make_new_lizard()
@@ -52,7 +52,6 @@ func spawn() -> Lizard:
 	liz.add_to_group("Lizards")
 	liz.set_process(true)
 	liz.set_physics_process(true)
-	Graphs.instance().lizard_spawned(liz)
 	return liz
 
 
@@ -70,19 +69,22 @@ func despawn(lizard: Lizard) -> void:
 
 
 # Shorthands
-func spawn_random(prob_sex: float = 0.5, prob_orange: float = 1/3, prob_yellow: float = 1/3, prob_blue: float = 1/3) -> Lizard:
-	var liz: Lizard = spawn()
+func spawn_random(prob_sex: float = 0.5, prob_orange: float = 1/3.0, prob_yellow: float = 1/3.0, prob_blue: float = 1/3.0) -> Lizard:
+	var liz: Lizard = __spawn()
 	liz.set_lizard_prob(prob_sex, prob_orange, prob_yellow, prob_blue)
+	Graphs.instance().lizard_spawned(liz)
 	return liz
 
 
 func spawn_fixed(sex: Constants.Sex, morph: Constants.Morph) -> Lizard:
-	var liz: Lizard = spawn()
+	var liz: Lizard = __spawn()
 	liz.set_lizard_fixed(sex, morph)
+	Graphs.instance().lizard_spawned(liz)
 	return liz
 
 
 func spawn_child(papa: Lizard, mama: Lizard) -> Lizard:
-	var liz: Lizard = spawn()
+	var liz: Lizard = __spawn()
 	liz.set_lizard_child(papa, mama)
+	Graphs.instance().lizard_spawned(liz)
 	return liz
