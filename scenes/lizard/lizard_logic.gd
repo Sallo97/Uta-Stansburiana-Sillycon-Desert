@@ -10,19 +10,6 @@ var constants_scpt = preload("res://scenes/lizard/constants.gd")
 @onready var ribbon_node : MeshInstance3D = lizard_node.get_node("Ribbon")
 
 
-#---------CONSTANTS----------------------------------
-
-# Size values are in mm
-const min_size : int = 20
-const max_size : int = 30
-
-# Speed of the lizard is in meters per second
-const min_speed = 50
-const max_speed = 50
-
-# Downward acceleration when in the air, in meters per seconds squared.
-var fall_acceleration = 100
-			
 #--------VARIABLES--------------------------------
 
 var sex
@@ -54,7 +41,7 @@ func randomMorph():
 # size = baseSize + (male ? 10 : 0) + (orange ? 10 : 0))
 # size cannot be > 60
 func randomSize():
-	var baseSize : int = randi_range(min_size, max_size) 
+	var baseSize : int = randi_range(Constants.min_size, Constants.max_size) 
 	if(sex == constants_scpt.Sex.MALE):
 		baseSize += 10
 	if (morph == constants_scpt.Morph.ORANGE):
@@ -75,7 +62,7 @@ func set_body_color():
 # This function sets the size of the ONLY
 # THIS instance of the lizard
 func set_lizard_size():
-	var scale_value : float = float(size) / float(min_size) # 1 : 20 = scale_value : size 
+	var scale_value : float = float(size) / float(Constants.min_size) # 1 : 20 = scale_value : size 
 	lizard_node.global_scale( Vector3(scale_value,scale_value,scale_value) )
 
 # This function removes the ribbon and the lips from the mesh
@@ -89,7 +76,7 @@ func male_mesh():
 
 func _physics_process(delta):
 	if not is_on_floor():
-		velocity.y = velocity.y - (fall_acceleration * delta)
+		velocity.y = velocity.y - (Constants.fall_acceleration * delta)
 		
 	move_and_slide()
 
@@ -123,7 +110,7 @@ func change_velocity_state():
 		velocity.x = 0
 		velocity.z = 0
 	else:
-		velocity = Vector3.FORWARD * randi_range(min_speed,max_speed)
+		velocity = Vector3.FORWARD * randi_range(Constants.min_speed, Constants.max_speed)
 		velocity = velocity.rotated(Vector3.UP, rotation.y)
 		
 
