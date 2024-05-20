@@ -23,8 +23,14 @@ static func stop_lizard(l1:Lizard, l2:Lizard):
 
 static func arranging_them(l1:Lizard, l2:Lizard):
 	l1.look_at_from_position(l1.position, l2.position)
+	l2.look_at_from_position(l2.position, l1.position)
 	# l1.position += l1.global_transform * Vector3.BACK * 0.1
-	l1.position -= (l2.position - l1.position) * 0.1
+	var distance = l2.position - l1.position
+	distance.y = 0
+	l1.position -= distance * 0.2
+	distance = l1.position - l2.position
+	distance.y = 0
+	l2.position -= distance * 0.2
 	deciding_interaction(l1,l2)
 
 static func deciding_interaction(l1:Lizard, l2:Lizard):
@@ -38,15 +44,15 @@ static func deciding_interaction(l1:Lizard, l2:Lizard):
 
 static func lizard_fight(l1:Lizard, l2:Lizard):
 	print("Starting lizard fight!")
-	l1.update_animation_parameters(1)
-	l2.update_animation_parameters(1)
+
+
 	
 	l1.get_node("FightParticles").emitting = true
 	l2.get_node("FightParticles").emitting = true
 	var timer: Timer = Timer.new()
 	timer.autostart = false
 	timer.one_shot = true
-	timer.wait_time = 3
+	timer.wait_time = 0.5
 	timer.timeout.connect((func (): 
 		if l1 != null: l1.get_node("FightParticles").emitting = false))
 	l1.add_child(timer)
@@ -54,7 +60,7 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 	timer = Timer.new()
 	timer.autostart = false
 	timer.one_shot = true
-	timer.wait_time = 3
+	timer.wait_time = 0.5
 	timer.timeout.connect((func (): 
 		if l2 != null: l2.get_node("FightParticles").emitting = false))
 	l2.add_child(timer)
@@ -74,12 +80,22 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 			prob_win_l1 += 0.2		
 	
 	var win: bool = randf() <= prob_win_l1
+	var timer_attack : Timer = Timer.new()
+	timer_attack.autostart = true
+	timer_attack.one_shot = true
+	timer_attack.wait_time = 0.5
 	if win:
-		LizardPool.instance().despawn(l2)
+		l1.update_animation_parameters(1)
+		l1.add_child(timer_attack)
+		timer_attack.timeout.connect(LizardPool.instance().despawn.bind(l2))
 		print(l2, " lost, is ded =(")
 	else:
-		LizardPool.instance().despawn(l1)
+		l2.update_animation_parameters(1)
+		l2.add_child(timer_attack)
+		timer_attack.timeout.connect(LizardPool.instance().despawn.bind(l1))
 		print(l1, " lost, is ded =(")
+		
+	
 
 static func lizard_love(l1:Lizard, l2:Lizard):
 	print("Starting lizard love!")
@@ -87,26 +103,27 @@ static func lizard_love(l1:Lizard, l2:Lizard):
 	l2.update_animation_parameters(2)
 	l1.get_node("LoveParticles").emitting = true
 	l2.get_node("LoveParticles").emitting = true
-	#var prob_mate: float = 0.5
-	#var male
-	#if(l1.sex == Constants.Sex.MALE):
-		#male = l1
-	#else:
-		#male = l2
-		#
-	#match male.morph:
-		#Constants.Morph.ORANGE:
-			#prob_mate += 0.2
-		#Constants.Morph.BLUE:
-			#prob_mate -= 0.1
-		#Constants.Morph.YELLOW:
-			#prob_mate -= 0.1
+	# METTI I TIMER
+	var prob_mate: float = 0.5
+	var male
+	if(l1.sex == Constants.Sex.MALE):
+		male = l1
+	else:
+		male = l2
+		
+	match male.morph:
+		Constants.Morph.ORANGE:
+			prob_mate += 0.2
+		Constants.Morph.BLUE:
+			prob_mate -= 0.1
+		Constants.Morph.YELLOW:
+			prob_mate -= 0.1
 	
-	#var mate: bool = randf() <= prob_mate
-	#if mate:
-		#print("BUM BUM QUAKA QUAKA A NEW CHILD IS BORN")
-		## Chiamare una funzione in MainDesert che genera un nuovo figlio
-	#else:
-		#print("Better luck next time!")
+	var mate: bool = randf() <= prob_mate
+	if mate:
+		print("BUM BUM QUAKA QUAKA A NEW CHILD IS BORN")
+		# Chiamare una funzione in MainDesert che genera un nuovo figlio
+	else:
+		print("Better luck next time!")
 		
 	
