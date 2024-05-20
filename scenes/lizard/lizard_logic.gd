@@ -6,7 +6,7 @@ class_name Lizard
 @onready var body_node : MeshInstance3D = lizard_node.get_node("Body")
 @onready var lips_node : MeshInstance3D = lizard_node.get_node("Lips")
 @onready var ribbon_node : MeshInstance3D = lizard_node.get_node("Ribbon")
-
+@onready var animation_tree : AnimationTree = $AnimationTree
 #--------VARIABLES--------------------------------
 
 var sex: Constants.Sex = Constants.Sex.MALE
@@ -44,6 +44,8 @@ func main_settings():
 	set_body_color()
 	set_lizard_size()
 	change_velocity_state()
+	update_animation_parameters(0)
+
 
 #---------SETTING FUNC--------------------
 
@@ -141,7 +143,6 @@ func _on_area_3d_body_entered(body):
 	if(body != self and body.is_in_group("Lizards") ): #
 		# print("mamma mi ha toccato una ", body)
 		InteractionManager.start_interaction(self, body)
-		
 
 func _physics_process(delta):
 	var raycast = %RayCast3D
@@ -152,6 +153,9 @@ func _physics_process(delta):
 	velocity.y = velocity.y - (Constants.fall_acceleration * delta)
 	move_and_slide()
 	
+func _ready():
+	animation_tree.active = true
+	
 func stop_velocity():
 	velocity.x = 0
 	velocity.z = 0
@@ -161,3 +165,27 @@ func normal_velocity():
 	velocity = Vector3.FORWARD * speed
 	velocity = velocity.rotated(Vector3.UP, rotation.y)
 	
+#-----------ANIMATIONS FUNC-------------------
+
+func update_animation_parameters(animation:int): # 0 = idle
+										   # 1 = attacking
+										   # 2 = cuddling
+	print("animation_tree =", animation_tree)
+	if (animation==0):										
+		print("Sono dentro animation parameters con 0")
+		animation_tree["parameters/conditions/is_idle"] = true
+		animation_tree["parameters/conditions/is_attacking"] = false
+		animation_tree["parameters/conditions/is_cuddling"] = false
+	elif (animation==1):
+		print("Sono dentro animation parameters con 1")
+		animation_tree["parameters/conditions/is_attacking"] = true
+		animation_tree["parameters/conditions/is_idle"] = false
+		animation_tree["parameters/conditions/is_cuddling"] = false
+	
+	elif (animation==2):
+		print("Sono dentro animation parameters con 2")
+		animation_tree["parameters/conditions/is_cuddling"] = true
+		animation_tree["parameters/conditions/is_idle"] = false
+		animation_tree["parameters/conditions/is_attacking"] = false
+		
+		

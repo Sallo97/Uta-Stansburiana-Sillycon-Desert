@@ -37,8 +37,9 @@ static func deciding_interaction(l1:Lizard, l2:Lizard):
 			return l != l1 && l != l2)
 
 static func lizard_fight(l1:Lizard, l2:Lizard):
-
 	print("Starting lizard fight!")
+	l1.update_animation_parameters(1)
+	l2.update_animation_parameters(1)
 	#var prob_win_l1: float = 0.5
 	#match l1.morph:
 		#Constants.Morph.ORANGE:
@@ -62,26 +63,28 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 
 static func lizard_love(l1:Lizard, l2:Lizard):
 	print("Starting lizard love!")
-	var prob_mate: float = 0.5
-	var male
-	if(l1.sex == Constants.Sex.MALE):
-		male = l1
-	else:
-		male = l2
-		
-	match male.morph:
-		Constants.Morph.ORANGE:
-			prob_mate += 0.2
-		Constants.Morph.BLUE:
-			prob_mate -= 0.1
-		Constants.Morph.YELLOW:
-			prob_mate -= 0.1
+	l1.update_animation_parameters(2)
+	l2.update_animation_parameters(2)
+	#var prob_mate: float = 0.5
+	#var male
+	#if(l1.sex == Constants.Sex.MALE):
+		#male = l1
+	#else:
+		#male = l2
+		#
+	#match male.morph:
+		#Constants.Morph.ORANGE:
+			#prob_mate += 0.2
+		#Constants.Morph.BLUE:
+			#prob_mate -= 0.1
+		#Constants.Morph.YELLOW:
+			#prob_mate -= 0.1
 	
-	var mate: bool = randf() <= prob_mate
-	if mate:
-		print("BUM BUM QUAKA QUAKA A NEW CHILD IS BORN")
-		# Chiamare una funzione in MainDesert che genera un nuovo figlio
-	else:
-		print("Better luck next time!")
+	#var mate: bool = randf() <= prob_mate
+	#if mate:
+		#print("BUM BUM QUAKA QUAKA A NEW CHILD IS BORN")
+		## Chiamare una funzione in MainDesert che genera un nuovo figlio
+	#else:
+		#print("Better luck next time!")
 		
 	
