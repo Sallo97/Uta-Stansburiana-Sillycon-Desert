@@ -51,24 +51,35 @@ func __spawn() -> Lizard:
 	__root.add_child(liz)
 	liz.add_to_group("Lizards")
 	liz.set_process(true)
+	liz.position = Vector3.ZERO
+	liz.velocity = Vector3.ZERO
+	liz.rotation = Vector3.ZERO
 	liz.set_physics_process(true)
+	liz.show()
 	return liz
 
 
 func despawn(lizard: Lizard) -> void:
+	lizard.hide()
 	__despawn_deferred.bind(lizard).call_deferred()
 
 func __despawn_deferred(lizard: Lizard) -> void:
-	if __instances.size() >= MAX_COUNT:
-		lizard.free()
+	if lizard.is_queued_for_deletion():
+		return
+	
+	var is_in_instances: bool = __instances.has(lizard)
+	if is_in_instances:
+		pass
 	else:
-		lizard.get_parent().remove_child(lizard)
-		lizard.remove_from_group("Lizards")
-		lizard.set_process(false)
-		lizard.set_physics_process(false)
-		__instances.push_back(lizard)
-
-	Graphs.instance().lizard_died(lizard)
+		if __instances.size() >= MAX_COUNT:
+			lizard.queue_free()
+		else:
+			lizard.get_parent().remove_child(lizard)
+			lizard.remove_from_group("Lizards")
+			lizard.set_process(false)
+			lizard.set_physics_process(false)
+			__instances.push_back(lizard)
+		Graphs.instance().lizard_died(lizard)
 
 
 # Shorthands

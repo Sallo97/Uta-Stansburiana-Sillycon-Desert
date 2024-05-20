@@ -3,7 +3,7 @@ class_name InteractionManager
 static var lizs_interacting := []
 
 static func start_interaction(l1: Lizard, l2: Lizard):
-	if lizs_interacting.find(l1) != -1 || lizs_interacting.find(l2) != -1:
+	if lizs_interacting.find(l1) != -1 || lizs_interacting.find(l2) != -1 || l1.is_queued_for_deletion() || l2.is_queued_for_deletion():
 		return
 	lizs_interacting.append(l1)
 	lizs_interacting.append(l2)
@@ -48,31 +48,38 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 	timer.one_shot = true
 	timer.wait_time = 3
 	timer.timeout.connect((func (): 
-		l1.get_node("FightParticles").emitting = false
-		l2.get_node("FightParticles").emitting = false))
-	l1.get_tree().root.add_child(timer)
+		if l1 != null: l1.get_node("FightParticles").emitting = false))
+	l1.add_child(timer)
+	timer.start()
+	timer = Timer.new()
+	timer.autostart = false
+	timer.one_shot = true
+	timer.wait_time = 3
+	timer.timeout.connect((func (): 
+		if l2 != null: l2.get_node("FightParticles").emitting = false))
+	l2.add_child(timer)
 	timer.start()
 
-	#var prob_win_l1: float = 0.5
-	#match l1.morph:
-		#Constants.Morph.ORANGE:
-			#prob_win_l1 += 0.2
-		#Constants.Morph.YELLOW:
-			#prob_win_l1 -= 0.2
-#
-	#match l2.morph:
-		#Constants.Morph.ORANGE:
-			#prob_win_l1 -= 0.2
-		#Constants.Morph.YELLOW:
-			#prob_win_l1 += 0.2		
-	#
-	#var win: bool = randf() <= prob_win_l1
-	#if win:
-		#LizardPool.instance().despawn(l2)
-		#print(l2, " lost, is ded =(")
-	#else:
-		#LizardPool.instance().despawn(l1)
-		#print(l1, " lost, is ded =(")
+	var prob_win_l1: float = 0.5
+	match l1.morph:
+		Constants.Morph.ORANGE:
+			prob_win_l1 += 0.2
+		Constants.Morph.YELLOW:
+			prob_win_l1 -= 0.2
+
+	match l2.morph:
+		Constants.Morph.ORANGE:
+			prob_win_l1 -= 0.2
+		Constants.Morph.YELLOW:
+			prob_win_l1 += 0.2		
+	
+	var win: bool = randf() <= prob_win_l1
+	if win:
+		LizardPool.instance().despawn(l2)
+		print(l2, " lost, is ded =(")
+	else:
+		LizardPool.instance().despawn(l1)
+		print(l1, " lost, is ded =(")
 
 static func lizard_love(l1:Lizard, l2:Lizard):
 	print("Starting lizard love!")

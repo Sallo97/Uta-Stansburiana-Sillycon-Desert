@@ -37,8 +37,7 @@ texture_filter = 0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_7ewjq"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_l77fp"]
-size = Vector3(0, 0, 0)
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_bb7ju"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_nj645")
@@ -58,7 +57,7 @@ script = ExtResource("1_cyp5x")
 size = Vector2i(50, 50)
 noise_multiplier = 50.0
 model_height = true
-mesh_simplification = 10
+mesh_simplification = 50
 noise_texture_scale = 8.0
 desert_texture = ExtResource("2_oie7t")
 desert_texture_scale = 1.0
@@ -107,11 +106,11 @@ pitch_bottom_limit = 0.215
 [node name="Area3D" type="Area3D" parent="BaseDesert"]
 
 [node name="Death_plane" type="CollisionShape3D" parent="BaseDesert/Area3D"]
-transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, -0.243507, -150.923, 0.343155)
-shape = SubResource("BoxShape3D_l77fp")
+transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, 0, -200, 0)
+shape = SubResource("WorldBoundaryShape3D_bb7ju")
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 0.5
+wait_time = 0.2
 autostart = true
 
 [node name="Walls" type="StaticBody3D" parent="."]

@@ -11,6 +11,9 @@ const max_size : int = 30
 const min_speed = 50
 const max_speed = 50
 
+# Max allowed velocity
+const max_velocity = 200
+
 # Downward acceleration when in the air, in meters per seconds squared.
 const fall_acceleration = 100
 

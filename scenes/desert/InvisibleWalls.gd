@@ -68,7 +68,21 @@ func generate_walls():
 	var wall_4 : CollisionShape3D = CollisionShape3D.new()
 	wall_4.shape = shape_4
 
+
+	 # Fifth Wall 
+	p1 = Vector3(max_x, max_y, min_z)
+	p2 = Vector3(min_x, max_y, min_z)
+	p3 = Vector3(min_x, max_y, max_z)
+	p4 = Vector3(max_x, max_y, max_z)
+
+
+	var shape_5 = ConvexPolygonShape3D.new()
+	shape_5.points = PackedVector3Array([p1,p2,p3,p4])
+	var wall_5 : CollisionShape3D = CollisionShape3D.new()
+	wall_5.shape = shape_5
+
 	add_child(wall_1)
 	add_child(wall_2)
 	add_child(wall_3)
 	add_child(wall_4)
+	add_child(wall_5)

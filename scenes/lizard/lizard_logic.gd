@@ -152,6 +152,10 @@ func _physics_process(delta):
 		
 	velocity.y = velocity.y - (Constants.fall_acceleration * delta)
 	move_and_slide()
+
+	# Clamp velocity to the max allowed velocity to avoid lizards shooting away into the void
+	if velocity.length() > Constants.max_velocity:
+		velocity = velocity.normalized() * Constants.max_velocity
 	
 func _ready():
 	animation_tree.active = true

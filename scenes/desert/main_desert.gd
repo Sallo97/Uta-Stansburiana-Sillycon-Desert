@@ -68,8 +68,11 @@ func sample_point() -> Vector3:
 	return Vector3(point_x, point_y, point_z)
 
 func _on_area_3d_body_entered(body):
-	body.queue_free()
-	# print(body, " fell off!, I removed it")
+	if body is Lizard:
+		LizardPool.instance().despawn(body)
+	else: # This shouldn't happen
+		body.queue_free()
+	print(body, " fell off!, I removed it")
 	
 	
 # In reads from the menu all the values
