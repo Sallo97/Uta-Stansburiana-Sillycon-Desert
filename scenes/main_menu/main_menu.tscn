@@ -61,6 +61,8 @@ layout_mode = 2
 min_value = 10.0
 max_value = 300.0
 value = 100.0
+allow_greater = true
+allow_lesser = true
 alignment = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/LizardPanel/MarginContainer/HBoxContainer/VBoxContainer"]
@@ -86,6 +88,8 @@ min_value = 100.0
 max_value = 1000.0
 value = 300.0
 rounded = true
+allow_greater = true
+allow_lesser = true
 alignment = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/LizardPanel/MarginContainer/HBoxContainer/VBoxContainer"]
@@ -102,6 +106,8 @@ min_value = 100.0
 max_value = 1000.0
 value = 300.0
 rounded = true
+allow_greater = true
+allow_lesser = true
 alignment = 2
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/LizardPanel/MarginContainer/HBoxContainer"]

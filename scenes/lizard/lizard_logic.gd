@@ -128,7 +128,7 @@ func set_death_timer():
 	death_timer = Timer.new()
 	death_timer.autostart = true
 	death_timer.one_shot = true
-	death_timer.wait_time = 100000
+	death_timer.wait_time = lifetime
 	self.add_child(death_timer)
 	death_timer.start()
 	death_timer.timeout.connect(LizardPool.instance().despawn.bind(self)) 

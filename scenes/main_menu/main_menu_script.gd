@@ -18,6 +18,8 @@ extends Control
 
 func _ready():
 	_orange_percentage_slider.value = 100
+	_blue_percentage_slider.value = 100
+	_yellow_percentage_slider.value = 100
 	_start_button.pressed.connect(_start_simulation)
 
 
@@ -32,6 +34,11 @@ func _process(_delta):
 		_orange_percentage_label.text = "{p}%".format({"p": int(_orange_percentage_slider.value * max_perc)})
 		_blue_percentage_label.text = "{p}%".format({"p": int(_blue_percentage_slider.value * max_perc)})
 		_yellow_percentage_label.text = "{p}%".format({"p": int(_yellow_percentage_slider.value * max_perc)})
+
+	if _desert_heigth_spinbox.value <= 0:
+		_desert_heigth_spinbox.value = 100
+	if _desert_width_spinbox.value <= 0:
+		_desert_heigth_spinbox.value = 100
 	_mesh_subdivision_label.text = "{p}".format({"p": _mesh_subdivision_slider.value})
 
 
