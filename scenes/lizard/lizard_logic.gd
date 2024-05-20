@@ -6,16 +6,18 @@ class_name Lizard
 @onready var animation_tree : AnimationTree = $AnimationTree
 
 #-------------MESH NODES--------------------------
+@onready var adult_lizard_mesh : MultiMeshInstance3D = %adult_lizard
+@onready var baby_lizard_mesh : MultiMeshInstance3D = %baby_lizard
+
 @onready var adult_body_node : MeshInstance3D = lizard_node.get_node("adult_lizard/Body")
 @onready var adult_lips_node : MeshInstance3D = lizard_node.get_node("adult_lizard/Lips")
 @onready var adult_ribbon_node : MeshInstance3D = lizard_node.get_node("adult_lizard/Ribbon")
 
-@onready var baby_body_node : MeshInstance3D = lizard_node.get_node("baby_lizard/Body")
-@onready var baby_lips_node : MeshInstance3D = lizard_node.get_node("baby_lizard/Lips")
-@onready var baby_ribbon_node : MeshInstance3D = lizard_node.get_node("baby_lizard/Ribbon")
+@onready var baby_body_node : MeshInstance3D = %baby_lizard/Body
+@onready var baby_lips_node : MeshInstance3D = %baby_lizard/Pacifier
+@onready var baby_ribbon_node : MeshInstance3D = %baby_lizard/Ribbon
 
-@onready var adult_lizard_mesh : MultiMeshInstance3D = %adult_lizard
-@onready var baby_lizard_mesh : MultiMeshInstance3D = %baby_lizard
+
 #--------VARIABLES--------------------------------
 
 var sex: Constants.Sex = Constants.Sex.MALE
@@ -25,8 +27,12 @@ var falling: bool = true
 var alleles = [Constants.Allele.O, Constants.Allele.O]
 var speed:float
 var lifetime: float
-var death_timer:Timer
+
 var is_adult:bool = true 
+
+#-------------TIMER VARIABLES---------------------
+var death_timer:Timer
+var grow_up_timer:Timer
 
 #---------CONSTRUCTORS-------------------------
 func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
@@ -55,8 +61,7 @@ func set_lizard_child(papa:Lizard, mama:Lizard):
 	main_settings()	
 
 func main_settings():
-	set_child_mesh()
-	set_female_attribute()
+	set_mesh()
 	set_body_color()
 	set_lizard_size()
 	change_velocity_state()
@@ -145,11 +150,12 @@ func set_lizard_size():
 # This function removes the ribbon and the lips from the mesh
 # if the current lizard is male
 func set_female_attribute():
+	print("baby_lizard_node = ", baby_lizard_mesh)
 	if (sex == Constants.Sex.MALE) :
 		adult_lips_node.hide()
 		adult_ribbon_node.hide()
-		baby_lips_node.hide()
-		baby_ribbon_node.hide()
+		#baby_lips_node.hide()
+		#baby_ribbon_node.hide()
 		
 func set_adult_mesh():
 	adult_lizard_mesh.show()
@@ -164,6 +170,7 @@ func set_mesh():
 		set_adult_mesh()
 	else:
 		set_child_mesh()
+	set_female_attribute()
 
 #------------INITIALIZE FUNC----------------------------------------
 func initialize(other_lizard:Lizard = null):

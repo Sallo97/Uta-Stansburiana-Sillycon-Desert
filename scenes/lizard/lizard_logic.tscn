@@ -847,7 +847,6 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 1.02598)
 shape = SubResource("BoxShape3D_epgmm")
 
 [node name="Area3D" type="Area3D" parent="."]
-visible = false
 
 [node name="CollisionInteraction" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00499201, 0, 2.00963)
@@ -856,7 +855,6 @@ shape = SubResource("BoxShape3D_de37r")
 [node name="RayCast3D" type="RayCast3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0.358032, -1.04256, 0.349536)
-visible = false
 debug_shape_custom_color = Color(0.443359, 0.413201, 0.29668, 1)
 
 [node name="LizardAnimations" type="AnimationPlayer" parent="."]
