@@ -166,8 +166,8 @@ func set_female_attribute():
 	if (sex == Constants.Sex.MALE) :
 		adult_lips_node.hide()
 		adult_ribbon_node.hide()
-		#baby_lips_node.hide()
-		#baby_ribbon_node.hide()
+		baby_lips_node.hide()
+		baby_ribbon_node.hide()
 		
 func set_adult_mesh():
 	adult_lizard_mesh.show()
