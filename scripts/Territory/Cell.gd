@@ -1,9 +1,10 @@
 class_name Cell
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
 
+var territories: Array[Territory] = []
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	pass
+func add_territory(territory: Territory):
+	if !territories.has(territory):
+		territories.push_back(territory)
+
+func remove_territory(territory: Territory):
+	territories.erase(territory)

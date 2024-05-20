@@ -1,6 +1,6 @@
 class_name Territory
 
-var owner_lizard
+var owner_lizard: Lizard
 var size: float
 var color: Color
 var desert
@@ -8,7 +8,7 @@ var distance_calculator
 var grid
 var cells: Array[Vector2i]
 
-func _init(desert_ref, distance_calculator_ref, grid_ref, owner):
+func _init(desert_ref, distance_calculator_ref, grid_ref, owner: Lizard):
 	owner_lizard = owner
 	size = 10
 	color = Constants.Color_Values.ret_color(owner_lizard.morph)

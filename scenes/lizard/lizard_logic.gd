@@ -25,6 +25,8 @@ var morph:Constants.Morph = Constants.Morph.ORANGE
 var size : int = Constants.min_size
 var falling: bool = true
 var alleles = [Constants.Allele.O, Constants.Allele.O]
+var current_territories: Array[Territory] = []
+var cell_change_timer: Timer
 var speed:float
 var is_adult:bool = true 
 
@@ -233,6 +235,10 @@ func normal_velocity():
 	velocity = Vector3.FORWARD * speed
 	velocity = velocity.rotated(Vector3.UP, rotation.y)
 	
+
+func on_lizard_entered_territory(other: Lizard):
+	print_debug(other.morph, " lizard entered ", self.morph, "'s territory")
+
 #-----------ANIMATIONS FUNC-------------------
 
 func update_animation_parameters(animation:int): # 0 = idle

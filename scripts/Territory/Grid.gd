@@ -4,8 +4,6 @@ var cells: Array = []
 var size: Vector2i
 var territories: Array[Territory] = []
 
-#func _ready():
-	#setup()
 
 func setup():
 	territories.clear()
@@ -32,5 +30,27 @@ func get_size() -> Vector2i:
 	return size
 
 
-func create_territory(lizard):
-	territories.append(Territory.new(%Desert, %DistanceCalculator, self, lizard))
+func create_territory(lizard: Lizard):
+	var new_territory: Territory = Territory.new(%Desert, %DistanceCalculator, self, lizard)
+	territories.push_back(new_territory)
+	for c in new_territory.cells:
+		cells[c.x][c.y].add_territory(new_territory)
+
+
+func destroy_territory(lizard: Lizard):
+	var territory = territories.filter(func (t: Territory): return t.owner_lizard == lizard)
+	if territory.size() != 0:
+		territory = territory[0]
+	territories.erase(territory)
+	for c in territory.cells:
+		c.remove_territory(territory)
+
+
+func cell_entered(lizard: Lizard):
+	# print_debug("Checking cells that ", lizard.morph, " entered")
+	var cell_pos: Vector2i = %DistanceCalculator.get_cell_at_position(lizard.position)
+	var cell: Cell = cells[cell_pos.x][cell_pos.y]
+	for t in cell.territories:
+		if t.owner_lizard != lizard && !lizard.current_territories.has(t):
+			t.owner_lizard.on_lizard_entered_territory(lizard)
+	lizard.current_territories = cell.territories

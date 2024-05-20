@@ -56,11 +56,27 @@ func __spawn() -> Lizard:
 	liz.rotation = Vector3.ZERO
 	liz.set_physics_process(true)
 	liz.show()
+
+	var timer: Timer = Timer.new()
+	timer.one_shot = false
+	timer.wait_time = 0.5
+	timer.autostart = false
+	timer.timeout.connect(__root.get_node("/root/Main/BaseDesert/Scripts/Grid").cell_entered.bind(liz))
+	liz.cell_change_timer = timer
+	liz.add_child(timer)
+	timer.start()
+	
 	return liz
 
 
 func despawn(lizard: Lizard) -> void:
 	lizard.hide()
+	var timer: Timer = lizard.cell_change_timer
+	if timer != null && !timer.is_queued_for_deletion():
+		timer.stop()
+		lizard.remove_child(timer)
+		lizard.cell_change_timer = null
+		timer.queue_free()
 	__despawn_deferred.bind(lizard).call_deferred()
 
 func __despawn_deferred(lizard: Lizard) -> void:
