@@ -26,13 +26,13 @@ var size : int = Constants.min_size
 var falling: bool = true
 var alleles = [Constants.Allele.O, Constants.Allele.O]
 var speed:float
-var lifetime: float
-
 var is_adult:bool = true 
 
 #-------------TIMER VARIABLES---------------------
 var death_timer:Timer
+var lifetime: float
 var grow_up_timer:Timer
+var grow_up_time:float
 
 #---------CONSTRUCTORS-------------------------
 func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
@@ -52,12 +52,12 @@ func set_lizard_fixed(new_sex:Constants.Sex, new_morph:Constants.Morph):
 	main_settings()
 	
 func set_lizard_child(papa:Lizard, mama:Lizard):
-	print("STO NASCENDO!!!!")
 	sex = randomSex()
 	alleles = Constants.set_alleles(sex, papa.alleles, mama.alleles)
 	morph = Constants.Alleles_Comb.ret_morph(alleles)
 	self.position = ((papa.position + mama.position)/2) + Vector3.UP
 	is_adult = false
+	set_grow_up_timer()
 	main_settings()	
 
 func main_settings():
@@ -126,10 +126,21 @@ func set_death_timer():
 	death_timer = Timer.new()
 	death_timer.autostart = true
 	death_timer.one_shot = true
-	death_timer.wait_time = lifetime
+	death_timer.wait_time = 100000
 	self.add_child(death_timer)
 	death_timer.start()
 	death_timer.timeout.connect(LizardPool.instance().despawn.bind(self)) 
+	
+func set_grow_up_timer():
+	grow_up_timer = Timer.new()
+	grow_up_timer.autostart = true
+	grow_up_timer.one_shot = true
+	grow_up_time = randf_range(Constants.min_grow_up_timer, Constants.max_grow_up_timer) 
+	grow_up_timer.wait_time = grow_up_time
+	self.add_child(grow_up_timer)
+	grow_up_timer.start()
+	grow_up_timer.timeout.connect(becoming_adult)
+
 
 #--------------MODIFY MESH FUNC------------
 
@@ -150,7 +161,6 @@ func set_lizard_size():
 # This function removes the ribbon and the lips from the mesh
 # if the current lizard is male
 func set_female_attribute():
-	print("baby_lizard_node = ", baby_lizard_mesh)
 	if (sex == Constants.Sex.MALE) :
 		adult_lips_node.hide()
 		adult_ribbon_node.hide()
@@ -171,6 +181,10 @@ func set_mesh():
 	else:
 		set_child_mesh()
 	set_female_attribute()
+	
+func becoming_adult():
+	is_adult = true
+	set_mesh()
 
 #------------INITIALIZE FUNC----------------------------------------
 func initialize(other_lizard:Lizard = null):
@@ -188,7 +202,6 @@ func change_velocity_state():
 		stop_velocity()
 	else:
 		normal_velocity()
-		
 
 func _on_area_3d_body_entered(body):
 	if(body != self and body.is_in_group("Lizards") ): #
@@ -225,20 +238,16 @@ func normal_velocity():
 func update_animation_parameters(animation:int): # 0 = idle
 										   # 1 = attacking
 										   # 2 = cuddling
-	print("animation_tree =", animation_tree)
 	if (animation==0):										
-		print("Sono dentro animation parameters con 0")
 		animation_tree["parameters/conditions/is_idle"] = true
 		animation_tree["parameters/conditions/is_attacking"] = false
 		animation_tree["parameters/conditions/is_cuddling"] = false
 	elif (animation==1):
-		print("Sono dentro animation parameters con 1")
 		animation_tree["parameters/conditions/is_attacking"] = true
 		animation_tree["parameters/conditions/is_idle"] = false
 		animation_tree["parameters/conditions/is_cuddling"] = false
 	
 	elif (animation==2):
-		print("Sono dentro animation parameters con 2")
 		animation_tree["parameters/conditions/is_cuddling"] = true
 		animation_tree["parameters/conditions/is_idle"] = false
 		animation_tree["parameters/conditions/is_attacking"] = false

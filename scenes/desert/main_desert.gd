@@ -4,7 +4,7 @@ extends Node
 @onready var aabb_node = %Desert.get_aabb()
 
 #-------------GLOBAL VARIABLES-------------------------
-var num_lizard:int = SceneData.get_lizard_count(10) # Default 10
+var num_lizard:int = 2 # SceneData.get_lizard_count(10) # Default 10
 var prob_orange:float = 1/3.0
 var prob_blue:float = 1/3.0
 var prob_yellow:float = 1/3.0

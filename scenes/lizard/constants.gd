@@ -16,6 +16,10 @@ const max_velocity = 200
 const max_lifetime:float = 30.0
 const min_lifetime:float = 10.0
 
+# Time in seconds
+const max_grow_up_timer:float = 5.0
+const min_grow_up_timer:float = 2.0
+
 # Downward acceleration when in the air, in meters per seconds squared.
 const fall_acceleration = 100
 

@@ -43,8 +43,6 @@ static func deciding_interaction(l1:Lizard, l2:Lizard):
 			return l != l1 && l != l2)
 
 static func lizard_fight(l1:Lizard, l2:Lizard):
-	print("Starting lizard fight!")
-	
 	l1.get_node("FightParticles").emitting = true
 	l2.get_node("FightParticles").emitting = true
 	var timer: Timer = Timer.new()
@@ -86,17 +84,15 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 		l1.update_animation_parameters(1)
 		l1.add_child(timer_attack)
 		timer_attack.timeout.connect(LizardPool.instance().despawn.bind(l2))
-		print(l2, " lost, is ded =(")
 	else:
 		l2.update_animation_parameters(1)
 		l2.add_child(timer_attack)
 		timer_attack.timeout.connect(LizardPool.instance().despawn.bind(l1))
-		print(l1, " lost, is ded =(")
+
 		
 	
 
 static func lizard_love(l1:Lizard, l2:Lizard):
-	print("Starting lizard love!")
 	l1.get_node("LoveParticles").emitting = true
 	l2.get_node("LoveParticles").emitting = true
 	
@@ -133,9 +129,3 @@ static func lizard_love(l1:Lizard, l2:Lizard):
 		l2.update_animation_parameters(2)
 		l1.add_child(timer_love)
 		timer_love.timeout.connect(LizardPool.instance().spawn_child.bindv([l1,l2]))
-		print("BUM BUM QUAKA QUAKA A NEW CHILD IS BORN")
-		# Chiamare una funzione in MainDesert che genera un nuovo figlio
-	else:
-		print("Better luck next time!")
-		
-	
