@@ -9,6 +9,10 @@ extends Control
 @export var _blue_percentage_slider: Slider
 @export var _yellow_percentage_label: Label
 @export var _yellow_percentage_slider: Slider
+
+@export var _mesh_subdivision_slider: Slider
+@export var _mesh_subdivision_label: Label
+
 @export var _start_button: Button
 
 
@@ -28,6 +32,7 @@ func _process(_delta):
 		_orange_percentage_label.text = "{p}%".format({"p": int(_orange_percentage_slider.value * max_perc)})
 		_blue_percentage_label.text = "{p}%".format({"p": int(_blue_percentage_slider.value * max_perc)})
 		_yellow_percentage_label.text = "{p}%".format({"p": int(_yellow_percentage_slider.value * max_perc)})
+	_mesh_subdivision_label.text = "{p}".format({"p": _mesh_subdivision_slider.value})
 
 
 func _start_simulation():
@@ -36,7 +41,8 @@ func _start_simulation():
 		SceneData.Keys.LIZARD_COUNT: _lizard_count_spinbox.value,
 		SceneData.Keys.ORANGE_PERCENTAGE: _orange_percentage_slider.value / 100.0,
 		SceneData.Keys.BLUE_PERCENTAGE: _blue_percentage_slider.value / 100.0,
-		SceneData.Keys.YELLOW_PERCENTAGE: _yellow_percentage_slider.value / 100.0
+		SceneData.Keys.YELLOW_PERCENTAGE: _yellow_percentage_slider.value / 100.0,
+		SceneData.Keys.MESH_SUBDIVISION: _mesh_subdivision_slider.value
 	})
 	var desert_scene := preload("res://scenes/desert/desert.tscn").instantiate()
 	get_tree().root.add_child(desert_scene)

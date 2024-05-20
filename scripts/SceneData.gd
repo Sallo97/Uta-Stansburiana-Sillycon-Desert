@@ -8,7 +8,8 @@ enum Keys {
 	LIZARD_COUNT,
 	ORANGE_PERCENTAGE,
 	BLUE_PERCENTAGE,
-	YELLOW_PERCENTAGE
+	YELLOW_PERCENTAGE,
+	MESH_SUBDIVISION
 }
 
 
@@ -38,3 +39,6 @@ func get_blue_probability(default: float) -> float:
 
 func get_yellow_probability(default: float) -> float:
 	return __get(Keys.YELLOW_PERCENTAGE, default)
+
+func get_mesh_subdivision(default: int) -> int:
+	return __get(Keys.MESH_SUBDIVISION, default)

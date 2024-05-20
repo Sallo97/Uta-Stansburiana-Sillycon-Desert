@@ -33,6 +33,7 @@ func _process(_delta):
 
 func reset():
 	size = SceneData.get_desert_size(size)
+	mesh_simplification = SceneData.get_mesh_subdivision(mesh_simplification)
 	%Grid.setup()
 
 	var noise_image: Image = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
