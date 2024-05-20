@@ -71,6 +71,8 @@ func __despawn_deferred(lizard: Lizard) -> void:
 	if is_in_instances:
 		pass
 	else:
+		lizard.death_timer.stop()
+		lizard.death_timer.queue_free()
 		if __instances.size() >= MAX_COUNT:
 			lizard.queue_free()
 		else:

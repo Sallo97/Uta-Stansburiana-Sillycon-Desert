@@ -3,10 +3,19 @@ class_name Lizard
 
 #------------NODES---------------------------------
 @onready var lizard_node : Node3D = get_node("Pivot/lizard")
-@onready var body_node : MeshInstance3D = lizard_node.get_node("Body")
-@onready var lips_node : MeshInstance3D = lizard_node.get_node("Lips")
-@onready var ribbon_node : MeshInstance3D = lizard_node.get_node("Ribbon")
 @onready var animation_tree : AnimationTree = $AnimationTree
+
+#-------------MESH NODES--------------------------
+@onready var adult_body_node : MeshInstance3D = lizard_node.get_node("adult_lizard/Body")
+@onready var adult_lips_node : MeshInstance3D = lizard_node.get_node("adult_lizard/Lips")
+@onready var adult_ribbon_node : MeshInstance3D = lizard_node.get_node("adult_lizard/Ribbon")
+
+@onready var baby_body_node : MeshInstance3D = lizard_node.get_node("baby_lizard/Body")
+@onready var baby_lips_node : MeshInstance3D = lizard_node.get_node("baby_lizard/Lips")
+@onready var baby_ribbon_node : MeshInstance3D = lizard_node.get_node("baby_lizard/Ribbon")
+
+@onready var adult_lizard_mesh : MultiMeshInstance3D = %adult_lizard
+@onready var baby_lizard_mesh : MultiMeshInstance3D = %baby_lizard
 #--------VARIABLES--------------------------------
 
 var sex: Constants.Sex = Constants.Sex.MALE
@@ -14,7 +23,10 @@ var morph:Constants.Morph = Constants.Morph.ORANGE
 var size : int = Constants.min_size
 var falling: bool = true
 var alleles = [Constants.Allele.O, Constants.Allele.O]
-var speed = randi_range(Constants.min_speed, Constants.max_speed)
+var speed:float
+var lifetime: float
+var death_timer:Timer
+var is_adult:bool = true 
 
 #---------CONSTRUCTORS-------------------------
 func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
@@ -34,17 +46,24 @@ func set_lizard_fixed(new_sex:Constants.Sex, new_morph:Constants.Morph):
 	main_settings()
 	
 func set_lizard_child(papa:Lizard, mama:Lizard):
+	print("STO NASCENDO!!!!")
 	sex = randomSex()
 	alleles = Constants.set_alleles(sex, papa.alleles, mama.alleles)
 	morph = Constants.Alleles_Comb.ret_morph(alleles)
+	self.position = ((papa.position + mama.position)/2) + Vector3.UP
+	is_adult = false
 	main_settings()	
 
 func main_settings():
-	set_mesh()
+	set_child_mesh()
+	set_female_attribute()
 	set_body_color()
 	set_lizard_size()
 	change_velocity_state()
 	update_animation_parameters(0)
+	lifetime = randi_range(Constants.min_lifetime, Constants.max_lifetime)
+	speed = randi_range(Constants.min_speed, Constants.max_speed)
+	set_death_timer()
 
 
 #---------SETTING FUNC--------------------
@@ -97,6 +116,15 @@ static func randomSize(sex:Constants.Sex, morph:Constants.Morph):
 	if (baseSize > 60):
 		baseSize = 60
 	return baseSize
+	
+func set_death_timer():
+	death_timer = Timer.new()
+	death_timer.autostart = true
+	death_timer.one_shot = true
+	death_timer.wait_time = lifetime
+	self.add_child(death_timer)
+	death_timer.start()
+	death_timer.timeout.connect(LizardPool.instance().despawn.bind(self)) 
 
 #--------------MODIFY MESH FUNC------------
 
@@ -105,7 +133,8 @@ static func randomSize(sex:Constants.Sex, morph:Constants.Morph):
 func set_body_color():
 	var material = StandardMaterial3D.new()
 	material.albedo_color = Constants.Color_Values.ret_color(morph)
-	body_node.material_override = material
+	adult_body_node.material_override = material
+	baby_body_node.material_override = material
 
 # This function sets the size of the ONLY
 # THIS instance of the lizard
@@ -115,10 +144,26 @@ func set_lizard_size():
 
 # This function removes the ribbon and the lips from the mesh
 # if the current lizard is male
-func set_mesh():
+func set_female_attribute():
 	if (sex == Constants.Sex.MALE) :
-		lips_node.hide()
-		ribbon_node.hide()
+		adult_lips_node.hide()
+		adult_ribbon_node.hide()
+		baby_lips_node.hide()
+		baby_ribbon_node.hide()
+		
+func set_adult_mesh():
+	adult_lizard_mesh.show()
+	baby_lizard_mesh.hide()
+	
+func set_child_mesh():
+	baby_lizard_mesh.show()
+	adult_lizard_mesh.hide()
+
+func set_mesh():
+	if(is_adult):
+		set_adult_mesh()
+	else:
+		set_child_mesh()
 
 #------------INITIALIZE FUNC----------------------------------------
 func initialize(other_lizard:Lizard = null):
@@ -136,7 +181,6 @@ func change_velocity_state():
 		stop_velocity()
 	else:
 		normal_velocity()
-		
 		
 
 func _on_area_3d_body_entered(body):
