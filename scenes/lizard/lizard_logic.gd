@@ -1,9 +1,13 @@
 extends CharacterBody3D
 class_name Lizard
 
+#-------------SCRIPTS-----------------------------
+
+
 #------------NODES---------------------------------
 @onready var lizard_node : Node3D = get_node("Pivot/lizard")
 @onready var animation_tree : AnimationTree = $AnimationTree
+@onready var distcalculator_node = get_node("/root/Main/BaseDesert/Scripts/DistanceCalculator")
 
 #-------------MESH NODES--------------------------
 @onready var adult_lizard_mesh : MultiMeshInstance3D = %adult_lizard
@@ -17,19 +21,23 @@ class_name Lizard
 @onready var baby_lips_node : MeshInstance3D = %baby_lizard/Pacifier
 @onready var baby_ribbon_node : MeshInstance3D = %baby_lizard/Ribbon
 
-
 #--------VARIABLES--------------------------------
 
 var sex: Constants.Sex = Constants.Sex.MALE
 var morph:Constants.Morph = Constants.Morph.ORANGE
 var size : int = Constants.min_size
-var falling: bool = true
 var alleles = [Constants.Allele.O, Constants.Allele.O]
 var current_territories: Array[Territory] = []
 var cell_change_timer: Timer
 var speed:float
+var higher_point
+var direction 
+#------------FLAGS-------------------------------
 var is_adult:bool = true 
-
+var falling: bool = true
+var found_territory: bool = false
+var is_stopped: bool = false
+var pattern_step: int = 1
 #-------------TIMER VARIABLES---------------------
 var death_timer:Timer
 var lifetime: float
@@ -209,8 +217,7 @@ func change_velocity_state():
 		normal_velocity()
 
 func _on_area_3d_body_entered(body):
-	if(body != self and body.is_in_group("Lizards") ): #
-		# print("mamma mi ha toccato una ", body)
+	if(is_adult and body != self and body.is_in_group("Lizards") ): #
 		InteractionManager.start_interaction(self, body)
 
 func _physics_process(delta):
@@ -218,13 +225,19 @@ func _physics_process(delta):
 	if falling and raycast.is_colliding():
 		falling = false
 		change_velocity_state()
-		
+	
 	velocity.y = velocity.y - (Constants.fall_acceleration * delta)
-	move_and_slide()
-
+	
 	# Clamp velocity to the max allowed velocity to avoid lizards shooting away into the void
 	if velocity.length() > Constants.max_velocity:
-		velocity = velocity.normalized() * Constants.max_velocity
+		velocity = velocity.normalized() * Constants.max_velocity	
+	
+	#if !found_territory:
+		#movement_pattern()
+	#
+	#if is_stopped:
+		#stop_velocity()
+	move_and_slide()
 	
 func _ready():
 	animation_tree.active = true
@@ -261,4 +274,53 @@ func update_animation_parameters(animation:int): # 0 = idle
 		animation_tree["parameters/conditions/is_idle"] = false
 		animation_tree["parameters/conditions/is_attacking"] = false
 		
-		
+
+#-------------MOVEMENT FUNC--------------------
+# 1 - Dal pt in cui mi trovo determino il punto piu' alto
+# 2 - Mi giro nella dirzione di higher_point (delegato a look_at_from_position)
+# 3 - Mi muovo verso quella direzione, fermandomi quando arrivo (delegato a arrive_at_point)
+# 4 - Impostalo come territorio di quella lucertola
+func movement_pattern():
+	match (pattern_step):
+		1:
+			pattern_step_1()
+		2:
+			pattern_step_2()
+		3:
+			pattern_step_3()
+		#4:
+			
+	
+	
+
+
+
+
+func pattern_step_1():
+	# STEP 1 - Dal pt in cui mi trovo determino il punto piu' alto
+	is_stopped = true
+	var current_cell = distcalculator_node.get_cell_at_position(self.position)
+	var ret_array = distcalculator_node.max_height_in_circle(current_cell, 1)
+	higher_point = Vector3(ret_array[0][0], 0, ret_array[0][1])
+	pattern_step = 2
+	
+func pattern_step_2():
+	# STEP 2 - Mi giro nella direzione di higher_point
+	look_at_from_position(self.position, higher_point)
+	is_stopped = false
+	pattern_step = 3
+	speed = 20
+
+func pattern_step_3():
+	print("higher_point = ", higher_point)
+	print("self.position = ", self.position)
+	look_at_from_position(self.position, higher_point)
+	direction = global_position.direction_to(higher_point)
+	velocity = direction * speed
+	# STEP 3 - Mi muovo verso higher_point, mi fermo quando lo raggiungo
+	# Dentro l'if sarebbe meglio dire che se la distanza tra self.position e' higher point e' 
+	# dentro un certo range, si ferma
+	if(self.position.x == higher_point.x || self.position.z == higher_point.z):
+		is_stopped=false
+
+
