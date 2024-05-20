@@ -36,6 +36,8 @@ func __setup():
 
 func __make_new_lizard() -> Lizard:
 	var newLizard: Lizard = lizard_scene.instantiate()
+	newLizard.remove_from_group("Lizards")
+	newLizard.remove_from_group("Children")
 	newLizard.set_process(false)
 	newLizard.set_physics_process(false)
 	return newLizard
@@ -49,7 +51,6 @@ func __spawn() -> Lizard:
 		liz = __instances.pop_back()
 
 	__root.add_child(liz)
-	liz.add_to_group("Lizards")
 	liz.set_process(true)
 	liz.position = Vector3.ZERO
 	liz.velocity = Vector3.ZERO
@@ -66,6 +67,8 @@ func __spawn() -> Lizard:
 	liz.add_child(timer)
 	timer.start()
 	
+	# print("lizard_group size: ", __root.get_tree().get_nodes_in_group("Lizards").size(), ", children_group size: ", __root.get_tree().get_nodes_in_group("Children").size())
+
 	return liz
 
 
@@ -94,6 +97,7 @@ func __despawn_deferred(lizard: Lizard) -> void:
 		else:
 			lizard.get_parent().remove_child(lizard)
 			lizard.remove_from_group("Lizards")
+			lizard.remove_from_group("Children")
 			lizard.set_process(false)
 			lizard.set_physics_process(false)
 			__instances.push_back(lizard)
@@ -103,6 +107,7 @@ func __despawn_deferred(lizard: Lizard) -> void:
 # Shorthands
 func spawn_random(prob_sex: float = 0.5, prob_orange: float = 1/3.0, prob_yellow: float = 1/3.0, prob_blue: float = 1/3.0) -> Lizard:
 	var liz: Lizard = __spawn()
+	liz.add_to_group("Lizards")
 	liz.set_lizard_prob(prob_sex, prob_orange, prob_yellow, prob_blue)
 	Graphs.instance().lizard_spawned(liz)
 	return liz
@@ -110,6 +115,7 @@ func spawn_random(prob_sex: float = 0.5, prob_orange: float = 1/3.0, prob_yellow
 
 func spawn_fixed(sex: Constants.Sex, morph: Constants.Morph) -> Lizard:
 	var liz: Lizard = __spawn()
+	liz.add_to_group("Lizards")
 	liz.set_lizard_fixed(sex, morph)
 	Graphs.instance().lizard_spawned(liz)
 	return liz
@@ -117,6 +123,7 @@ func spawn_fixed(sex: Constants.Sex, morph: Constants.Morph) -> Lizard:
 
 func spawn_child(papa: Lizard, mama: Lizard) -> Lizard:
 	var liz: Lizard = __spawn()
+	liz.add_to_group("Children")
 	liz.set_lizard_child(papa, mama)
 	Graphs.instance().lizard_spawned(liz)
 	return liz

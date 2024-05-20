@@ -45,22 +45,22 @@ static func deciding_interaction(l1:Lizard, l2:Lizard):
 static func lizard_fight(l1:Lizard, l2:Lizard):
 	l1.get_node("FightParticles").emitting = true
 	l2.get_node("FightParticles").emitting = true
-	var timer: Timer = Timer.new()
-	timer.autostart = false
-	timer.one_shot = true
-	timer.wait_time = 0.5
-	timer.timeout.connect((func (): 
-		if l1 != null: l1.get_node("FightParticles").emitting = false))
-	l1.add_child(timer)
-	timer.start()
-	timer = Timer.new()
-	timer.autostart = false
-	timer.one_shot = true
-	timer.wait_time = 0.5
-	timer.timeout.connect((func (): 
-		if l2 != null: l2.get_node("FightParticles").emitting = false))
-	l2.add_child(timer)
-	timer.start()
+	# var timer: Timer = Timer.new()
+	# timer.autostart = false
+	# timer.one_shot = true
+	# timer.wait_time = 0.5
+	# timer.timeout.connect((func (): 
+	# 	if l1 != null: l1.get_node("FightParticles").emitting = false))
+	# l1.add_child(timer)
+	# timer.start()
+	# timer = Timer.new()
+	# timer.autostart = false
+	# timer.one_shot = true
+	# timer.wait_time = 0.5
+	# timer.timeout.connect((func (): 
+	# 	if l2 != null: l2.get_node("FightParticles").emitting = false))
+	# l2.add_child(timer)
+	# timer.start()
 
 	var prob_win_l1: float = 0.5
 	match l1.morph:

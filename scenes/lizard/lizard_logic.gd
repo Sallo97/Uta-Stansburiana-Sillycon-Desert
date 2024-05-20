@@ -186,6 +186,9 @@ func set_mesh():
 	
 func becoming_adult():
 	is_adult = true
+	remove_from_group("Children")
+	add_to_group("Lizards")
+	# (func (): print("becoming_adult!    lizard_group size: ", get_tree().get_nodes_in_group("Lizards").size(), ", children_group size: ", get_tree().get_nodes_in_group("Children").size())).call_deferred()
 	set_mesh()
 
 #------------INITIALIZE FUNC----------------------------------------

@@ -1,4 +1,4 @@
-[gd_scene load_steps=81 format=3 uid="uid://ddafgqxbgv4yr"]
+[gd_scene load_steps=76 format=3 uid="uid://ddafgqxbgv4yr"]
 
 [ext_resource type="Script" path="res://scenes/lizard/lizard_logic.gd" id="1_0ponp"]
 [ext_resource type="Texture2D" uid="uid://dvfbhc7p4jyrw" path="res://assets/2D/textures/tingle_heart.png" id="2_7ra5k"]
@@ -861,6 +861,7 @@ draw_pass_1 = SubResource("QuadMesh_u5yup")
 material_override = SubResource("StandardMaterial3D_s2pse")
 emitting = false
 amount = 10
+one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_oqjo1")
 draw_pass_1 = SubResource("QuadMesh_flbpl")
