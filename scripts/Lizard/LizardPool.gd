@@ -95,6 +95,7 @@ func __despawn_deferred(lizard: Lizard) -> void:
 		if __instances.size() >= MAX_COUNT:
 			lizard.queue_free()
 		else:
+			Grid.instance().destroy_territory(lizard)
 			lizard.get_parent().remove_child(lizard)
 			lizard.remove_from_group("Lizards")
 			lizard.remove_from_group("Children")

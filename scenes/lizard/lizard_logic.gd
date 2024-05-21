@@ -75,6 +75,8 @@ func set_lizard_child(papa:Lizard, mama:Lizard):
 	main_settings()	
 
 func main_settings():
+	floor_constant_speed = true
+	floor_max_angle = INF
 	set_mesh()
 	set_body_color()
 	set_lizard_size()
@@ -229,17 +231,18 @@ func _physics_process(delta):
 		falling = false
 		change_velocity_state()
 	
+	if !Grid.instance().territories.size() == 0:
+		movement_pattern()
+	
 	velocity.y = velocity.y - (Constants.fall_acceleration * delta)
 	
 	# Clamp velocity to the max allowed velocity to avoid lizards shooting away into the void
 	if velocity.length() > Constants.max_velocity:
 		velocity = velocity.normalized() * Constants.max_velocity	
 	
-	#if !found_territory:
-		#movement_pattern()
-	#
-	#if is_stopped:
-		#stop_velocity()
+	
+	if is_stopped:
+		stop_velocity()
 	move_and_slide()
 	
 func _ready():
@@ -309,6 +312,8 @@ func play_death_animation():
 # 4 - Impostalo come territorio di quella lucertola
 func movement_pattern():
 	match (pattern_step):
+		0:
+			return
 		1:
 			pattern_step_1()
 		2:
@@ -331,7 +336,11 @@ func pattern_step_1():
 		return
 	var ret_array = DistanceCalculator.instance().max_height_in_circle(current_cell, 5)
 	var absolute_position = DistanceCalculator.instance().get_position_of_cell(ret_array[0])
-	higher_point = Vector3(absolute_position[0], 0, absolute_position[1])
+
+	#print_debug(DistanceCalculator.instance().get_cell_at_position(position))
+	#print_debug(DistanceCalculator.instance().get_cell_at_position(DistanceCalculator.instance().get_position_of_cell(DistanceCalculator.instance().get_cell_at_position(position))))
+
+	higher_point = Vector3(absolute_position[0], position.y, absolute_position[2])
 	pattern_step = 2
 	
 func pattern_step_2():
@@ -342,15 +351,29 @@ func pattern_step_2():
 	speed = 20
 
 func pattern_step_3():
-	print("higher_point = ", higher_point)
-	print("self.position = ", self.position)
-	look_at_from_position(self.position, higher_point)
+	# print("higher_point = ", higher_point)
+	# print("self.position = ", self.position)
+	# look_at_from_position(self.position, higher_point)
 	direction = global_position.direction_to(higher_point)
 	velocity = direction * speed
+	velocity.y = 0
+	velocity += (Vector3.DOWN * velocity.y)
 	# STEP 3 - Mi muovo verso higher_point, mi fermo quando lo raggiungo
 	# Dentro l'if sarebbe meglio dire che se la distanza tra self.position e' higher point e' 
 	# dentro un certo range, si ferma
-	if(self.position.x == higher_point.x || self.position.z == higher_point.z):
-		is_stopped=false
+	if(abs(self.position.x - higher_point.x) < 0.2 || abs(self.position.z - higher_point.z) < 0.2):
+		is_stopped = true
+
+	pattern_step = 3
+	var timer: Timer = Timer.new()
+	timer.autostart = false
+	timer.one_shot = false
+	timer.wait_time = 0.5
+	timer.timeout.connect(func ():
+		pattern_step = 1
+		timer.queue_free())
+	add_child(timer)
+	timer.start()
+	
 
 

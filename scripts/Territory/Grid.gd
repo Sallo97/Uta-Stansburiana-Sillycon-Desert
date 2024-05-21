@@ -60,7 +60,8 @@ func destroy_territory(lizard: Lizard):
 		territory = territory[0]
 	territories.erase(territory)
 	for c in territory.cells:
-		c.remove_territory(territory)
+		cells[c.x][c.y].remove_territory(territory)
+	territory.delete()
 
 
 func cell_entered(lizard: Lizard):
