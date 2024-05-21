@@ -120,3 +120,7 @@ func get_position_of_cell(cell: Vector2i) -> Vector3:
 
 	var pos_2d := (Vector2(cell) * cell_size) + desert_pos_2d
 	return Vector3(pos_2d.x, %Grid.get_cell_heightv(cell), pos_2d.y)
+
+
+func is_valid_cell(cell: Vector2i) -> bool:
+	return cell.x >= 0 && cell.x < %Grid.size.x && cell.y >= 0 && cell.y < %Grid.size.y

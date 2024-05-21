@@ -256,8 +256,12 @@ func normal_velocity():
 	velocity = velocity.rotated(Vector3.UP, rotation.y)
 	
 
-func on_lizard_entered_territory(other: Lizard):
+func on_other_lizard_entered_territory(other: Lizard):
 	print_debug(other.morph, " lizard entered ", self.morph, "'s territory")
+
+
+func on_entered_territory(territory: Territory):
+	pass
 
 #-----------ANIMATIONS FUNC-------------------
 
@@ -324,8 +328,11 @@ func pattern_step_1():
 	# STEP 1 - Dal pt in cui mi trovo determino il punto piu' alto
 	is_stopped = true
 	var current_cell = distcalculator_node.get_cell_at_position(self.position)
-	var ret_array = distcalculator_node.max_height_in_circle(current_cell, 1)
-	higher_point = Vector3(ret_array[0][0], 0, ret_array[0][1])
+	if !distcalculator_node.is_valid_cell(current_cell):
+		return
+	var ret_array = distcalculator_node.max_height_in_circle(current_cell, 5)
+	var absolute_position = distcalculator_node.get_position_of_cell(ret_array[0])
+	higher_point = Vector3(absolute_position[0], 0, absolute_position[1])
 	pattern_step = 2
 	
 func pattern_step_2():

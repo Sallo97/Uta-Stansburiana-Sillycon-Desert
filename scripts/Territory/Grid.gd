@@ -49,11 +49,12 @@ func destroy_territory(lizard: Lizard):
 func cell_entered(lizard: Lizard):
 	# print_debug("Checking cells that ", lizard.morph, " entered")
 	var cell_pos: Vector2i = %DistanceCalculator.get_cell_at_position(lizard.position)
-	if cell_pos.x < 0 || cell_pos.x > cells.size() || cell_pos.y < 0 || cell_pos.y > cells[0].size():
+	if !%DistanceCalculator.is_valid_cell(cell_pos):
 		# Lizard tried to check cells while it was outside of the map
 		return
 	var cell: Cell = cells[cell_pos.x][cell_pos.y]
 	for t in cell.territories:
 		if t.owner_lizard != lizard && !lizard.current_territories.has(t):
-			t.owner_lizard.on_lizard_entered_territory(lizard)
+			t.owner_lizard.on_other_lizard_entered_territory(lizard)
+			lizard.on_entered_territory(t)
 	lizard.current_territories = cell.territories
