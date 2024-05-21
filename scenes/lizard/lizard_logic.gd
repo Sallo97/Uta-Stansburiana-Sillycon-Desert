@@ -139,7 +139,7 @@ func set_death_timer():
 	death_timer.wait_time = lifetime
 	self.add_child(death_timer)
 	death_timer.start()
-	death_timer.timeout.connect(LizardPool.instance().despawn.bind(self)) 
+	death_timer.timeout.connect(play_death_animation) 
 	
 func set_grow_up_timer():
 	grow_up_timer = Timer.new()
@@ -260,20 +260,40 @@ func on_lizard_entered_territory(other: Lizard):
 func update_animation_parameters(animation:int): # 0 = idle
 										   # 1 = attacking
 										   # 2 = cuddling
+										   # 3 = death
 	if (animation==0):										
 		animation_tree["parameters/conditions/is_idle"] = true
 		animation_tree["parameters/conditions/is_attacking"] = false
 		animation_tree["parameters/conditions/is_cuddling"] = false
+		animation_tree["parameters/conditions/is_dead"] = false
 	elif (animation==1):
 		animation_tree["parameters/conditions/is_attacking"] = true
 		animation_tree["parameters/conditions/is_idle"] = false
 		animation_tree["parameters/conditions/is_cuddling"] = false
+		animation_tree["parameters/conditions/is_dead"] = false
 	
 	elif (animation==2):
 		animation_tree["parameters/conditions/is_cuddling"] = true
 		animation_tree["parameters/conditions/is_idle"] = false
 		animation_tree["parameters/conditions/is_attacking"] = false
+		animation_tree["parameters/conditions/is_dead"] = false
+	
+	elif (animation==3):
+		animation_tree["parameters/conditions/is_dead"] = true
+		animation_tree["parameters/conditions/is_cuddling"] = false
+		animation_tree["parameters/conditions/is_idle"] = false
+		animation_tree["parameters/conditions/is_attacking"] = false
 		
+func play_death_animation():
+	var animation_timer = Timer.new()
+	animation_timer.autostart = true
+	animation_timer.one_shot = true
+	animation_timer.wait_time = 1
+	self.add_child(animation_timer)
+	animation_timer.start()
+	update_animation_parameters(3)
+	animation_timer.timeout.connect(LizardPool.instance().despawn.bind(self)) 
+
 
 #-------------MOVEMENT FUNC--------------------
 # 1 - Dal pt in cui mi trovo determino il punto piu' alto

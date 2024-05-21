@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://ddafgqxbgv4yr"]
+[gd_scene load_steps=80 format=3 uid="uid://ddafgqxbgv4yr"]
 
 [ext_resource type="Script" path="res://scenes/lizard/lizard_logic.gd" id="1_0ponp"]
 [ext_resource type="Texture2D" uid="uid://dvfbhc7p4jyrw" path="res://assets/2D/textures/tingle_heart.png" id="2_7ra5k"]
@@ -571,6 +571,18 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector3(0, 0, 0)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/lizard:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_reqs0"]
 resource_name = "attack"
@@ -604,53 +616,42 @@ tracks/0/keys = {
 "values": [Vector3(3.48787e-16, 3.48787e-16, 3.48787e-16), Vector3(3.48787e-16, 0.523599, 3.48787e-16), Vector3(3.48787e-16, -0.523599, 3.48787e-16), Vector3(3.48787e-16, 3.48787e-16, 3.48787e-16)]
 }
 
+[sub_resource type="Animation" id="Animation_tqw4e"]
+resource_name = "death"
+length = 0.375004
+step = 0.0416667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Pivot/lizard:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.375),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(3.48787e-16, 3.48787e-16, 3.14159)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pivot/lizard:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.125, 0.375),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(2.08165e-12, 4, 2.08165e-12), Vector3(2.08165e-12, 2.08165e-12, 2.08165e-12)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yw7ad"]
 _data = {
 "RESET": SubResource("Animation_piuud"),
 "attack": SubResource("Animation_reqs0"),
-"cuddle": SubResource("Animation_osr1l")
+"cuddle": SubResource("Animation_osr1l"),
+"death": SubResource("Animation_tqw4e")
 }
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1r7h1"]
-animation = &"RESET"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_evr26"]
-animation = &"attack"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_yshdc"]
-animation = &"cuddle"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wg8tq"]
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_t2ek1"]
-advance_mode = 2
-advance_condition = &"is_attacking"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_njkfc"]
-switch_mode = 2
-advance_mode = 2
-advance_condition = &"is_idle"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_duanj"]
-switch_mode = 2
-advance_mode = 2
-advance_condition = &"is_idle"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_646j5"]
-advance_mode = 2
-advance_condition = &"is_cuddling"
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_rr6qf"]
-states/RESET/node = SubResource("AnimationNodeAnimation_1r7h1")
-states/RESET/position = Vector2(221.58, 99.75)
-states/Start/position = Vector2(37.5, 99.5)
-states/attack/node = SubResource("AnimationNodeAnimation_evr26")
-states/attack/position = Vector2(387.83, 21.0882)
-states/cuddle/node = SubResource("AnimationNodeAnimation_yshdc")
-states/cuddle/position = Vector2(388.705, 198.088)
-transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_wg8tq"), "RESET", "attack", SubResource("AnimationNodeStateMachineTransition_t2ek1"), "attack", "RESET", SubResource("AnimationNodeStateMachineTransition_njkfc"), "cuddle", "RESET", SubResource("AnimationNodeStateMachineTransition_duanj"), "RESET", "cuddle", SubResource("AnimationNodeStateMachineTransition_646j5")]
-graph_offset = Vector2(-53.58, -27.5443)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4tpno"]
 transparency = 1
@@ -708,6 +709,60 @@ gravity = Vector3(0, 0, 0)
 [sub_resource type="QuadMesh" id="QuadMesh_flbpl"]
 size = Vector2(8, 8)
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_r33rf"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_x6vhj"]
+animation = &"attack"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_0q6h6"]
+animation = &"cuddle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3b0iy"]
+animation = &"death"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1o51k"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gk2d5"]
+advance_mode = 2
+advance_condition = &"is_dead"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_bp32w"]
+switch_mode = 2
+advance_mode = 2
+advance_condition = &"is_idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2828c"]
+advance_mode = 2
+advance_condition = &"is_attacking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_nh8am"]
+switch_mode = 2
+advance_mode = 2
+advance_condition = &"is_idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_hd8ff"]
+switch_mode = 2
+advance_mode = 2
+advance_condition = &"is_idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_r4onj"]
+advance_mode = 2
+advance_condition = &"is_cuddling"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_4lcch"]
+states/RESET/node = SubResource("AnimationNodeAnimation_r33rf")
+states/RESET/position = Vector2(493.53, 100.45)
+states/attack/node = SubResource("AnimationNodeAnimation_x6vhj")
+states/attack/position = Vector2(652.45, 97.8344)
+states/cuddle/node = SubResource("AnimationNodeAnimation_0q6h6")
+states/cuddle/position = Vector2(493.163, 235.785)
+states/death/node = SubResource("AnimationNodeAnimation_3b0iy")
+states/death/position = Vector2(493.48, -39.6625)
+transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_1o51k"), "RESET", "death", SubResource("AnimationNodeStateMachineTransition_gk2d5"), "death", "RESET", SubResource("AnimationNodeStateMachineTransition_bp32w"), "RESET", "attack", SubResource("AnimationNodeStateMachineTransition_2828c"), "attack", "RESET", SubResource("AnimationNodeStateMachineTransition_nh8am"), "cuddle", "RESET", SubResource("AnimationNodeStateMachineTransition_hd8ff"), "RESET", "cuddle", SubResource("AnimationNodeStateMachineTransition_r4onj")]
+graph_offset = Vector2(14.4176, -89.2251)
+
 [node name="baseLizard" type="CharacterBody3D" groups=["Lizards"]]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 script = ExtResource("1_0ponp")
@@ -719,7 +774,7 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
 [node name="adult_lizard" type="MultiMeshInstance3D" parent="Pivot/lizard"]
 unique_name_in_owner = true
-transform = Transform3D(0.992418, -0.11937, -0.0292911, 0.119837, 0.992684, 0.0147268, 0.0273188, -0.0181253, 0.999462, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Body" type="MeshInstance3D" parent="Pivot/lizard/adult_lizard"]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0)
@@ -837,15 +892,6 @@ libraries = {
 "": SubResource("AnimationLibrary_yw7ad")
 }
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
-unique_name_in_owner = true
-root_node = NodePath("%AnimationTree/..")
-tree_root = SubResource("AnimationNodeStateMachine_rr6qf")
-anim_player = NodePath("../LizardAnimations")
-parameters/conditions/is_attacking = false
-parameters/conditions/is_cuddling = false
-parameters/conditions/is_idle = false
-
 [node name="LoveParticles" type="GPUParticles3D" parent="."]
 material_override = SubResource("StandardMaterial3D_4tpno")
 cast_shadow = 0
@@ -865,5 +911,13 @@ one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_oqjo1")
 draw_pass_1 = SubResource("QuadMesh_flbpl")
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_4lcch")
+anim_player = NodePath("../LizardAnimations")
+parameters/conditions/is_attacking = false
+parameters/conditions/is_cuddling = false
+parameters/conditions/is_dead = false
+parameters/conditions/is_idle = false
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
