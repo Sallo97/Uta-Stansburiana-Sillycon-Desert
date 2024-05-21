@@ -36,7 +36,9 @@ var is_adult:bool = true
 var falling: bool = true
 var found_territory: bool = false
 var pattern_step: int = 1
+var behaviour_iterations: int = 0
 var state: Constants.LizardState = Constants.LizardState.IDLE
+var has_territory: bool = false
 #-------------TIMER VARIABLES---------------------
 var death_timer:Timer
 var lifetime: float
@@ -85,6 +87,7 @@ func main_settings():
 # It chooses randomly the sex of the lizard.
 # Getting a male or a female is equiprobable
 static func randomSex(prob:float = 0.5):
+	return Constants.Sex.MALE
 	var is_male : bool = randf() <= prob 
 	if is_male:
 		return Constants.Sex.MALE
@@ -215,20 +218,36 @@ func _on_area_3d_body_entered(body):
 	if(is_adult and body != self and body.is_in_group("Lizards") ): #
 		InteractionManager.start_interaction(self, body)
 
-func _physics_process(delta):	
-	if state == Constants.LizardState.IDLE:
-		# Decide action
-		match sex:
-			Constants.Sex.MALE:
-				set_state(Constants.LizardState.SEARCHING)
-			Constants.Sex.FEMALE:
-				set_state(Constants.LizardState.SEARCHING_TERRITORY)
+func _physics_process(delta):
+	if position.y < -100:
+		LizardPool.instance().despawn(self)
+		print(self, " fell off! Despawning")
+		return
 
+	# print_debug(state)
 	match state:
-		Constants.LizardState.SEARCHING when !Grid.instance().territories.size() == 0 && can_move():
+		Constants.LizardState.IDLE:
+			# Decide action
+			match sex:
+				Constants.Sex.MALE:
+					match morph:
+						Constants.Morph.ORANGE, Constants.Morph.BLUE when !has_territory:
+							set_state(Constants.LizardState.SEARCHING)
+						Constants.Morph.YELLOW:
+							if Grid.instance().territories.size() == 0:
+								set_state(Constants.LizardState.WANDERING)
+				Constants.Sex.FEMALE:
+					set_state(Constants.LizardState.WANDERING)
+
+		Constants.LizardState.SEARCHING when can_move():
+			# print_debug(can_move())
 			hill_climb_pattern()
-		Constants.LizardState.SEARCHING_TERRITORY when can_move():
+
+		Constants.LizardState.WANDERING when can_move():
 			wander_pattern()
+
+		Constants.LizardState.CREATING_TERRITORY:
+			create_territory()
 	
 	# Apply gravity
 	velocity.y = velocity.y - (Constants.fall_acceleration * delta)
@@ -265,10 +284,10 @@ func on_entered_territory(territory: Territory):
 
 #-----------ANIMATIONS FUNC-------------------
 
-func update_animation_parameters(animation:int): # 0 = idle
-										   # 1 = attacking
-										   # 2 = cuddling
-										   # 3 = death
+func update_animation_parameters(animation:int): 	# 0 = idle
+													# 1 = attacking
+													# 2 = cuddling
+													# 3 = death
 	if (animation==0):										
 		animation_tree["parameters/conditions/is_idle"] = true
 		animation_tree["parameters/conditions/is_attacking"] = false
@@ -350,6 +369,10 @@ func hill_climb_pattern_2():
 	timer.timeout.connect(func ():
 		if state == Constants.LizardState.SEARCHING:
 			pattern_step = 1
+			behaviour_iterations -= 1
+			print_debug(behaviour_iterations)
+			if behaviour_iterations == 0:
+				set_state(Constants.LizardState.CREATING_TERRITORY)
 		timer.queue_free())
 	add_child(timer)
 	timer.start()
@@ -366,7 +389,7 @@ func hill_climb_pattern_3():
 	# Dentro l'if sarebbe meglio dire che se la distanza tra self.position e' higher point e' 
 	# dentro un certo range, si ferma
 	if(abs(self.position.x - destination_point.x) < 0.2 || abs(self.position.z - destination_point.z) < 0.2):
-		set_state(Constants.LizardState.STOPPED)
+		set_state(Constants.LizardState.CREATING_TERRITORY)
 
 	pattern_step = 3
 	
@@ -386,6 +409,14 @@ func can_move():
 func set_state(new_state: Constants.LizardState):
 	pattern_step = 1
 	state = new_state
+	match new_state:
+		Constants.LizardState.SEARCHING:
+			match morph:
+				Constants.Morph.ORANGE:
+					behaviour_iterations = 10
+				Constants.Morph.BLUE:
+					behaviour_iterations = 5
+				_: assert(false) # IMPOSSIBLE!!!
 
 
 func wander_pattern():
@@ -410,7 +441,7 @@ func wander_pattern_1():
 	timer.one_shot = false
 	timer.wait_time = 1
 	timer.timeout.connect(func ():
-		if state == Constants.LizardState.SEARCHING_TERRITORY:
+		if state == Constants.LizardState.WANDERING:
 			pattern_step = 1
 		timer.queue_free())
 	add_child(timer)
@@ -423,3 +454,10 @@ func wander_pattern_2():
 	velocity = direction * speed
 	velocity.y = 0
 	velocity += (Vector3.DOWN * velocity.y)
+
+
+func create_territory():
+	print_debug("Creating territory!")
+	has_territory = true
+	Grid.instance().create_territory(self)
+	set_state(Constants.LizardState.IDLE)

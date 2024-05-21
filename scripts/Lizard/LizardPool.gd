@@ -55,6 +55,8 @@ func __spawn() -> Lizard:
 	liz.position = Vector3.ZERO
 	liz.velocity = Vector3.ZERO
 	liz.rotation = Vector3.ZERO
+	liz.set_state(Constants.LizardState.IDLE)
+	liz.has_territory = false
 	liz.set_physics_process(true)
 	liz.show()
 

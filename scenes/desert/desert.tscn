@@ -35,7 +35,7 @@ texture_filter = 0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_7ewjq"]
 
-[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_bb7ju"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_u11cb"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_nj645")
@@ -96,7 +96,8 @@ pitch_bottom_limit = 0.215
 
 [node name="Death_plane" type="CollisionShape3D" parent="BaseDesert/Area3D"]
 transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, 0, -200, 0)
-shape = SubResource("WorldBoundaryShape3D_bb7ju")
+shape = SubResource("BoxShape3D_u11cb")
+disabled = true
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.1

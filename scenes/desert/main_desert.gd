@@ -5,9 +5,9 @@ extends Node
 
 #-------------GLOBAL VARIABLES-------------------------
 var num_lizard:int = SceneData.get_lizard_count(2) # Default 10
-var prob_orange:float = 1/3.0
-var prob_blue:float = 1/3.0
-var prob_yellow:float = 1/3.0
+var prob_orange:float = SceneData.get_orange_probability(1/3.0)
+var prob_blue:float = SceneData.get_blue_probability(1/3.0)
+var prob_yellow:float = SceneData.get_yellow_probability(1/3.0)
 var prob_sex:float = 0.5
 var lizard_interacting := []
 
@@ -31,7 +31,6 @@ func _on_timer_timeout():
 func set_lizard(liz:Lizard, group_lizs:Array[Node]):
 	liz.position = sample_point()
 	set_direction(liz, group_lizs)
-	Grid.instance().create_territory(liz)
 	
 func set_direction(liz:Lizard, group_lizs: Array[Node]):
 	group_lizs = group_lizs.filter(

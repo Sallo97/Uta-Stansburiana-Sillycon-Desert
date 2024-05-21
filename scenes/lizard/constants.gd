@@ -61,7 +61,8 @@ enum LizardState{
 	SEARCHING,
 	FIGHTING,
 	LOVING,
-	SEARCHING_TERRITORY
+	WANDERING,
+	CREATING_TERRITORY
 }
 # Morph type (it depends on the color of the lizard)
 enum Morph {ORANGE = 0, YELLOW = 1, BLUE = 2}
