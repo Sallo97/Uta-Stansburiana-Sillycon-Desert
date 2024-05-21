@@ -75,9 +75,8 @@ func main_settings():
 	set_mesh()
 	set_body_color()
 	set_lizard_size()
-	change_velocity_state()
 	update_animation_parameters(0)
-	lifetime = 1000 # randi_range(Constants.min_lifetime, Constants.max_lifetime)
+	lifetime = randi_range(Constants.min_lifetime, Constants.max_lifetime)
 	speed = randi_range(Constants.min_speed, Constants.max_speed)
 	set_death_timer()
 
@@ -213,12 +212,6 @@ func initialize(other_lizard:Lizard = null):
 	
 
 #---------------API FUNC-------------------------------
-		
-func change_velocity_state():
-	if falling == true:
-		stop_velocity()
-	else:
-		normal_velocity()
 
 func _on_area_3d_body_entered(body):
 	if(is_adult and body != self and body.is_in_group("Lizards") ): #
@@ -226,11 +219,8 @@ func _on_area_3d_body_entered(body):
 
 func _physics_process(delta):
 	var raycast = %RayCast3D
-	if falling and raycast.is_colliding():
-		falling = false
-		change_velocity_state()
 	
-	if !Grid.instance().territories.size() == 0:
+	if !Grid.instance().territories.size() == 0 && is_on_floor:
 		movement_pattern()
 	
 	velocity.y = velocity.y - (Constants.fall_acceleration * delta)
@@ -239,18 +229,15 @@ func _physics_process(delta):
 	if velocity.length() > Constants.max_velocity:
 		velocity = velocity.normalized() * Constants.max_velocity	
 	
-	
-	if is_stopped:
+		
+	if !is_on_floor || is_stopped: #and raycast.is_colliding()
 		stop_velocity()
+		
 	move_and_slide()
 	
 func _ready():
 	animation_tree.active = true
 	
-func stop_velocity():
-	velocity.x = 0
-	velocity.z = 0
-	# velocity y = 0
 
 func normal_velocity():
 	velocity = Vector3.FORWARD * speed
@@ -321,10 +308,6 @@ func movement_pattern():
 			pattern_step_3()
 		#4:
 			
-	
-	
-
-
 
 
 func pattern_step_1():
@@ -374,5 +357,9 @@ func pattern_step_3():
 	add_child(timer)
 	timer.start()
 	
+
+func stop_velocity():
+	velocity.x = 0
+	velocity.z = 0
 
 

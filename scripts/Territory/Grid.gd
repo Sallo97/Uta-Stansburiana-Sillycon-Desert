@@ -58,6 +58,8 @@ func destroy_territory(lizard: Lizard):
 	var territory = territories.filter(func (t: Territory): return t.owner_lizard == lizard)
 	if territory.size() != 0:
 		territory = territory[0]
+	else:
+		return
 	territories.erase(territory)
 	for c in territory.cells:
 		cells[c.x][c.y].remove_territory(territory)
