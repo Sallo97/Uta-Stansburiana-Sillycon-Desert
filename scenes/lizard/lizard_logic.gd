@@ -29,14 +29,14 @@ var alleles = [Constants.Allele.O, Constants.Allele.O]
 var current_territories: Array[Territory] = []
 var cell_change_timer: Timer
 var speed:float
-var higher_point
+var destination_point
 var direction 
 #------------FLAGS-------------------------------
 var is_adult:bool = true 
 var falling: bool = true
 var found_territory: bool = false
-var is_stopped: bool = false
 var pattern_step: int = 1
+var state: Constants.LizardState = Constants.LizardState.IDLE
 #-------------TIMER VARIABLES---------------------
 var death_timer:Timer
 var lifetime: float
@@ -61,7 +61,6 @@ func set_lizard_fixed(new_sex:Constants.Sex, new_morph:Constants.Morph):
 	
 func set_lizard_child(papa:Lizard, mama:Lizard):
 	sex = randomSex()
-	sex = Constants.Sex.FEMALE
 	alleles = Constants.set_alleles(sex, papa.alleles, mama.alleles)
 	morph = Constants.Alleles_Comb.ret_morph(alleles)
 	self.position = ((papa.position + mama.position)/2) + Vector3.UP
@@ -71,7 +70,7 @@ func set_lizard_child(papa:Lizard, mama:Lizard):
 
 func main_settings():
 	floor_constant_speed = true
-	floor_max_angle = INF
+	floor_max_angle = (PI / 2.5)
 	set_mesh()
 	set_body_color()
 	set_lizard_size()
@@ -168,7 +167,6 @@ func set_lizard_size():
 	var scale_value : float = float(size) / float(Constants.min_size) # 1 : 20 = scale_value : size 
 	if !is_adult:
 		scale_value *= 0.5
-	print("Scale value is ", scale_value)
 	lizard_node.scale_object_local( Vector3(scale_value,scale_value,scale_value) )
 	
 
@@ -217,22 +215,35 @@ func _on_area_3d_body_entered(body):
 	if(is_adult and body != self and body.is_in_group("Lizards") ): #
 		InteractionManager.start_interaction(self, body)
 
-func _physics_process(delta):
-	var raycast = %RayCast3D
+func _physics_process(delta):	
+	if state == Constants.LizardState.IDLE:
+		# Decide action
+		match sex:
+			Constants.Sex.MALE:
+				set_state(Constants.LizardState.SEARCHING)
+			Constants.Sex.FEMALE:
+				set_state(Constants.LizardState.SEARCHING_TERRITORY)
+
+	match state:
+		Constants.LizardState.SEARCHING when !Grid.instance().territories.size() == 0 && can_move():
+			hill_climb_pattern()
+		Constants.LizardState.SEARCHING_TERRITORY when can_move():
+			wander_pattern()
 	
-	if !Grid.instance().territories.size() == 0 && is_on_floor:
-		movement_pattern()
-	
+	# Apply gravity
 	velocity.y = velocity.y - (Constants.fall_acceleration * delta)
 	
 	# Clamp velocity to the max allowed velocity to avoid lizards shooting away into the void
 	if velocity.length() > Constants.max_velocity:
-		velocity = velocity.normalized() * Constants.max_velocity	
+		velocity = velocity.normalized() * Constants.max_velocity
 	
 		
-	if !is_on_floor || is_stopped: #and raycast.is_colliding()
+	if !is_on_floor() || !can_move() : #and raycast.is_colliding()
 		stop_velocity()
 		
+	if is_on_wall():
+		rotate(Vector3.UP, PI / 2.0)
+		velocity = velocity.rotated(Vector3.UP, PI / 2.0)
 	move_and_slide()
 	
 func _ready():
@@ -245,7 +256,8 @@ func normal_velocity():
 	
 
 func on_other_lizard_entered_territory(other: Lizard):
-	print_debug(other.morph, " lizard entered ", self.morph, "'s territory")
+	# print_debug(other.morph, " lizard entered ", self.morph, "'s territory")
+	pass
 
 
 func on_entered_territory(territory: Territory):
@@ -281,6 +293,7 @@ func update_animation_parameters(animation:int): # 0 = idle
 		animation_tree["parameters/conditions/is_attacking"] = false
 		
 func play_death_animation():
+	set_state(Constants.LizardState.STOPPED)
 	var animation_timer = Timer.new()
 	animation_timer.autostart = true
 	animation_timer.one_shot = true
@@ -293,26 +306,25 @@ func play_death_animation():
 
 #-------------MOVEMENT FUNC--------------------
 # 1 - Dal pt in cui mi trovo determino il punto piu' alto
-# 2 - Mi giro nella dirzione di higher_point (delegato a look_at_from_position)
+# 2 - Mi giro nella dirzione di destination_point (delegato a look_at_from_position)
 # 3 - Mi muovo verso quella direzione, fermandomi quando arrivo (delegato a arrive_at_point)
 # 4 - Impostalo come territorio di quella lucertola
-func movement_pattern():
+func hill_climb_pattern():
 	match (pattern_step):
 		0:
 			return
 		1:
-			pattern_step_1()
+			hill_climb_pattern_1()
 		2:
-			pattern_step_2()
+			hill_climb_pattern_2()
 		3:
-			pattern_step_3()
+			hill_climb_pattern_3()
 		#4:
 			
 
 
-func pattern_step_1():
+func hill_climb_pattern_1():
 	# STEP 1 - Dal pt in cui mi trovo determino il punto piu' alto
-	is_stopped = true
 	var current_cell = DistanceCalculator.instance().get_cell_at_position(self.position)
 	if !DistanceCalculator.instance().is_valid_cell(current_cell):
 		return
@@ -322,40 +334,41 @@ func pattern_step_1():
 	#print_debug(DistanceCalculator.instance().get_cell_at_position(position))
 	#print_debug(DistanceCalculator.instance().get_cell_at_position(DistanceCalculator.instance().get_position_of_cell(DistanceCalculator.instance().get_cell_at_position(position))))
 
-	higher_point = Vector3(absolute_position[0], position.y, absolute_position[2])
+	destination_point = Vector3(absolute_position[0], position.y, absolute_position[2])
 	pattern_step = 2
 	
-func pattern_step_2():
-	# STEP 2 - Mi giro nella direzione di higher_point
-	look_at_from_position(self.position, higher_point)
-	is_stopped = false
+func hill_climb_pattern_2():
+	# STEP 2 - Mi giro nella direzione di destination_point
+	look_at_from_position(self.position, destination_point)
 	pattern_step = 3
 	speed = 20
 
-func pattern_step_3():
-	# print("higher_point = ", higher_point)
-	# print("self.position = ", self.position)
-	# look_at_from_position(self.position, higher_point)
-	direction = global_position.direction_to(higher_point)
-	velocity = direction * speed
-	velocity.y = 0
-	velocity += (Vector3.DOWN * velocity.y)
-	# STEP 3 - Mi muovo verso higher_point, mi fermo quando lo raggiungo
-	# Dentro l'if sarebbe meglio dire che se la distanza tra self.position e' higher point e' 
-	# dentro un certo range, si ferma
-	if(abs(self.position.x - higher_point.x) < 0.2 || abs(self.position.z - higher_point.z) < 0.2):
-		is_stopped = true
-
-	pattern_step = 3
 	var timer: Timer = Timer.new()
 	timer.autostart = false
 	timer.one_shot = false
 	timer.wait_time = 0.5
 	timer.timeout.connect(func ():
-		pattern_step = 1
+		if state == Constants.LizardState.SEARCHING:
+			pattern_step = 1
 		timer.queue_free())
 	add_child(timer)
 	timer.start()
+
+func hill_climb_pattern_3():
+	# print("destination_point = ", destination_point)
+	# print("self.position = ", self.position)
+	# look_at_from_position(self.position, destination_point)
+	direction = global_position.direction_to(destination_point)
+	velocity = direction * speed
+	velocity.y = 0
+	velocity += (Vector3.DOWN * velocity.y)
+	# STEP 3 - Mi muovo verso destination_point, mi fermo quando lo raggiungo
+	# Dentro l'if sarebbe meglio dire che se la distanza tra self.position e' higher point e' 
+	# dentro un certo range, si ferma
+	if(abs(self.position.x - destination_point.x) < 0.2 || abs(self.position.z - destination_point.z) < 0.2):
+		set_state(Constants.LizardState.STOPPED)
+
+	pattern_step = 3
 	
 
 func stop_velocity():
@@ -363,3 +376,50 @@ func stop_velocity():
 	velocity.z = 0
 
 
+func can_move():
+	match state:
+		Constants.LizardState.IDLE, Constants.LizardState.STOPPED, Constants.LizardState.FIGHTING, Constants.LizardState.LOVING:
+			return false
+		_:  return is_on_floor()
+
+
+func set_state(new_state: Constants.LizardState):
+	pattern_step = 1
+	state = new_state
+
+
+func wander_pattern():
+	match (pattern_step):
+		0:
+			return
+		1:
+			wander_pattern_1()
+		2:
+			wander_pattern_2()
+		#4:
+
+
+func wander_pattern_1():
+	# STEP 1 - Get random point in radius
+	destination_point = global_position.direction_to((global_transform * Vector3.FORWARD).rotated(Vector3.UP, randf_range(-PI / 6.0, PI + 6.0)))
+	look_at_from_position(self.position, self.position + destination_point)
+	speed = 20
+
+	var timer: Timer = Timer.new()
+	timer.autostart = false
+	timer.one_shot = false
+	timer.wait_time = 1
+	timer.timeout.connect(func ():
+		if state == Constants.LizardState.SEARCHING_TERRITORY:
+			pattern_step = 1
+		timer.queue_free())
+	add_child(timer)
+	timer.start()
+
+	pattern_step = 2
+	
+func wander_pattern_2():
+	direction = destination_point
+	velocity = direction * speed
+	velocity.y = 0
+	velocity += (Vector3.DOWN * velocity.y)

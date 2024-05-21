@@ -38,29 +38,10 @@ static func deciding_interaction(l1:Lizard, l2:Lizard):
 		lizard_love(l1, l2)
 	elif(l1.sex == Constants.Sex.MALE):
 		lizard_fight(l1, l2)
-	lizs_interacting = lizs_interacting.filter(
-		func(l):
-			return l != l1 && l != l2)
 
 static func lizard_fight(l1:Lizard, l2:Lizard):
 	l1.get_node("FightParticles").emitting = true
 	l2.get_node("FightParticles").emitting = true
-	# var timer: Timer = Timer.new()
-	# timer.autostart = false
-	# timer.one_shot = true
-	# timer.wait_time = 0.5
-	# timer.timeout.connect((func (): 
-	# 	if l1 != null: l1.get_node("FightParticles").emitting = false))
-	# l1.add_child(timer)
-	# timer.start()
-	# timer = Timer.new()
-	# timer.autostart = false
-	# timer.one_shot = true
-	# timer.wait_time = 0.5
-	# timer.timeout.connect((func (): 
-	# 	if l2 != null: l2.get_node("FightParticles").emitting = false))
-	# l2.add_child(timer)
-	# timer.start()
 
 	var prob_win_l1: float = 0.5
 	match l1.morph:
@@ -83,11 +64,11 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 	if win:
 		l1.update_animation_parameters(1)
 		l1.add_child(timer_attack)
-		timer_attack.timeout.connect(LizardPool.instance().despawn.bind(l2))
+		timer_attack.timeout.connect(end_interaction.bindv([l1, l2, true]))
 	else:
 		l2.update_animation_parameters(1)
 		l2.add_child(timer_attack)
-		timer_attack.timeout.connect(LizardPool.instance().despawn.bind(l1))
+		timer_attack.timeout.connect(end_interaction.bindv([l2, l1, false]))
 
 		
 	
@@ -136,4 +117,18 @@ static func lizard_love(l1:Lizard, l2:Lizard):
 		else:
 			papa = l2
 			mama = l1
-		timer_love.timeout.connect(LizardPool.instance().spawn_child.bindv([papa,mama]))
+		timer_love.timeout.connect(end_interaction.bindv([papa, mama, false]))
+
+
+static func end_interaction(l1: Lizard, l2: Lizard, is_fight: bool):
+	lizs_interacting = lizs_interacting.filter(
+		func(l):
+			return l != l1 && l != l2)
+
+	if is_fight:
+		LizardPool.instance().despawn(l2)
+		l2.set_state(Constants.LizardState.IDLE)
+	else:
+		LizardPool.instance().spawn_child(l1, l2)
+		l1.set_state(Constants.LizardState.IDLE)
+		l2.set_state(Constants.LizardState.IDLE)

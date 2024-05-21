@@ -16,6 +16,7 @@ func _init(desert_ref, distance_calculator_ref, grid_ref, owner: Lizard):
 	distance_calculator = distance_calculator_ref
 	grid = grid_ref
 	cells = distance_calculator.get_cells_within_distance(distance_calculator.get_cell_at_position(owner_lizard.position), size)
+	# print_debug(cells)
 	draw()
 
 func draw():

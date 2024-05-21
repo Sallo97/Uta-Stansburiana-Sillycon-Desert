@@ -34,6 +34,7 @@ class Color_Values:
 			Morph.ORANGE : return orange_color
 			Morph.YELLOW : return yellow_color
 			Morph.BLUE : return blue_color
+
 class Alleles_Comb:
 	const orange_comb =[ 
 					[Allele.O, Allele.O], [Allele.O, Allele.B],
@@ -52,7 +53,16 @@ class Alleles_Comb:
 			return Morph.BLUE
 		elif(yellow_comb.find(comb)):
 			return Morph.YELLOW
-			
+
+
+enum LizardState{
+	IDLE,
+	STOPPED,
+	SEARCHING,
+	FIGHTING,
+	LOVING,
+	SEARCHING_TERRITORY
+}
 # Morph type (it depends on the color of the lizard)
 enum Morph {ORANGE = 0, YELLOW = 1, BLUE = 2}
 
