@@ -31,7 +31,7 @@ func _on_timer_timeout():
 func set_lizard(liz:Lizard, group_lizs:Array[Node]):
 	liz.position = sample_point()
 	set_direction(liz, group_lizs)
-	%Grid.create_territory(liz)
+	Grid.instance().create_territory(liz)
 	
 func set_direction(liz:Lizard, group_lizs: Array[Node]):
 	group_lizs = group_lizs.filter(

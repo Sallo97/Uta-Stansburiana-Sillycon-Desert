@@ -62,7 +62,7 @@ func __spawn() -> Lizard:
 	timer.one_shot = false
 	timer.wait_time = 0.5
 	timer.autostart = false
-	timer.timeout.connect(__root.get_node("/root/Main/BaseDesert/Scripts/Grid").cell_entered.bind(liz))
+	timer.timeout.connect(Grid.instance().cell_entered.bind(liz))
 	liz.cell_change_timer = timer
 	liz.add_child(timer)
 	timer.start()

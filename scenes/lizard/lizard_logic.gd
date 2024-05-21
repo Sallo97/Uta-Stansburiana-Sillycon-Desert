@@ -7,7 +7,6 @@ class_name Lizard
 #------------NODES---------------------------------
 @onready var lizard_node : Node3D = get_node("Pivot/lizard")
 @onready var animation_tree : AnimationTree = $AnimationTree
-@onready var distcalculator_node = get_node("/root/Main/BaseDesert/Scripts/DistanceCalculator")
 
 #-------------MESH NODES--------------------------
 @onready var adult_lizard_mesh : MultiMeshInstance3D = %adult_lizard
@@ -327,11 +326,11 @@ func movement_pattern():
 func pattern_step_1():
 	# STEP 1 - Dal pt in cui mi trovo determino il punto piu' alto
 	is_stopped = true
-	var current_cell = distcalculator_node.get_cell_at_position(self.position)
-	if !distcalculator_node.is_valid_cell(current_cell):
+	var current_cell = DistanceCalculator.instance().get_cell_at_position(self.position)
+	if !DistanceCalculator.instance().is_valid_cell(current_cell):
 		return
-	var ret_array = distcalculator_node.max_height_in_circle(current_cell, 5)
-	var absolute_position = distcalculator_node.get_position_of_cell(ret_array[0])
+	var ret_array = DistanceCalculator.instance().max_height_in_circle(current_cell, 5)
+	var absolute_position = DistanceCalculator.instance().get_position_of_cell(ret_array[0])
 	higher_point = Vector3(absolute_position[0], 0, absolute_position[1])
 	pattern_step = 2
 	

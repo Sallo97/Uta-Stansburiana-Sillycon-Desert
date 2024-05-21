@@ -34,7 +34,7 @@ func _process(_delta):
 func reset():
 	size = SceneData.get_desert_size(size)
 	mesh_simplification = SceneData.get_mesh_subdivision(mesh_simplification)
-	%Grid.setup()
+	Grid.instance().setup(self)
 
 	var noise_image: Image = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
 	generatePlaneMeshXZ(noise_image)
@@ -75,14 +75,14 @@ func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
 	
-	# var _territory: Territory = Territory.new(self, %DistanceCalculator, %Grid, {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
+	# var _territory: Territory = Territory.new(self, DistanceCalculator.instance(), Grid.instance(), {"position": Vector2i(x, y), "morph": [Constants.Morph.ORANGE, Constants.Morph.YELLOW, Constants.Morph.BLUE][randi_range(0,2)]})
 	#territory.delete()
 	
-	# var circle: Array[Vector2i] = %DistanceCalculator.rasterize_circle(Vector2i(x, y), 10)
+	# var circle: Array[Vector2i] = DistanceCalculator.instance().rasterize_circle(Vector2i(x, y), 10)
 	# draw_pixel_array(circle, Color.ALICE_BLUE)
-	# set_overlay_pixelv(%DistanceCalculator.max_height(circle)[0], Color.REBECCA_PURPLE)
+	# set_overlay_pixelv(DistanceCalculator.instance().max_height(circle)[0], Color.REBECCA_PURPLE)
 
-	# print_debug((%DistanceCalculator as DistanceCalculator))
+	# print_debug((DistanceCalculator.instance() as DistanceCalculator))
 
 
 func set_overlay_pixel(x: int, y: int, color: Color, delete = false):
@@ -123,7 +123,7 @@ func draw_pixel_array(cells: Array[Vector2i], color: Color, delete = false):
 
 
 func draw_territory(pos: Vector2i, distance: float, color: Color, delete = false):
-	var cells: Array[Vector2i] = %DistanceCalculator.get_cells_within_distance(pos, distance)
+	var cells: Array[Vector2i] = DistanceCalculator.instance().get_cells_within_distance(pos, distance)
 	draw_pixel_array(cells, color, delete)
 
 
