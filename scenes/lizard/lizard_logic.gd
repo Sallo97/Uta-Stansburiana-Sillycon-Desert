@@ -50,6 +50,10 @@ func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
 	sex = randomSex(prob_sex)
 	morph = randomMorph(sex, prob_orange,
 						prob_blue, prob_yellow)
+	if sex==Constants.Sex.MALE:
+		morph = Constants.Morph.BLUE
+	else:
+		morph = Constants.Morph.YELLOW
 	alleles = Constants.set_random_alleles(morph,prob_orange,
 								 prob_blue, prob_yellow)
 	# print("I arrived here with ", sex, morph, alleles)
@@ -63,6 +67,7 @@ func set_lizard_fixed(new_sex:Constants.Sex, new_morph:Constants.Morph):
 	
 func set_lizard_child(papa:Lizard, mama:Lizard):
 	sex = randomSex()
+	sex = Constants.Sex.FEMALE
 	alleles = Constants.set_alleles(sex, papa.alleles, mama.alleles)
 	morph = Constants.Alleles_Comb.ret_morph(alleles)
 	self.position = ((papa.position + mama.position)/2) + Vector3.UP

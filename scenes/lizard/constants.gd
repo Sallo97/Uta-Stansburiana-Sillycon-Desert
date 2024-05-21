@@ -97,10 +97,17 @@ static func set_random_alleles(morph:Constants.Morph,
 	return [allele_1, allele_2]
 	
 static func set_alleles(sex, papa_al, mama_al):
-	var idx1 = randi_range(0,1)
-	var idx2 = randi_range(0,1)
+	print("papa_al = ", papa_al)
+	print("mama_al = ", mama_al)
 	
-	if (papa_al[idx1] == Allele.B && sex == Sex.FEMALE):
-		if(mama_al[idx2] == Allele.B):
-			idx2 ^= 1
-	return [papa_al[idx1], mama_al[idx2]]
+	var idx_p = randi_range(0,1)
+	var idx_m = randi_range(0,1)
+	var A_p = papa_al[idx_p]
+	var A_m = mama_al[idx_m]
+	
+	if sex==Constants.Sex.FEMALE and A_p == Constants.Allele.B and A_m == Constants.Allele.B:
+		idx_m = absi(idx_m - 1)
+		A_m = mama_al[idx_m]
+		
+	print("child_al = ", [A_p, A_m])
+	return [A_p, A_m]

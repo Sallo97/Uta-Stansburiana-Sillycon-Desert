@@ -128,4 +128,12 @@ static func lizard_love(l1:Lizard, l2:Lizard):
 		l1.update_animation_parameters(2)
 		l2.update_animation_parameters(2)
 		l1.add_child(timer_love)
-		timer_love.timeout.connect(LizardPool.instance().spawn_child.bindv([l1,l2]))
+		var papa : Lizard
+		var mama : Lizard
+		if l1.sex == Constants.Sex.MALE:
+			papa = l1
+			mama = l2
+		else:
+			papa = l2
+			mama = l1
+		timer_love.timeout.connect(LizardPool.instance().spawn_child.bindv([papa,mama]))
