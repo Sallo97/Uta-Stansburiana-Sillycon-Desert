@@ -49,13 +49,8 @@ func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
 	sex = randomSex(prob_sex)
 	morph = randomMorph(sex, prob_orange,
 						prob_blue, prob_yellow)
-	if sex==Constants.Sex.MALE:
-		morph = Constants.Morph.BLUE
-	else:
-		morph = Constants.Morph.YELLOW
 	alleles = Constants.set_random_alleles(morph,prob_orange,
 								 prob_blue, prob_yellow)
-	# print("I arrived here with ", sex, morph, alleles)
 	main_settings()
 
 func set_lizard_fixed(new_sex:Constants.Sex, new_morph:Constants.Morph):
@@ -82,7 +77,7 @@ func main_settings():
 	set_lizard_size()
 	change_velocity_state()
 	update_animation_parameters(0)
-	lifetime = randi_range(Constants.min_lifetime, Constants.max_lifetime)
+	lifetime = 1000 # randi_range(Constants.min_lifetime, Constants.max_lifetime)
 	speed = randi_range(Constants.min_speed, Constants.max_speed)
 	set_death_timer()
 
@@ -172,7 +167,11 @@ func set_body_color():
 # THIS instance of the lizard
 func set_lizard_size():
 	var scale_value : float = float(size) / float(Constants.min_size) # 1 : 20 = scale_value : size 
-	lizard_node.global_scale( Vector3(scale_value,scale_value,scale_value) )
+	if !is_adult:
+		scale_value *= 0.5
+	print("Scale value is ", scale_value)
+	lizard_node.scale_object_local( Vector3(scale_value,scale_value,scale_value) )
+	
 
 # This function removes the ribbon and the lips from the mesh
 # if the current lizard is male
@@ -201,8 +200,8 @@ func becoming_adult():
 	is_adult = true
 	remove_from_group("Children")
 	add_to_group("Lizards")
-	# (func (): print("becoming_adult!    lizard_group size: ", get_tree().get_nodes_in_group("Lizards").size(), ", children_group size: ", get_tree().get_nodes_in_group("Children").size())).call_deferred()
 	set_mesh()
+	lizard_node.scale_object_local( Vector3(2,2,2) )
 
 #------------INITIALIZE FUNC----------------------------------------
 func initialize(other_lizard:Lizard = null):

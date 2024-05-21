@@ -97,8 +97,6 @@ static func set_random_alleles(morph:Constants.Morph,
 	return [allele_1, allele_2]
 	
 static func set_alleles(sex, papa_al, mama_al):
-	print("papa_al = ", papa_al)
-	print("mama_al = ", mama_al)
 	
 	var idx_p = randi_range(0,1)
 	var idx_m = randi_range(0,1)
