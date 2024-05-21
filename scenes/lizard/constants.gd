@@ -2,8 +2,8 @@ class_name Constants
 #---------CONSTANTS----------------------------------
 
 # Size values are in mm
-const min_size : int = 20
-const max_size : int = 30
+const min_size : float = 0.2
+const max_size : float = 0.3
 
 # Speed of the lizard is in meters per second
 const min_speed:float = 50.0
@@ -22,6 +22,9 @@ const min_grow_up_timer:float = 2.0
 
 # Downward acceleration when in the air, in meters per seconds squared.
 const fall_acceleration = 100
+
+const orange_territory_size = 20
+const blue_territory_size = 7
 
 #-----------ENUMS--------------------------------------
 class Color_Values:

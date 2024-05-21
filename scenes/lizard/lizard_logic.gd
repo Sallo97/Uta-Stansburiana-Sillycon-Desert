@@ -24,7 +24,7 @@ class_name Lizard
 
 var sex: Constants.Sex = Constants.Sex.MALE
 var morph:Constants.Morph = Constants.Morph.ORANGE
-var size : int = Constants.min_size
+var size: float = Constants.min_size
 var alleles = [Constants.Allele.O, Constants.Allele.O]
 var current_territories: Array[Territory] = []
 var cell_change_timer: Timer
@@ -75,6 +75,7 @@ func main_settings():
 	floor_max_angle = (PI / 2.5)
 	set_mesh()
 	set_body_color()
+	size = randomSize(sex, morph)
 	set_lizard_size()
 	update_animation_parameters(0)
 	lifetime = randi_range(Constants.min_lifetime, Constants.max_lifetime)
@@ -124,14 +125,14 @@ static func randomMorph(sex:Constants.Sex, or_prob=0.5,
 # baseSize = [20…30]mm
 # size = baseSize + (male ? 10 : 0) + (orange ? 10 : 0))
 # size cannot be > 60
-static func randomSize(sex:Constants.Sex, morph:Constants.Morph):
-	var baseSize : int = randi_range(Constants.min_size, Constants.max_size) 
+static func randomSize(sex:Constants.Sex, morph:Constants.Morph) -> float:
+	var baseSize: float = randf_range(Constants.min_size, Constants.max_size) 
 	if(sex == Constants.Sex.MALE):
-		baseSize += 10
+		baseSize += 0.1
 	if (morph == Constants.Morph.ORANGE):
-		baseSize += 10
-	if (baseSize > 60):
-		baseSize = 60
+		baseSize += 0.10
+	if (baseSize > 0.60):
+		baseSize = 0.60
 	return baseSize
 	
 func set_death_timer():
@@ -164,10 +165,10 @@ func set_body_color():
 	adult_body_node.material_override = material
 	baby_body_node.material_override = material
 
-# This function sets the size of the ONLY
+# This function sets the size of ONLY
 # THIS instance of the lizard
 func set_lizard_size():
-	var scale_value : float = float(size) / float(Constants.min_size) # 1 : 20 = scale_value : size 
+	var scale_value: float = float(size) # 1 : 20 = scale_value : size 
 	if !is_adult:
 		scale_value *= 0.5
 	lizard_node.scale_object_local( Vector3(scale_value,scale_value,scale_value) )

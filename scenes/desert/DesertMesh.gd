@@ -94,10 +94,11 @@ func set_overlay_pixel(x: int, y: int, color: Color, delete = false):
 		else:
 			new_color = original_color * color
 	else:
-		if original_color == color:
+		if (Vector4(original_color.r, original_color.g, original_color.b, original_color.a) - Vector4(color.r, color.g, color.b, color.a)).length() < 0.1:
 			new_color = Color(0,0,0,0)
 		else:
 			new_color = original_color / color
+		print_debug(new_color)
 	overlay_image.set_pixel(x, y, new_color)
 	overlay_texture.set_image(overlay_image)
 
@@ -114,7 +115,7 @@ func draw_pixel_array(cells: Array[Vector2i], color: Color, delete = false):
 			else:
 				new_color = original_color * color
 		else:
-			if original_color == color:
+			if (Vector4(original_color.r, original_color.g, original_color.b, original_color.a) - Vector4(color.r, color.g, color.b, color.a)).length() < 0.1:
 				new_color = Color(0,0,0,0)
 			else:
 				new_color = original_color / color

@@ -10,9 +10,9 @@ func _init(desert_ref, distance_calculator_ref, grid_ref, owner: Lizard):
 	owner_lizard = owner
 	match owner_lizard.morph:
 		Constants.Morph.ORANGE:
-			size = 10
+			size = Constants.orange_territory_size
 		Constants.Morph.BLUE:
-			size = 5
+			size = Constants.blue_territory_size
 	color = Constants.Color_Values.ret_color(owner_lizard.morph)
 	desert = desert_ref
 	cells = DistanceCalculator.instance().get_cells_within_distance(DistanceCalculator.instance().get_cell_at_position(owner_lizard.position), size)
