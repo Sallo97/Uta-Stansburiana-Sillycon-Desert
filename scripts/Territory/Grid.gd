@@ -47,11 +47,12 @@ func get_size() -> Vector2i:
 	return size
 
 
-func create_territory(lizard: Lizard):
+func create_territory(lizard: Lizard) -> Territory:
 	var new_territory: Territory = Territory.new(__desert, DistanceCalculator.instance(), self, lizard)
 	territories.push_back(new_territory)
 	for c in new_territory.cells:
 		cells[c.x][c.y].add_territory(new_territory)
+	return new_territory
 
 
 func destroy_territory(lizard: Lizard):
@@ -63,6 +64,7 @@ func destroy_territory(lizard: Lizard):
 	territories.erase(territory)
 	for c in territory.cells:
 		cells[c.x][c.y].remove_territory(territory)
+	territory.owner_lizard.territory = null
 	territory.delete()
 
 

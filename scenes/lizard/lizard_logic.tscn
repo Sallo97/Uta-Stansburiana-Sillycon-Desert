@@ -1,8 +1,8 @@
 [gd_scene load_steps=80 format=3 uid="uid://ddafgqxbgv4yr"]
 
 [ext_resource type="Script" path="res://scenes/lizard/lizard_logic.gd" id="1_0ponp"]
-[ext_resource type="Texture2D" uid="uid://dvfbhc7p4jyrw" path="res://assets/2D/textures/tingle_heart.png" id="2_7ra5k"]
-[ext_resource type="Texture2D" uid="uid://cp1hx17dw5rio" path="res://assets/2D/textures/fight_cloud.png" id="3_oy0mc"]
+[ext_resource type="Texture2D" uid="uid://raksfnfmogcd" path="res://assets/2D/textures/cuore.png" id="2_km2au"]
+[ext_resource type="Texture2D" uid="uid://bmiekf6rqm6bj" path="res://assets/2D/textures/azzuffata_3.png" id="3_4ca4v"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceo4q"]
 resource_name = "Material.001"
@@ -656,7 +656,7 @@ _data = {
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4tpno"]
 transparency = 1
 shading_mode = 0
-albedo_texture = ExtResource("2_7ra5k")
+albedo_texture = ExtResource("2_km2au")
 texture_filter = 0
 billboard_mode = 1
 billboard_keep_scale = true
@@ -697,10 +697,15 @@ size = Vector2(4, 4)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s2pse"]
 transparency = 1
 shading_mode = 0
-albedo_texture = ExtResource("3_oy0mc")
-billboard_mode = 1
+albedo_texture = ExtResource("3_4ca4v")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_oqjo1"]
+angle_min = -30.0
+angle_max = 30.0
 spread = 180.0
 initial_velocity_min = 16.0
 initial_velocity_max = 16.0
@@ -896,7 +901,7 @@ libraries = {
 material_override = SubResource("StandardMaterial3D_4tpno")
 cast_shadow = 0
 emitting = false
-amount = 5
+amount = 3
 lifetime = 2.0
 one_shot = true
 draw_order = 2

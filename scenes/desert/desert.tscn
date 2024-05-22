@@ -6,13 +6,13 @@
 [ext_resource type="Script" path="res://SimpleFreeLookCamera/camera.gd" id="2_hx1cu"]
 [ext_resource type="Texture2D" uid="uid://c6nlutbu2sm6h" path="res://assets/2D/textures/sand_1.jpg" id="2_oie7t"]
 [ext_resource type="PackedScene" uid="uid://ddafgqxbgv4yr" path="res://scenes/lizard/lizard_logic.tscn" id="2_y5bvo"]
-[ext_resource type="Texture2D" uid="uid://clxk34tq8y8q" path="res://assets/environment_maps/desert.jpg" id="3_7xv5x"]
+[ext_resource type="Texture2D" uid="uid://dlor8x3nxxlon" path="res://assets/environment_maps/skybox.png" id="3_0e226"]
 [ext_resource type="Script" path="res://scripts/Camera/CameraManager.gd" id="8_gtwnx"]
 [ext_resource type="Script" path="res://scripts/Camera/CameraRestrict.gd" id="10_21hqv"]
 [ext_resource type="Script" path="res://scenes/desert/InvisibleWalls.gd" id="12_w3lrv"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nbowp"]
-panorama = ExtResource("3_7xv5x")
+panorama = ExtResource("3_0e226")
 
 [sub_resource type="Sky" id="Sky_ryn1v"]
 sky_material = SubResource("PanoramaSkyMaterial_nbowp")
@@ -55,7 +55,7 @@ script = ExtResource("1_cyp5x")
 size = Vector2i(50, 50)
 noise_multiplier = 50.0
 model_height = true
-mesh_simplification = 1
+mesh_simplification = 20
 collision_offset = Vector3(0, 0, 0)
 noise_texture_scale = 8.0
 desert_texture = ExtResource("2_oie7t")

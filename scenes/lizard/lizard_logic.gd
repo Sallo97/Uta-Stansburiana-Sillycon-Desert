@@ -38,7 +38,7 @@ var found_territory: bool = false
 var pattern_step: int = 1
 var behaviour_iterations: int = 0
 var state: Constants.LizardState = Constants.LizardState.IDLE
-var has_territory: bool = false
+var territory: Territory = null
 #-------------TIMER VARIABLES---------------------
 var death_timer:Timer
 var lifetime: float
@@ -174,7 +174,7 @@ func set_lizard_size():
 	var scale_value: float = float(size) # 1 : 20 = scale_value : size 
 	if !is_adult:
 		scale_value *= 0.5
-	lizard_node.scale_object_local( Vector3(scale_value,scale_value,scale_value) )
+	scale_object_local( Vector3(scale_value,scale_value,scale_value) )
 	
 
 # This function removes the ribbon and the lips from the mesh
@@ -205,7 +205,7 @@ func becoming_adult():
 	remove_from_group("Children")
 	add_to_group("Lizards")
 	set_mesh()
-	lizard_node.scale_object_local( Vector3(2,2,2) )
+	scale_object_local( Vector3(2,2,2) )
 
 #------------INITIALIZE FUNC----------------------------------------
 func initialize(other_lizard:Lizard = null):
@@ -235,8 +235,10 @@ func _physics_process(delta):
 			match sex:
 				Constants.Sex.MALE:
 					match morph:
-						Constants.Morph.ORANGE, Constants.Morph.BLUE when !has_territory:
+						Constants.Morph.ORANGE, Constants.Morph.BLUE when territory == null:
 							set_state(Constants.LizardState.SEARCHING)
+						Constants.Morph.ORANGE, Constants.Morph.BLUE when territory != null:
+							set_state(Constants.LizardState.PATROLLING)
 						Constants.Morph.YELLOW:
 							if Grid.instance().territories.size() == 0:
 								set_state(Constants.LizardState.WANDERING)
@@ -249,6 +251,9 @@ func _physics_process(delta):
 
 		Constants.LizardState.WANDERING when can_move():
 			wander_pattern()
+
+		Constants.LizardState.PATROLLING when can_move():
+			patrol_own_territory()
 
 		Constants.LizardState.CREATING_TERRITORY:
 			create_territory()
@@ -348,7 +353,7 @@ func hill_climb_pattern():
 
 func hill_climb_pattern_1():
 	# STEP 1 - Dal pt in cui mi trovo determino il punto piu' alto
-	var current_cell = DistanceCalculator.instance().get_cell_at_position(self.position)
+	var current_cell = DistanceCalculator.instance().get_cell_at_position(self.global_position)
 	if !DistanceCalculator.instance().is_valid_cell(current_cell):
 		return
 	var ret_array = DistanceCalculator.instance().max_height_in_circle(current_cell, 5)
@@ -357,12 +362,12 @@ func hill_climb_pattern_1():
 	#print_debug(DistanceCalculator.instance().get_cell_at_position(position))
 	#print_debug(DistanceCalculator.instance().get_cell_at_position(DistanceCalculator.instance().get_position_of_cell(DistanceCalculator.instance().get_cell_at_position(position))))
 
-	destination_point = Vector3(absolute_position[0], position.y, absolute_position[2])
+	destination_point = Vector3(absolute_position[0], global_position.y, absolute_position[2])
 	pattern_step = 2
 	
 func hill_climb_pattern_2():
 	# STEP 2 - Mi giro nella direzione di destination_point
-	look_at_from_position(self.position, destination_point)
+	look_at_from_position(self.global_position, destination_point)
 	pattern_step = 3
 	speed = 20
 
@@ -392,7 +397,7 @@ func hill_climb_pattern_3():
 	# STEP 3 - Mi muovo verso destination_point, mi fermo quando lo raggiungo
 	# Dentro l'if sarebbe meglio dire che se la distanza tra self.position e' higher point e' 
 	# dentro un certo range, si ferma
-	if(abs(self.position.x - destination_point.x) < 0.2 || abs(self.position.z - destination_point.z) < 0.2):
+	if(abs(self.global_position.x - destination_point.x) < 0.2 || abs(self.global_position.z - destination_point.z) < 0.2):
 		set_state(Constants.LizardState.CREATING_TERRITORY)
 
 	pattern_step = 3
@@ -437,7 +442,7 @@ func wander_pattern():
 func wander_pattern_1():
 	# STEP 1 - Get random point in radius
 	destination_point = global_position.direction_to((global_transform * Vector3.FORWARD).rotated(Vector3.UP, randf_range(-PI / 6.0, PI + 6.0)))
-	look_at_from_position(self.position, self.position + destination_point)
+	look_at_from_position(self.global_position, self.global_position + destination_point)
 	speed = 20
 
 	var timer: Timer = Timer.new()
@@ -462,6 +467,42 @@ func wander_pattern_2():
 
 func create_territory():
 	print_debug("Creating territory!")
-	has_territory = true
-	Grid.instance().create_territory(self)
+	territory = Grid.instance().create_territory(self)
 	set_state(Constants.LizardState.IDLE)
+
+
+func patrol_own_territory():
+	match (pattern_step):
+		0:
+			return
+		1:
+			patrol_own_territory1()
+		2:
+			patrol_own_territory2()
+		#4:
+
+func patrol_own_territory1():
+	# STEP 1 - Get random point in territory
+	destination_point = DistanceCalculator.instance().get_position_of_cell(territory.cells.pick_random())
+	destination_point.y = global_position.y
+	look_at_from_position(self.global_position, destination_point)
+	speed = 10
+
+	var timer: Timer = Timer.new()
+	timer.autostart = false
+	timer.one_shot = false
+	timer.wait_time = 1
+	timer.timeout.connect(func ():
+		if state == Constants.LizardState.PATROLLING:
+			pattern_step = 1
+		timer.queue_free())
+	add_child(timer)
+	timer.start()
+
+	pattern_step = 2
+
+func patrol_own_territory2():
+	direction = global_position.direction_to(destination_point)
+	velocity = direction * speed
+	velocity.y = 0
+	velocity += (Vector3.DOWN * velocity.y)

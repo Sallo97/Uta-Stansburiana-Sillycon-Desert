@@ -70,6 +70,13 @@ func reset():
 	timer.start()
 	timer.timeout.connect(set_random_pixel)
 
+	# print_debug(get_aabb().position)
+	# print_debug(get_aabb().end)
+	# print_debug(get_aabb().size)
+	# var center = DistanceCalculator.instance().get_cell_at_position((get_aabb().position + get_aabb().end) / 2)
+	# print_debug(center)
+	# set_overlay_pixelv(center, Color.GAINSBORO)
+
 
 func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
@@ -172,7 +179,7 @@ func generatePlaneMeshXZ(_noise_img):
 			var height = _noise_img.get_pixel(min(xIdx * mesh_simplification, img_size.x), min(zIdx * mesh_simplification, img_size.y) )[0] * noise_multiplier
 			var vertexPosition := Vector3((tx - 0.5) * size.x, height if model_height else 0, (tz - 0.5) * size.y)
 			vertices[i] = vertexPosition
-			uv[i] = Vector3(float(xIdx) / xVertexCount, float(zIdx) / zVertexCount, 0.0)
+			uv[i] = Vector3(float(xIdx) / (xVertexCount - 1), float(zIdx) / (zVertexCount - 1), 0.0)
 			i += 1
 	
 	var indices := PackedInt32Array()

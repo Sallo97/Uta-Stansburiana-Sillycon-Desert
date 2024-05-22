@@ -56,7 +56,7 @@ func __spawn() -> Lizard:
 	liz.velocity = Vector3.ZERO
 	liz.rotation = Vector3.ZERO
 	liz.set_state(Constants.LizardState.IDLE)
-	liz.has_territory = false
+	liz.territory = null
 	liz.set_physics_process(true)
 	liz.show()
 
@@ -92,8 +92,12 @@ func __despawn_deferred(lizard: Lizard) -> void:
 	if is_in_instances:
 		pass
 	else:
-		lizard.death_timer.stop()
-		lizard.death_timer.queue_free()
+		if lizard.death_timer != null:
+			lizard.death_timer.stop()
+			lizard.death_timer.queue_free()
+		if lizard.grow_up_timer != null:
+			lizard.grow_up_timer.stop()
+			lizard.grow_up_timer.queue_free()
 		if __instances.size() >= MAX_COUNT:
 			lizard.queue_free()
 		else:
