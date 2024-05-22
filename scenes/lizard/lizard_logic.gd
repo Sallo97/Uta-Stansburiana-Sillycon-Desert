@@ -22,8 +22,8 @@ class_name Lizard
 
 #--------VARIABLES--------------------------------
 
-var sex: Constants.Sex = Constants.Sex.MALE
-var morph:Constants.Morph = Constants.Morph.ORANGE
+var sex: Constants.Sex #= Constants.Sex.FEMALE# = Constants.Sex.MALE
+var morph:Constants.Morph # = Constants.Morph.ORANGE
 var size: float = Constants.min_size
 var alleles = [Constants.Allele.O, Constants.Allele.O]
 var current_territories: Array[Territory] = []
@@ -48,7 +48,10 @@ var grow_up_time:float
 #---------CONSTRUCTORS-------------------------
 func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
 		   prob_yellow:float = 1/3.0, prob_blue:float = 1/3.0):
+	print("prob_sex = ", prob_sex)
 	sex = randomSex(prob_sex)
+	sex = Constants.Sex.MALE
+	print("sex = ", sex)
 	morph = randomMorph(sex, prob_orange,
 						prob_blue, prob_yellow)
 	alleles = Constants.set_random_alleles(morph,prob_orange,
@@ -88,7 +91,7 @@ func main_settings():
 # It chooses randomly the sex of the lizard.
 # Getting a male or a female is equiprobable
 static func randomSex(prob:float = 0.5):
-	return Constants.Sex.MALE
+	# return Constants.Sex.MALE
 	var is_male : bool = randf() <= prob 
 	if is_male:
 		return Constants.Sex.MALE
