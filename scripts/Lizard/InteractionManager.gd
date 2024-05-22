@@ -130,4 +130,6 @@ static func end_interaction(l1: Lizard, l2: Lizard, is_fight: bool):
 	else:
 		LizardPool.instance().spawn_child(l1, l2)
 		l1.set_state(Constants.LizardState.IDLE)
+		if l1.morph == Constants.Morph.YELLOW:
+			l1.territory = null
 		l2.set_state(Constants.LizardState.IDLE)

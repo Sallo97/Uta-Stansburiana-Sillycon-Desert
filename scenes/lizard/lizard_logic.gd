@@ -48,10 +48,10 @@ var grow_up_time:float
 #---------CONSTRUCTORS-------------------------
 func set_lizard_prob(prob_sex:float = 0.5, prob_orange:float = 1/3.0,
 		   prob_yellow:float = 1/3.0, prob_blue:float = 1/3.0):
-	print("prob_sex = ", prob_sex)
+	# print("prob_sex = ", prob_sex)
 	sex = randomSex(prob_sex)
-	sex = Constants.Sex.MALE
-	print("sex = ", sex)
+	# sex = Constants.Sex.MALE
+	# print("sex = ", sex)
 	morph = randomMorph(sex, prob_orange,
 						prob_blue, prob_yellow)
 	alleles = Constants.set_random_alleles(morph,prob_orange,
@@ -68,7 +68,7 @@ func set_lizard_child(papa:Lizard, mama:Lizard):
 	sex = randomSex()
 	alleles = Constants.set_alleles(sex, papa.alleles, mama.alleles)
 	morph = Constants.Alleles_Comb.ret_morph(alleles)
-	self.position = ((papa.position + mama.position)/2) + Vector3.UP
+	self.global_position = ((papa.global_position + mama.global_position)/2) + (Vector3.UP * 10)
 	is_adult = false
 	set_grow_up_timer()
 	main_settings()	
@@ -91,7 +91,7 @@ func main_settings():
 # It chooses randomly the sex of the lizard.
 # Getting a male or a female is equiprobable
 static func randomSex(prob:float = 0.5):
-	# return Constants.Sex.MALE
+	return Constants.Sex.MALE
 	var is_male : bool = randf() <= prob 
 	if is_male:
 		return Constants.Sex.MALE
@@ -106,23 +106,20 @@ static func randomMorph(sex:Constants.Sex, or_prob=0.5,
 	
 	# Setting probabilities
 	var morph
-	var is_orange:bool = randf() <= or_prob
-	var is_yellow:bool 
-	var is_blue:bool
-	if sex == Constants.Sex.MALE:
-		is_yellow = randf() <= yw_prob + or_prob 
-		is_blue = true
-	else:
-		is_yellow = true
-		is_blue = false
-	
-	# Returing morph
-	if is_orange:
-		return Constants.Morph.ORANGE
-	elif !is_orange && is_blue:
-		return Constants.Morph.BLUE
-	elif !is_blue && is_yellow:
-		return Constants.Morph.YELLOW
+	var rand_val = randf()
+	match sex:
+		Constants.Sex.MALE:
+			if rand_val <= or_prob:
+				return Constants.Morph.ORANGE
+			if rand_val <= or_prob + bl_prob:
+				return Constants.Morph.BLUE
+			else:
+				return Constants.Morph.YELLOW
+		Constants.Sex.FEMALE:
+			if rand_val <= or_prob:
+				return Constants.Morph.ORANGE
+			else:
+				return Constants.Morph.YELLOW
 
 # It chooses randomly the size of the lizard.
 # baseSize = [20…30]mm
@@ -240,13 +237,11 @@ func _physics_process(delta):
 						Constants.Morph.ORANGE, Constants.Morph.BLUE when territory != null:
 							set_state(Constants.LizardState.PATROLLING)
 						Constants.Morph.YELLOW:
-							if Grid.instance().territories.size() == 0:
-								set_state(Constants.LizardState.WANDERING)
+							set_state(Constants.LizardState.WANDERING)
 				Constants.Sex.FEMALE:
 					set_state(Constants.LizardState.WANDERING)
 
 		Constants.LizardState.SEARCHING when can_move():
-			# print_debug(can_move())
 			hill_climb_pattern()
 
 		Constants.LizardState.WANDERING when can_move():
@@ -254,6 +249,9 @@ func _physics_process(delta):
 
 		Constants.LizardState.PATROLLING when can_move():
 			patrol_own_territory()
+
+		Constants.LizardState.ATTACKING_INTRUDER when can_move():
+			attack_intruder()
 
 		Constants.LizardState.CREATING_TERRITORY:
 			create_territory()
@@ -284,12 +282,15 @@ func normal_velocity():
 	
 
 func on_other_lizard_entered_territory(other: Lizard):
-	# print_debug(other.morph, " lizard entered ", self.morph, "'s territory")
-	pass
+	if state == Constants.LizardState.PATROLLING && other.sex == Constants.Sex.MALE:
+		set_state(Constants.LizardState.ATTACKING_INTRUDER)
+		destination_point = other
 
 
 func on_entered_territory(territory: Territory):
-	pass
+	if (sex == Constants.Sex.FEMALE || morph == Constants.Morph.YELLOW) && state == Constants.LizardState.WANDERING:
+		self.territory = territory
+		set_state(Constants.LizardState.PATROLLING)
 
 #-----------ANIMATIONS FUNC-------------------
 
@@ -379,7 +380,7 @@ func hill_climb_pattern_2():
 		if state == Constants.LizardState.SEARCHING:
 			pattern_step = 1
 			behaviour_iterations -= 1
-			print_debug(behaviour_iterations)
+			# print_debug(behaviour_iterations)
 			if behaviour_iterations == 0:
 				set_state(Constants.LizardState.CREATING_TERRITORY)
 		timer.queue_free())
@@ -466,7 +467,7 @@ func wander_pattern_2():
 
 
 func create_territory():
-	print_debug("Creating territory!")
+	# print_debug("Creating territory!")
 	territory = Grid.instance().create_territory(self)
 	set_state(Constants.LizardState.IDLE)
 
@@ -482,6 +483,8 @@ func patrol_own_territory():
 		#4:
 
 func patrol_own_territory1():
+	if territory == null || territory.is_queued_for_deletion():
+		set_state(Constants.LizardState.IDLE)
 	# STEP 1 - Get random point in territory
 	destination_point = DistanceCalculator.instance().get_position_of_cell(territory.cells.pick_random())
 	destination_point.y = global_position.y
@@ -502,7 +505,55 @@ func patrol_own_territory1():
 	pattern_step = 2
 
 func patrol_own_territory2():
+	if territory == null || territory.is_queued_for_deletion():
+		set_state(Constants.LizardState.IDLE)
 	direction = global_position.direction_to(destination_point)
+	velocity = direction * speed
+	velocity.y = 0
+	velocity += (Vector3.DOWN * velocity.y)
+
+
+
+func attack_intruder():
+	match (pattern_step):
+		0:
+			return
+		1:
+			attack_intruder1()
+		2:
+			attack_intruder2()
+		#4:
+
+func attack_intruder1():
+	if destination_point == null || destination_point.is_queued_for_deletion():
+		destination_point = null
+		set_state(Constants.LizardState.IDLE)
+	var destination = destination_point.global_position
+	destination.y = global_position.y
+	look_at_from_position(self.global_position, destination)
+	speed = 20
+
+	var timer: Timer = Timer.new()
+	timer.autostart = false
+	timer.one_shot = false
+	timer.wait_time = 1
+	timer.timeout.connect(func ():
+		if state == Constants.LizardState.ATTACKING_INTRUDER:
+			pattern_step = 1
+		timer.queue_free())
+	add_child(timer)
+	timer.start()
+
+	pattern_step = 2
+
+func attack_intruder2():
+	if destination_point == null || destination_point.is_queued_for_deletion():
+		destination_point = null
+		set_state(Constants.LizardState.IDLE)
+	var destination = destination_point.global_position
+	destination.y = global_position.y
+	look_at_from_position(self.global_position, destination)
+	direction = global_position.direction_to(destination)
 	velocity = direction * speed
 	velocity.y = 0
 	velocity += (Vector3.DOWN * velocity.y)

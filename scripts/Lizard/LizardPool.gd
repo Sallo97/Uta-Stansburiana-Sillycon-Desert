@@ -55,6 +55,7 @@ func __spawn() -> Lizard:
 	liz.position = Vector3.ZERO
 	liz.velocity = Vector3.ZERO
 	liz.rotation = Vector3.ZERO
+	liz.scale = Vector3.ONE
 	liz.set_state(Constants.LizardState.IDLE)
 	liz.territory = null
 	liz.set_physics_process(true)
@@ -98,10 +99,10 @@ func __despawn_deferred(lizard: Lizard) -> void:
 		if lizard.grow_up_timer != null:
 			lizard.grow_up_timer.stop()
 			lizard.grow_up_timer.queue_free()
+		Grid.instance().destroy_territory(lizard)
 		if __instances.size() >= MAX_COUNT:
 			lizard.queue_free()
 		else:
-			Grid.instance().destroy_territory(lizard)
 			lizard.get_parent().remove_child(lizard)
 			lizard.remove_from_group("Lizards")
 			lizard.remove_from_group("Children")
@@ -115,6 +116,7 @@ func __despawn_deferred(lizard: Lizard) -> void:
 func spawn_random(prob_sex: float = 0.5, prob_orange: float = 1/3.0, prob_yellow: float = 1/3.0, prob_blue: float = 1/3.0) -> Lizard:
 	var liz: Lizard = __spawn()
 	liz.add_to_group("Lizards")
+	# print_debug("spawning random ", prob_orange, " ", prob_blue, " ", prob_yellow)
 	liz.set_lizard_prob(prob_sex, prob_orange, prob_yellow, prob_blue)
 	Graphs.instance().lizard_spawned(liz)
 	return liz

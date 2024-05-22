@@ -56,6 +56,9 @@ func create_territory(lizard: Lizard) -> Territory:
 
 
 func destroy_territory(lizard: Lizard):
+	if lizard.sex == Constants.Sex.FEMALE || lizard.morph == Constants.Morph.YELLOW:
+		return
+	
 	var territory = territories.filter(func (t: Territory): return t.owner_lizard == lizard)
 	if territory.size() != 0:
 		territory = territory[0]
@@ -69,6 +72,8 @@ func destroy_territory(lizard: Lizard):
 
 
 func cell_entered(lizard: Lizard):
+	if lizard == null || lizard.is_queued_for_deletion():
+		return
 	# print_debug("Checking cells that ", lizard.morph, " entered")
 	var cell_pos: Vector2i = DistanceCalculator.instance().get_cell_at_position(lizard.position)
 	if !DistanceCalculator.instance().is_valid_cell(cell_pos):
@@ -76,13 +81,14 @@ func cell_entered(lizard: Lizard):
 		return
 	var cell: Cell = cells[cell_pos.x][cell_pos.y]
 	for t in cell.territories:
-		if t.owner_lizard != lizard && !lizard.current_territories.has(t):
+		if t.owner_lizard != null && !t.owner_lizard.is_queued_for_deletion() && t.owner_lizard != lizard && !lizard.current_territories.has(t):
 			t.owner_lizard.on_other_lizard_entered_territory(lizard)
 			lizard.on_entered_territory(t)
 	lizard.current_territories = cell.territories
 
 
 func redraw_all_territories():
+	__desert.reset_overlay()
 	for t in territories:
 		__desert.draw_pixel_array_noset(t.cells, t.color, false)
 	__desert.set_overlay_image_to_texture()

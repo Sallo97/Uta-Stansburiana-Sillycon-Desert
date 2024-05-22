@@ -23,8 +23,8 @@ const min_grow_up_timer:float = 2.0
 # Downward acceleration when in the air, in meters per seconds squared.
 const fall_acceleration = 100
 
-const orange_territory_size = 20
-const blue_territory_size = 7
+const orange_territory_size = 40
+const blue_territory_size = 15
 
 #-----------ENUMS--------------------------------------
 class Color_Values:
@@ -66,7 +66,8 @@ enum LizardState{
 	LOVING,
 	WANDERING,
 	CREATING_TERRITORY,
-	PATROLLING
+	PATROLLING,
+	ATTACKING_INTRUDER
 }
 # Morph type (it depends on the color of the lizard)
 enum Morph {ORANGE = 0, YELLOW = 1, BLUE = 2}
@@ -122,5 +123,5 @@ static func set_alleles(sex, papa_al, mama_al):
 		idx_m = absi(idx_m - 1)
 		A_m = mama_al[idx_m]
 		
-	print("child_al = ", [A_p, A_m])
+	# print("child_al = ", [A_p, A_m])
 	return [A_p, A_m]

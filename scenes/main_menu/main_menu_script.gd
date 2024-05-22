@@ -43,12 +43,13 @@ func _process(_delta):
 
 
 func _start_simulation():
+	var slider_sum := _orange_percentage_slider.value + _blue_percentage_slider.value + _yellow_percentage_slider.value
 	SceneData.initialize({
 		SceneData.Keys.DESERT_SIZE: Vector2i(int(_desert_heigth_spinbox.value), int(_desert_width_spinbox.value)),
 		SceneData.Keys.LIZARD_COUNT: _lizard_count_spinbox.value,
-		SceneData.Keys.ORANGE_PERCENTAGE: _orange_percentage_slider.value / 100.0,
-		SceneData.Keys.BLUE_PERCENTAGE: _blue_percentage_slider.value / 100.0,
-		SceneData.Keys.YELLOW_PERCENTAGE: _yellow_percentage_slider.value / 100.0,
+		SceneData.Keys.ORANGE_PERCENTAGE: _orange_percentage_slider.value / slider_sum,
+		SceneData.Keys.BLUE_PERCENTAGE: _blue_percentage_slider.value / slider_sum,
+		SceneData.Keys.YELLOW_PERCENTAGE: _yellow_percentage_slider.value / slider_sum,
 		SceneData.Keys.MESH_SUBDIVISION: _mesh_subdivision_slider.value
 	})
 	var desert_scene := preload("res://scenes/desert/desert.tscn").instantiate()
