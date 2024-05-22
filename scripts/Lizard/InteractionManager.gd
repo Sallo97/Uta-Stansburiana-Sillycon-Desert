@@ -64,10 +64,11 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 	if win:
 		l1.update_animation_parameters(1)
 		timer_attack.timeout.connect(end_interaction.bindv([l1, l2, true]))
+		l1.add_child(timer_attack)
 	else:
 		l2.update_animation_parameters(1)
 		timer_attack.timeout.connect(end_interaction.bindv([l2, l1, true]))
-
+		l2.add_child(timer_attack)
 		
 	
 
@@ -75,12 +76,12 @@ static func lizard_love(l1:Lizard, l2:Lizard):
 	l1.get_node("LoveParticles").emitting = true
 	l2.get_node("LoveParticles").emitting = true
 	
-	var timer: Timer = Timer.new()
-	timer.autostart = false
-	timer.one_shot = true
-	timer.wait_time = 0.5
-	timer.timeout.connect((func (): 
-		if l1 != null: l1.get_node("LoveParticles").emitting = false))
+	# var timer: Timer = Timer.new()
+	# timer.autostart = false
+	# timer.one_shot = true
+	# timer.wait_time = 0.5
+	# timer.timeout.connect((func (): 
+	# 	if l1 != null: l1.get_node("LoveParticles").emitting = false))
 	
 	var prob_mate: float = 0.5
 	var male

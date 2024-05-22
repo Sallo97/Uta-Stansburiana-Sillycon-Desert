@@ -1,4 +1,5 @@
 extends MeshInstance3D
+class_name DesertMesh
 
 @export var size: Vector2i = Vector2i(100, 100)
 @export var noise_multiplier: float = 10.0
@@ -78,6 +79,15 @@ func reset():
 	# set_overlay_pixelv(center, Color.GAINSBORO)
 
 
+func reset_overlay():
+	overlay_image = Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
+	set_overlay_image_to_texture()
+
+
+func set_overlay_image_to_texture():
+	overlay_texture.set_image(overlay_image)
+
+
 func set_random_pixel():
 	var x = randi_range(0, overlay_image.get_size().x - 1)
 	var y = randi_range(0, overlay_image.get_size().y - 1)
@@ -113,6 +123,10 @@ func set_overlay_pixelv(point: Vector2i, color: Color, delete = false):
 	set_overlay_pixel(point.x, point.y, color, delete)
 
 func draw_pixel_array(cells: Array[Vector2i], color: Color, delete = false):
+	draw_pixel_array_noset(cells, color, delete)
+	overlay_texture.set_image(overlay_image)
+
+func draw_pixel_array_noset(cells: Array[Vector2i], color: Color, delete = false):
 	for c in cells:
 		var original_color := overlay_image.get_pixelv(c)
 		var new_color: Color
@@ -127,7 +141,6 @@ func draw_pixel_array(cells: Array[Vector2i], color: Color, delete = false):
 			else:
 				new_color = original_color / color
 		overlay_image.set_pixelv(c, new_color)
-	overlay_texture.set_image(overlay_image)
 
 
 func draw_territory(pos: Vector2i, distance: float, color: Color, delete = false):

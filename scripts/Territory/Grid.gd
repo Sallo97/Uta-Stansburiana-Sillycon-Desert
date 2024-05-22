@@ -18,10 +18,10 @@ var cells: Array = []
 var size: Vector2i
 var territories: Array[Territory] = []
 
-var __desert: Node
+var __desert: DesertMesh
 
 
-func setup(desert_ref: Node):
+func setup(desert_ref: DesertMesh):
 	__desert = desert_ref
 	territories.clear()
 	cells.clear()
@@ -80,3 +80,9 @@ func cell_entered(lizard: Lizard):
 			t.owner_lizard.on_other_lizard_entered_territory(lizard)
 			lizard.on_entered_territory(t)
 	lizard.current_territories = cell.territories
+
+
+func redraw_all_territories():
+	for t in territories:
+		__desert.draw_pixel_array_noset(t.cells, t.color, false)
+	__desert.set_overlay_image_to_texture()

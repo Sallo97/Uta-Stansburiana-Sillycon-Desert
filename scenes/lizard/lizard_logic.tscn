@@ -911,7 +911,7 @@ draw_pass_1 = SubResource("QuadMesh_u5yup")
 [node name="FightParticles" type="GPUParticles3D" parent="."]
 material_override = SubResource("StandardMaterial3D_s2pse")
 emitting = false
-amount = 10
+amount = 3
 one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_oqjo1")
