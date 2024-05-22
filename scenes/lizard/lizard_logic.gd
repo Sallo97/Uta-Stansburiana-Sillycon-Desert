@@ -217,6 +217,12 @@ func becoming_adult():
 	scale_object_local( Vector3(2,2,2) )
 	set_state(Constants.LizardState.IDLE)
 
+func turn_blue():
+	morph = Constants.Morph.BLUE
+	alleles = Constants.Alleles_Comb.blue_comb[0]
+	set_body_color()
+	set_state(Constants.LizardState.IDLE)
+
 #------------INITIALIZE FUNC----------------------------------------
 func initialize(other_lizard:Lizard = null):
 	if other_lizard == null:

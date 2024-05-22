@@ -57,7 +57,7 @@ func create_territory(lizard: Lizard) -> Territory:
 
 func destroy_territory(lizard: Lizard):
 	if lizard.sex == Constants.Sex.FEMALE && lizard.territory != null && !lizard.territory.is_queued_for_deletion():
-		lizard.territory.females.erase(lizard)
+		territories[territories.find(lizard.territory)].females.erase(lizard)
 		return
 	if lizard.morph == Constants.Morph.YELLOW:
 		return
@@ -67,6 +67,20 @@ func destroy_territory(lizard: Lizard):
 		territory = territory[0]
 	else:
 		return
+
+	var yellows = territory.females.filter(func (l): return !l.is_queued_for_deletion() && l.sex == Constants.Sex.MALE && l.morph == Constants.Morph.YELLOW)
+	if yellows.size() > 0:
+		var new_owner = yellows.pick_random()
+		Graphs.instance().lizard_died(new_owner)
+		new_owner.turn_blue()
+		Graphs.instance().lizard_spawned(new_owner)
+		territories[territories.find(territory)].set_new_owner(new_owner)
+		new_owner.territory = territory
+		territories[territories.find(territory)].females.erase(new_owner)
+		return
+
+
+
 	territories.erase(territory)
 	for c in territory.cells:
 		cells[c.x][c.y].remove_territory(territory)

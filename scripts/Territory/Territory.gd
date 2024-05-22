@@ -16,8 +16,14 @@ func _init(desert_ref, distance_calculator_ref, grid_ref, owner: Lizard):
 			size = Constants.blue_territory_size
 	color = Constants.Color_Values.ret_color(owner_lizard.morph)
 	desert = desert_ref
-	cells = DistanceCalculator.instance().get_cells_within_distance(DistanceCalculator.instance().get_cell_at_position(owner_lizard.position), size)
+	cells = DistanceCalculator.instance().get_cells_within_distance(DistanceCalculator.instance().get_cell_at_position(owner_lizard.position), size).filter(DistanceCalculator.instance().is_valid_cell)
 	# print_debug(cells)
+	draw()
+
+func set_new_owner(lizard: Lizard):
+	delete()
+	owner_lizard = lizard
+	color = Constants.Color_Values.ret_color(owner_lizard.morph)
 	draw()
 
 func draw():
