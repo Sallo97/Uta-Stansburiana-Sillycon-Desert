@@ -15,6 +15,8 @@ extends Control
 
 @export var _start_button: Button
 
+var desert_scene: Node
+
 
 func _ready():
 	_orange_percentage_slider.value = 100
@@ -24,6 +26,14 @@ func _ready():
 
 
 func _process(_delta):
+	if Input.is_action_just_pressed("main_menu") && desert_scene != null:
+		# get_tree().root.remove_child(desert_scene)
+		desert_scene.queue_free()
+		desert_scene = null
+		Graphs.destroy()
+
+		show()
+
 	var slider_sum := _orange_percentage_slider.value + _blue_percentage_slider.value + _yellow_percentage_slider.value
 	if slider_sum == 0:
 		_orange_percentage_slider.value = 1
@@ -43,6 +53,8 @@ func _process(_delta):
 
 
 func _start_simulation():
+	if desert_scene != null:
+		return
 	var slider_sum := _orange_percentage_slider.value + _blue_percentage_slider.value + _yellow_percentage_slider.value
 	SceneData.initialize({
 		SceneData.Keys.DESERT_SIZE: Vector2i(int(_desert_heigth_spinbox.value), int(_desert_width_spinbox.value)),
@@ -52,7 +64,7 @@ func _start_simulation():
 		SceneData.Keys.YELLOW_PERCENTAGE: _yellow_percentage_slider.value / slider_sum,
 		SceneData.Keys.MESH_SUBDIVISION: _mesh_subdivision_slider.value
 	})
-	var desert_scene := preload("res://scenes/desert/desert.tscn").instantiate()
+	desert_scene = load("res://scenes/desert/desert.tscn").instantiate()
 	get_tree().root.add_child(desert_scene)
 	#call_deferred("free")
 	hide()

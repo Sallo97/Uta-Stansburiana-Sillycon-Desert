@@ -18,6 +18,12 @@ static func instance() -> Graphs:
 		return __instance
 
 
+static func destroy():
+	__instance.queue_free()
+	__instance = null
+	DebugDraw2D.clear_graphs()
+
+
 var _lizards: Array[int] = [0, 0, 0]
 var _graphs_visible: bool = true
 var _graph: DebugDraw2DGraph

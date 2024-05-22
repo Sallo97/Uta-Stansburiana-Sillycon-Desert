@@ -18,10 +18,6 @@ const MAX_ITERATIONS = 20000
 const SLOPE_MULTIPLIER = 50
 
 
-func _ready():
-	pass # Replace with function body.
-
-
 func distance(p1: Vector2, p2: Vector2i):
 	# return grid.get_cell_height(p1.x, p1.y)
 	return p1.distance_to(p2)
