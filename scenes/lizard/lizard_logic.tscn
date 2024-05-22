@@ -728,6 +728,7 @@ animation = &"death"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1o51k"]
 advance_mode = 2
+advance_condition = &"is_idle"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gk2d5"]
 advance_mode = 2
@@ -766,7 +767,7 @@ states/cuddle/position = Vector2(493.163, 235.785)
 states/death/node = SubResource("AnimationNodeAnimation_3b0iy")
 states/death/position = Vector2(493.48, -39.6625)
 transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_1o51k"), "RESET", "death", SubResource("AnimationNodeStateMachineTransition_gk2d5"), "death", "RESET", SubResource("AnimationNodeStateMachineTransition_bp32w"), "RESET", "attack", SubResource("AnimationNodeStateMachineTransition_2828c"), "attack", "RESET", SubResource("AnimationNodeStateMachineTransition_nh8am"), "cuddle", "RESET", SubResource("AnimationNodeStateMachineTransition_hd8ff"), "RESET", "cuddle", SubResource("AnimationNodeStateMachineTransition_r4onj")]
-graph_offset = Vector2(14.4176, -89.2251)
+graph_offset = Vector2(-166.755, -121.269)
 
 [node name="baseLizard" type="CharacterBody3D" groups=["Lizards"]]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)

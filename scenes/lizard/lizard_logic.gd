@@ -31,6 +31,7 @@ var cell_change_timer: Timer
 var speed:float
 var destination_point
 var direction 
+var territory: Territory = null
 #------------FLAGS-------------------------------
 var is_adult:bool = true 
 var falling: bool = true
@@ -38,7 +39,8 @@ var found_territory: bool = false
 var pattern_step: int = 1
 var behaviour_iterations: int = 0
 var state: Constants.LizardState = Constants.LizardState.IDLE
-var territory: Territory = null
+var can_bounce: bool = true
+var can_interact: bool = true
 #-------------TIMER VARIABLES---------------------
 var death_timer:Timer
 var lifetime: float
@@ -68,6 +70,8 @@ func set_lizard_child(papa:Lizard, mama:Lizard):
 	sex = randomSex()
 	alleles = Constants.set_alleles(sex, papa.alleles, mama.alleles)
 	morph = Constants.Alleles_Comb.ret_morph(alleles)
+	# if morph == Constants.Morph.YELLOW:
+	# 	print_debug("Yellow child born!")
 	self.global_position = ((papa.global_position + mama.global_position)/2) + (Vector3.UP * 10)
 	is_adult = false
 	set_grow_up_timer()
@@ -75,13 +79,15 @@ func set_lizard_child(papa:Lizard, mama:Lizard):
 
 func main_settings():
 	floor_constant_speed = true
-	floor_max_angle = (PI / 2.5)
+	floor_max_angle = (PI / 2.1)
 	set_mesh()
 	set_body_color()
-	size = randomSize(sex, morph)
+	size = Lizard.randomSize(sex, morph)
 	set_lizard_size()
 	update_animation_parameters(0)
-	lifetime = randi_range(Constants.min_lifetime, Constants.max_lifetime)
+	@warning_ignore("narrowing_conversion")
+	lifetime = int(float(randi_range(Constants.min_lifetime, Constants.max_lifetime)) * (0.7 if morph == Constants.Morph.ORANGE else 1.0))
+	@warning_ignore("narrowing_conversion")
 	speed = randi_range(Constants.min_speed, Constants.max_speed)
 	set_death_timer()
 
@@ -91,7 +97,7 @@ func main_settings():
 # It chooses randomly the sex of the lizard.
 # Getting a male or a female is equiprobable
 static func randomSex(prob:float = 0.5):
-	return Constants.Sex.MALE
+	# return Constants.Sex.MALE
 	var is_male : bool = randf() <= prob 
 	if is_male:
 		return Constants.Sex.MALE
@@ -177,10 +183,16 @@ func set_lizard_size():
 # This function removes the ribbon and the lips from the mesh
 # if the current lizard is male
 func set_female_attribute():
-	if (sex == Constants.Sex.MALE) :
+	if (sex == Constants.Sex.MALE):
 		adult_lips_node.hide()
 		adult_ribbon_node.hide()
 		baby_ribbon_node.hide()
+		baby_lips_node.hide()
+	else:
+		adult_lips_node.show()
+		adult_ribbon_node.show()
+		baby_ribbon_node.show()
+		baby_lips_node.show()
 		
 func set_adult_mesh():
 	adult_lizard_mesh.show()
@@ -203,6 +215,7 @@ func becoming_adult():
 	add_to_group("Lizards")
 	set_mesh()
 	scale_object_local( Vector3(2,2,2) )
+	set_state(Constants.LizardState.IDLE)
 
 #------------INITIALIZE FUNC----------------------------------------
 func initialize(other_lizard:Lizard = null):
@@ -216,7 +229,7 @@ func initialize(other_lizard:Lizard = null):
 #---------------API FUNC-------------------------------
 
 func _on_area_3d_body_entered(body):
-	if(is_adult and body != self and body.is_in_group("Lizards") ): #
+	if(is_adult and body != self and body.is_in_group("Lizards") && can_interact): #
 		InteractionManager.start_interaction(self, body)
 
 func _physics_process(delta):
@@ -229,17 +242,26 @@ func _physics_process(delta):
 	match state:
 		Constants.LizardState.IDLE:
 			# Decide action
-			match sex:
-				Constants.Sex.MALE:
-					match morph:
-						Constants.Morph.ORANGE, Constants.Morph.BLUE when territory == null:
-							set_state(Constants.LizardState.SEARCHING)
-						Constants.Morph.ORANGE, Constants.Morph.BLUE when territory != null:
-							set_state(Constants.LizardState.PATROLLING)
-						Constants.Morph.YELLOW:
-							set_state(Constants.LizardState.WANDERING)
-				Constants.Sex.FEMALE:
+
+			match is_adult:
+				false:
 					set_state(Constants.LizardState.WANDERING)
+				true:
+					match sex:
+						Constants.Sex.MALE:
+							match morph:
+								Constants.Morph.ORANGE, Constants.Morph.BLUE when territory == null:
+									set_state(Constants.LizardState.SEARCHING)
+								Constants.Morph.ORANGE, Constants.Morph.BLUE when territory != null:
+									set_state(Constants.LizardState.PATROLLING)
+								Constants.Morph.YELLOW:
+									set_state(Constants.LizardState.WANDERING)
+						Constants.Sex.FEMALE:
+							if territory == null || territory.is_queued_for_deletion():
+								set_state(Constants.LizardState.WANDERING)
+							else:
+								set_state(Constants.LizardState.PATROLLING)
+				
 
 		Constants.LizardState.SEARCHING when can_move():
 			hill_climb_pattern()
@@ -267,9 +289,29 @@ func _physics_process(delta):
 	if !is_on_floor() || !can_move() : #and raycast.is_colliding()
 		stop_velocity()
 		
-	if is_on_wall():
-		rotate(Vector3.UP, PI / 2.0)
-		velocity = velocity.rotated(Vector3.UP, PI / 2.0)
+	if is_on_wall() && can_bounce:
+		if destination_point is Vector3:
+			can_bounce = false
+			destination_point = destination_point.bounce(get_wall_normal())
+			var dest: Vector3 = destination_point
+			dest.y = position.y
+			look_at_from_position(global_position, dest)
+			var bounce_timer := Timer.new()
+			bounce_timer.autostart = false
+			bounce_timer.one_shot = true
+			bounce_timer.wait_time = 0.2
+			bounce_timer.timeout.connect(func ():
+				can_bounce = true
+				bounce_timer.queue_free())
+			add_child(bounce_timer)
+			bounce_timer.start()
+			# rotate(Vector3.UP, PI / 2.0)
+			# velocity = velocity.rotated(Vector3.UP, PI / 2.0)
+			
+	var coll := get_last_slide_collision()
+	if coll != null && coll.get_collision_count() > 0 && coll.get_collider(0) is Lizard:
+		self.position += Vector3.FORWARD.rotated(Vector3.UP, randf_range(-PI, PI))
+
 	move_and_slide()
 	
 func _ready():
@@ -283,13 +325,23 @@ func normal_velocity():
 
 func on_other_lizard_entered_territory(other: Lizard):
 	if state == Constants.LizardState.PATROLLING && other.sex == Constants.Sex.MALE:
+		if other.morph == Constants.Morph.YELLOW:
+			match morph:
+				Constants.Morph.ORANGE when randf() > 0.8: # Probability that a yellow lizard enters unnoticed
+					return
+				# Constants.Morph.BLUE when randf() > 0.8:
+				# 	return
 		set_state(Constants.LizardState.ATTACKING_INTRUDER)
 		destination_point = other
 
 
 func on_entered_territory(territory: Territory):
 	if (sex == Constants.Sex.FEMALE || morph == Constants.Morph.YELLOW) && state == Constants.LizardState.WANDERING:
+		if territory.owner_lizard.morph == Constants.Morph.BLUE && territory.females.size() > 0:
+			return
 		self.territory = territory
+		if !territory.females.has(self):
+			territory.females.push_back(self)
 		set_state(Constants.LizardState.PATROLLING)
 
 #-----------ANIMATIONS FUNC-------------------
@@ -382,6 +434,7 @@ func hill_climb_pattern_2():
 			behaviour_iterations -= 1
 			# print_debug(behaviour_iterations)
 			if behaviour_iterations == 0:
+				# print_debug("Stopped max iterations")
 				set_state(Constants.LizardState.CREATING_TERRITORY)
 		timer.queue_free())
 	add_child(timer)
@@ -398,7 +451,8 @@ func hill_climb_pattern_3():
 	# STEP 3 - Mi muovo verso destination_point, mi fermo quando lo raggiungo
 	# Dentro l'if sarebbe meglio dire che se la distanza tra self.position e' higher point e' 
 	# dentro un certo range, si ferma
-	if(abs(self.global_position.x - destination_point.x) < 0.2 || abs(self.global_position.z - destination_point.z) < 0.2):
+	if(abs(self.global_position.x - destination_point.x) < 0.005 && abs(self.global_position.z - destination_point.z) < 0.005):
+		# print_debug("Stopped: ", abs(self.global_position.x - destination_point.x), ", ", abs(self.global_position.z - destination_point.z))
 		set_state(Constants.LizardState.CREATING_TERRITORY)
 
 	pattern_step = 3
@@ -423,9 +477,9 @@ func set_state(new_state: Constants.LizardState):
 		Constants.LizardState.SEARCHING:
 			match morph:
 				Constants.Morph.ORANGE:
-					behaviour_iterations = 10
+					behaviour_iterations = 15
 				Constants.Morph.BLUE:
-					behaviour_iterations = 5
+					behaviour_iterations = 7
 				_: assert(false) # IMPOSSIBLE!!!
 
 
@@ -442,14 +496,14 @@ func wander_pattern():
 
 func wander_pattern_1():
 	# STEP 1 - Get random point in radius
-	destination_point = global_position.direction_to((global_transform * Vector3.FORWARD).rotated(Vector3.UP, randf_range(-PI / 6.0, PI + 6.0)))
+	destination_point = global_position.direction_to(global_transform * Vector3.FORWARD).rotated(Vector3.UP, randf_range(-PI / 3.0, PI + 3.0))
 	look_at_from_position(self.global_position, self.global_position + destination_point)
 	speed = 20
 
 	var timer: Timer = Timer.new()
 	timer.autostart = false
 	timer.one_shot = false
-	timer.wait_time = 1
+	timer.wait_time = 3
 	timer.timeout.connect(func ():
 		if state == Constants.LizardState.WANDERING:
 			pattern_step = 1
@@ -485,6 +539,7 @@ func patrol_own_territory():
 func patrol_own_territory1():
 	if territory == null || territory.is_queued_for_deletion():
 		set_state(Constants.LizardState.IDLE)
+		return
 	# STEP 1 - Get random point in territory
 	destination_point = DistanceCalculator.instance().get_position_of_cell(territory.cells.pick_random())
 	destination_point.y = global_position.y
@@ -507,6 +562,7 @@ func patrol_own_territory1():
 func patrol_own_territory2():
 	if territory == null || territory.is_queued_for_deletion():
 		set_state(Constants.LizardState.IDLE)
+		return
 	direction = global_position.direction_to(destination_point)
 	velocity = direction * speed
 	velocity.y = 0
@@ -528,6 +584,7 @@ func attack_intruder1():
 	if destination_point == null || destination_point.is_queued_for_deletion():
 		destination_point = null
 		set_state(Constants.LizardState.IDLE)
+		return
 	var destination = destination_point.global_position
 	destination.y = global_position.y
 	look_at_from_position(self.global_position, destination)
@@ -550,6 +607,7 @@ func attack_intruder2():
 	if destination_point == null || destination_point.is_queued_for_deletion():
 		destination_point = null
 		set_state(Constants.LizardState.IDLE)
+		return
 	var destination = destination_point.global_position
 	destination.y = global_position.y
 	look_at_from_position(self.global_position, destination)

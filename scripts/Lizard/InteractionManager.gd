@@ -1,5 +1,11 @@
 class_name InteractionManager
 
+enum InteractionType{
+	FIGHT,
+	LOVE,
+	MEETING
+}
+
 static var lizs_interacting := []
 
 static func start_interaction(l1: Lizard, l2: Lizard):
@@ -11,6 +17,8 @@ static func start_interaction(l1: Lizard, l2: Lizard):
 	
 	
 static func stop_lizard(l1:Lizard, l2:Lizard):
+	l1.set_state(Constants.LizardState.STOPPED)
+	l2.set_state(Constants.LizardState.STOPPED)
 	l1.stop_velocity()
 	l2.stop_velocity()
 	var stop_timer: Timer = Timer.new()
@@ -37,9 +45,16 @@ static func deciding_interaction(l1:Lizard, l2:Lizard):
 	if(l1.sex != l2.sex):
 		lizard_love(l1, l2)
 	elif(l1.sex == Constants.Sex.MALE):
-		lizard_fight(l1, l2)
+		if randf() < 0.5:
+			lizard_fight(l1, l2)
+		else:
+			lizard_meeting(l1, l2)
+	else:
+		lizard_meeting(l1, l2)
 
 static func lizard_fight(l1:Lizard, l2:Lizard):
+	l1.set_state(Constants.LizardState.FIGHTING)
+	l2.set_state(Constants.LizardState.FIGHTING)
 	l1.get_node("FightParticles").emitting = true
 	l2.get_node("FightParticles").emitting = true
 
@@ -63,16 +78,18 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 	timer_attack.wait_time = 0.5
 	if win:
 		l1.update_animation_parameters(1)
-		timer_attack.timeout.connect(end_interaction.bindv([l1, l2, true]))
+		timer_attack.timeout.connect(end_interaction.bindv([l1, l2, InteractionType.FIGHT]))
 		l1.add_child(timer_attack)
 	else:
 		l2.update_animation_parameters(1)
-		timer_attack.timeout.connect(end_interaction.bindv([l2, l1, true]))
+		timer_attack.timeout.connect(end_interaction.bindv([l2, l1, InteractionType.FIGHT]))
 		l2.add_child(timer_attack)
 		
 	
 
 static func lizard_love(l1:Lizard, l2:Lizard):
+	l1.set_state(Constants.LizardState.LOVING)
+	l2.set_state(Constants.LizardState.LOVING)
 	l1.get_node("LoveParticles").emitting = true
 	l2.get_node("LoveParticles").emitting = true
 	
@@ -116,20 +133,55 @@ static func lizard_love(l1:Lizard, l2:Lizard):
 		else:
 			papa = l2
 			mama = l1
-		timer_love.timeout.connect(end_interaction.bindv([papa, mama, false]))
+		timer_love.timeout.connect(end_interaction.bindv([papa, mama, InteractionType.LOVE]))
 
 
-static func end_interaction(l1: Lizard, l2: Lizard, is_fight: bool):
+static func lizard_meeting(l1: Lizard, l2: Lizard):
+	var timer_meeting : Timer = Timer.new()
+	timer_meeting.autostart = true
+	timer_meeting.one_shot = true
+	timer_meeting.wait_time = 0.5
+	l1.add_child(timer_meeting)
+	timer_meeting.timeout.connect(end_interaction.bindv([l1, l2, InteractionType.MEETING]))
+
+
+static func end_interaction(l1: Lizard, l2: Lizard, type: InteractionType):
 	lizs_interacting = lizs_interacting.filter(
 		func(l):
 			return l != l1 && l != l2)
 
-	if is_fight:
-		LizardPool.instance().despawn(l2)
-		l2.set_state(Constants.LizardState.IDLE)
-	else:
-		LizardPool.instance().spawn_child(l1, l2)
-		l1.set_state(Constants.LizardState.IDLE)
-		if l1.morph == Constants.Morph.YELLOW:
-			l1.territory = null
-		l2.set_state(Constants.LizardState.IDLE)
+	l1.update_animation_parameters(0)
+	l2.update_animation_parameters(0)
+	match type:
+		InteractionType.FIGHT:
+			LizardPool.instance().despawn(l2)
+			l1.set_state(Constants.LizardState.IDLE)
+		InteractionType.LOVE:
+			LizardPool.instance().spawn_child(l1, l2)
+			l1.set_state(Constants.LizardState.IDLE)
+			if l1.morph == Constants.Morph.YELLOW:
+				l1.territory = null
+			l2.set_state(Constants.LizardState.IDLE)
+		InteractionType.MEETING:
+			l1.set_state(Constants.LizardState.IDLE)
+			l2.set_state(Constants.LizardState.IDLE)
+
+	var interaction_timer_1: Timer = Timer.new()
+	interaction_timer_1.autostart = false
+	interaction_timer_1.one_shot = true
+	interaction_timer_1.wait_time = 1 if l1.sex == Constants.Sex.MALE else 5
+	interaction_timer_1.timeout.connect(func ():
+		l1.can_interact = true
+		interaction_timer_1.queue_free())
+	l1.add_child(interaction_timer_1)
+	interaction_timer_1.start()
+
+	var interaction_timer_2: Timer = Timer.new()
+	interaction_timer_2.autostart = false
+	interaction_timer_2.one_shot = true
+	interaction_timer_2.wait_time = 1 if l2.sex == Constants.Sex.MALE else 5
+	interaction_timer_2.timeout.connect(func ():
+		l2.can_interact = true
+		interaction_timer_2.queue_free())
+	l2.add_child(interaction_timer_2)
+	interaction_timer_2.start()

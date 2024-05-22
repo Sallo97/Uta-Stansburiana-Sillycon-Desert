@@ -1,6 +1,7 @@
 class_name Territory
 
 var owner_lizard: Lizard
+var females: Array[Lizard] = []
 var size: float
 var color: Color
 var desert

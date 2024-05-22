@@ -56,7 +56,10 @@ func create_territory(lizard: Lizard) -> Territory:
 
 
 func destroy_territory(lizard: Lizard):
-	if lizard.sex == Constants.Sex.FEMALE || lizard.morph == Constants.Morph.YELLOW:
+	if lizard.sex == Constants.Sex.FEMALE && lizard.territory != null && !lizard.territory.is_queued_for_deletion():
+		lizard.territory.females.erase(lizard)
+		return
+	if lizard.morph == Constants.Morph.YELLOW:
 		return
 	
 	var territory = territories.filter(func (t: Territory): return t.owner_lizard == lizard)

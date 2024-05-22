@@ -13,8 +13,8 @@ const max_speed:float = 50.0
 const max_velocity = 200
 
 # Time in seconds
-const max_lifetime:float = 30.0
-const min_lifetime:float = 10.0
+const max_lifetime:float = 40.0
+const min_lifetime:float = 15.0
 
 # Time in seconds
 const max_grow_up_timer:float = 5.0
@@ -23,8 +23,8 @@ const min_grow_up_timer:float = 2.0
 # Downward acceleration when in the air, in meters per seconds squared.
 const fall_acceleration = 100
 
-const orange_territory_size = 40
-const blue_territory_size = 15
+const orange_territory_size = 20
+const blue_territory_size = 10
 
 #-----------ENUMS--------------------------------------
 class Color_Values:
@@ -50,11 +50,11 @@ class Alleles_Comb:
 					[Allele.B, Allele.Y] ]
 	
 	static func ret_morph(comb):
-		if(orange_comb.find(comb)):
+		if(orange_comb.find(comb) != -1):
 			return Morph.ORANGE
-		elif(blue_comb.find(comb)):
+		elif(blue_comb.find(comb) != -1):
 			return Morph.BLUE
-		elif(yellow_comb.find(comb)):
+		elif(yellow_comb.find(comb) != -1):
 			return Morph.YELLOW
 
 
@@ -82,35 +82,25 @@ enum Allele {O = 0, B = 1, Y = 2}
 
 # It determines the alleles depending on the
 # morph of the lizard
-static func set_random_alleles(morph:Constants.Morph,
-			prob_o = 0.5, prob_b = 0.5, prob_y = 0.5):
-	var allele_1:Constants.Allele
-	var allele_2:Constants.Allele
-	
-	var is_orange:bool = randf() <= prob_o
-	var is_blue:bool = randf() <= prob_b
-	var is_yellow:bool = randf() <= prob_y
-
-	if (morph == Constants.Morph.ORANGE):
-		allele_1 = Constants.Allele.O
-		if(is_orange):
-			allele_2 = Constants.Allele.O
-		elif(is_blue):
-			allele_2 = Constants.Allele.B
-		elif(is_yellow):
-			allele_2 = Constants.Allele.Y
-	
-	elif (morph == Constants.Morph.BLUE):
-		allele_1 = Constants.Allele.B
-		allele_2 = Constants.Allele.B
-	
-	elif (morph == Constants.Morph.YELLOW):
-		allele_1 = Constants.Allele.Y
-		if(is_blue):
-			allele_2 = Constants.Allele.B
-		elif(is_yellow):
-			allele_2 = Constants.Allele.Y
-	return [allele_1, allele_2]
+static func set_random_alleles(morph:Morph,
+			prob_o = 1/3.0, prob_b = 1/3.0, prob_y = 1/3.0):
+	var out
+	match morph:
+		Morph.ORANGE:
+			out = [
+				[Allele.O, Allele.O],
+				[Allele.O, Allele.B],
+				[Allele.O, Allele.Y]
+			].pick_random()
+		Morph.BLUE:
+			out = [Allele.B, Allele.B]
+		Morph.YELLOW:
+			out = [
+				[Allele.Y, Allele.B],
+				[Allele.Y, Allele.Y]
+			].pick_random()
+	out.shuffle()
+	return out
 	
 static func set_alleles(sex, papa_al, mama_al):
 	

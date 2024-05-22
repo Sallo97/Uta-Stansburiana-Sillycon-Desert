@@ -55,10 +55,11 @@ func __spawn() -> Lizard:
 	liz.position = Vector3.ZERO
 	liz.velocity = Vector3.ZERO
 	liz.rotation = Vector3.ZERO
-	liz.scale = Vector3.ONE
+	liz.scale = Vector3.ONE * 0.5
 	liz.set_state(Constants.LizardState.IDLE)
 	liz.territory = null
 	liz.set_physics_process(true)
+	liz.can_interact = true
 	liz.show()
 
 	var timer: Timer = Timer.new()
@@ -77,6 +78,7 @@ func __spawn() -> Lizard:
 
 func despawn(lizard: Lizard) -> void:
 	lizard.hide()
+	lizard.can_interact = false
 	var timer: Timer = lizard.cell_change_timer
 	if timer != null && !timer.is_queued_for_deletion():
 		timer.stop()

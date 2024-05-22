@@ -14,7 +14,7 @@ static func instance() -> DistanceCalculator:
 		return __instance
 
 
-const MAX_ITERATIONS = 200
+const MAX_ITERATIONS = 20000
 const SLOPE_MULTIPLIER = 50
 
 
