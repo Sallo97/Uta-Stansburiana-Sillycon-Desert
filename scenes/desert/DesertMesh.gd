@@ -27,9 +27,9 @@ func _ready():
 	reset()
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	pass
+	if Input.is_action_just_pressed("redraw_territories"):
+		Grid.instance().redraw_all_territories()
 
 
 func reset():
@@ -115,7 +115,6 @@ func set_overlay_pixel(x: int, y: int, color: Color, delete = false):
 			new_color = Color(0,0,0,0)
 		else:
 			new_color = original_color / color
-		print_debug(new_color)
 	overlay_image.set_pixel(x, y, new_color)
 	overlay_texture.set_image(overlay_image)
 
