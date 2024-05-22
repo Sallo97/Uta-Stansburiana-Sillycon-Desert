@@ -105,8 +105,20 @@ func max_height(cells: Array[Vector2i]) -> Array:
 
 
 func max_height_in_circle(center: Vector2i, radius: int) -> Array:
-	var cells: Array[Vector2i] = rasterize_circle(center, radius)
+	var cells: Array[Vector2i] = rasterize_circle(center, radius).filter(DistanceCalculator.instance().is_valid_cell)
 	return max_height(cells)
+
+func max_height_in_circle_approx(center: Vector2i, radius: int) -> Array:
+	var cells: Array[Vector2i] = rasterize_circle(center, radius).filter(DistanceCalculator.instance().is_valid_cell)
+	@warning_ignore("shadowed_global_identifier")
+	var max = cells.pick_random()
+	max = [max, Grid.instance().get_cell_heightv(max)]
+	for i in 10:
+		var current_cell = cells.pick_random()
+		var cell_height: float = Grid.instance().get_cell_heightv(current_cell)
+		if cell_height > max[1]:
+			max = [current_cell, cell_height]
+	return max
 
 
 func get_cell_at_position(absolute_position: Vector3) -> Vector2i:

@@ -902,7 +902,7 @@ libraries = {
 material_override = SubResource("StandardMaterial3D_4tpno")
 cast_shadow = 0
 emitting = false
-amount = 3
+amount = 1
 lifetime = 2.0
 one_shot = true
 draw_order = 2
@@ -912,7 +912,7 @@ draw_pass_1 = SubResource("QuadMesh_u5yup")
 [node name="FightParticles" type="GPUParticles3D" parent="."]
 material_override = SubResource("StandardMaterial3D_s2pse")
 emitting = false
-amount = 3
+amount = 1
 one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_oqjo1")

@@ -21,6 +21,8 @@ static func stop_lizard(l1:Lizard, l2:Lizard):
 	l2.set_state(Constants.LizardState.STOPPED)
 	l1.stop_velocity()
 	l2.stop_velocity()
+	l1.can_interact = false
+	l2.can_interact = false
 	var stop_timer: Timer = Timer.new()
 	l1.get_tree().root.add_child(stop_timer)
 	stop_timer.autostart = true
@@ -169,7 +171,7 @@ static func end_interaction(l1: Lizard, l2: Lizard, type: InteractionType):
 	var interaction_timer_1: Timer = Timer.new()
 	interaction_timer_1.autostart = false
 	interaction_timer_1.one_shot = true
-	interaction_timer_1.wait_time = 1 if l1.sex == Constants.Sex.MALE else 5
+	interaction_timer_1.wait_time = Constants.male_interaction_cooldown if l1.sex == Constants.Sex.MALE else Constants.female_interaction_cooldown
 	interaction_timer_1.timeout.connect(func ():
 		l1.can_interact = true
 		interaction_timer_1.queue_free())
@@ -179,7 +181,7 @@ static func end_interaction(l1: Lizard, l2: Lizard, type: InteractionType):
 	var interaction_timer_2: Timer = Timer.new()
 	interaction_timer_2.autostart = false
 	interaction_timer_2.one_shot = true
-	interaction_timer_2.wait_time = 1 if l2.sex == Constants.Sex.MALE else 5
+	interaction_timer_2.wait_time = Constants.male_interaction_cooldown if l2.sex == Constants.Sex.MALE else Constants.female_interaction_cooldown
 	interaction_timer_2.timeout.connect(func ():
 		l2.can_interact = true
 		interaction_timer_2.queue_free())

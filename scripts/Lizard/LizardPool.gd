@@ -15,7 +15,7 @@ static func instance() -> LizardPool:
 
 
 const WARM_COUNT = 30
-const MAX_COUNT = 100
+const MAX_COUNT = 1000
 const MIN_COUNT = 0
 
 var __root: Node

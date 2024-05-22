@@ -9,7 +9,9 @@ enum Keys {
 	ORANGE_PERCENTAGE,
 	BLUE_PERCENTAGE,
 	YELLOW_PERCENTAGE,
-	MESH_SUBDIVISION
+	MESH_SUBDIVISION,
+	LIFESPAN_MULTIPLIER,
+	TERRITORY_SIZE_MULTIPLIER
 }
 
 
@@ -42,3 +44,9 @@ func get_yellow_probability(default: float) -> float:
 
 func get_mesh_subdivision(default: int) -> int:
 	return __get(Keys.MESH_SUBDIVISION, default)
+
+func get_lifespan_multiplier(default: float) -> float:
+	return __get(Keys.LIFESPAN_MULTIPLIER, default)
+
+func get_territory_multiplier(default: float) -> float:
+	return __get(Keys.TERRITORY_SIZE_MULTIPLIER, default)

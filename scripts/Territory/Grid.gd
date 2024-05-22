@@ -56,10 +56,10 @@ func create_territory(lizard: Lizard) -> Territory:
 
 
 func destroy_territory(lizard: Lizard):
-	if lizard.sex == Constants.Sex.FEMALE && lizard.territory != null && !lizard.territory.is_queued_for_deletion():
-		territories[territories.find(lizard.territory)].females.erase(lizard)
-		return
-	if lizard.morph == Constants.Morph.YELLOW:
+	if (lizard.sex == Constants.Sex.FEMALE && lizard.territory != null && !lizard.territory.is_queued_for_deletion()) || (lizard.morph == Constants.Morph.YELLOW):
+		var index = territories.find(lizard.territory)
+		if index != -1:
+			territories[index].females.erase(lizard)
 		return
 	
 	var territory = territories.filter(func (t: Territory): return t.owner_lizard == lizard)
@@ -86,6 +86,11 @@ func destroy_territory(lizard: Lizard):
 		cells[c.x][c.y].remove_territory(territory)
 	territory.owner_lizard.territory = null
 	territory.delete()
+
+	var del_territories = territories.filter(func (t): return (t.owner_lizard == null || t.owner_lizard.is_queued_for_deletion() || t.owner_lizard.visible == false))
+	for t in del_territories:
+		t.delete()
+		territories.erase(t)
 
 
 func cell_entered(lizard: Lizard):

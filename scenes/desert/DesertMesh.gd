@@ -30,6 +30,18 @@ func _ready():
 func _process(_delta):
 	if Input.is_action_just_pressed("redraw_territories"):
 		Grid.instance().redraw_all_territories()
+		var lizards = get_tree().get_nodes_in_group("Lizards")
+		Graphs.instance()._lizards = [
+			lizards.filter(func (l): return l.morph == Constants.Morph.ORANGE).size(),
+			lizards.filter(func (l): return l.morph == Constants.Morph.BLUE).size(),
+			lizards.filter(func (l): return l.morph == Constants.Morph.YELLOW).size()
+		]
+		lizards = get_tree().get_nodes_in_group("Children")
+		Graphs.instance()._lizards += [
+			lizards.filter(func (l): return l.morph == Constants.Morph.ORANGE).size(),
+			lizards.filter(func (l): return l.morph == Constants.Morph.BLUE).size(),
+			lizards.filter(func (l): return l.morph == Constants.Morph.YELLOW).size()
+		]
 
 
 func reset():

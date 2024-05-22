@@ -10,6 +10,12 @@ extends Control
 @export var _yellow_percentage_label: Label
 @export var _yellow_percentage_slider: Slider
 
+@export var _lifespan_slider: Slider
+@export var _lifespan_label: Label
+
+@export var _territory_size_slider: Slider
+@export var _territory_size_label: Label
+
 @export var _mesh_subdivision_slider: Slider
 @export var _mesh_subdivision_label: Label
 
@@ -45,6 +51,9 @@ func _process(_delta):
 		_blue_percentage_label.text = "{p}%".format({"p": int(_blue_percentage_slider.value * max_perc)})
 		_yellow_percentage_label.text = "{p}%".format({"p": int(_yellow_percentage_slider.value * max_perc)})
 
+	_lifespan_label.text = "{p}".format({"p": _lifespan_slider.value})
+	_territory_size_label.text = "{p}".format({"p": _territory_size_slider.value})
+
 	if _desert_heigth_spinbox.value <= 0:
 		_desert_heigth_spinbox.value = 100
 	if _desert_width_spinbox.value <= 0:
@@ -62,7 +71,9 @@ func _start_simulation():
 		SceneData.Keys.ORANGE_PERCENTAGE: _orange_percentage_slider.value / slider_sum,
 		SceneData.Keys.BLUE_PERCENTAGE: _blue_percentage_slider.value / slider_sum,
 		SceneData.Keys.YELLOW_PERCENTAGE: _yellow_percentage_slider.value / slider_sum,
-		SceneData.Keys.MESH_SUBDIVISION: _mesh_subdivision_slider.value
+		SceneData.Keys.MESH_SUBDIVISION: _mesh_subdivision_slider.value,
+		SceneData.Keys.LIFESPAN_MULTIPLIER: _lifespan_slider.value,
+		SceneData.Keys.TERRITORY_SIZE_MULTIPLIER: _territory_size_slider.value
 	})
 	desert_scene = load("res://scenes/desert/desert.tscn").instantiate()
 	get_tree().root.add_child(desert_scene)

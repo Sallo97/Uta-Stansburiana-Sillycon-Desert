@@ -26,6 +26,12 @@ const fall_acceleration = 100
 const orange_territory_size = 20
 const blue_territory_size = 10
 
+const orange_hill_iterations = 6
+const blue_hill_iterations = 3
+
+const male_interaction_cooldown = 2
+const female_interaction_cooldown = 10
+
 #-----------ENUMS--------------------------------------
 class Color_Values:
 	const yellow_color  :  Color  = Color(0.7, 0.5, 0.2,  1)

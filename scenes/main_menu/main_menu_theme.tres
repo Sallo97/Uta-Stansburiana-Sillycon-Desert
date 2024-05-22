@@ -2,9 +2,9 @@
 
 [resource]
 default_font_size = 42
-HBoxContainer/constants/separation = 40
+HBoxContainer/constants/separation = 30
 MarginContainer/constants/margin_bottom = 40
 MarginContainer/constants/margin_left = 40
 MarginContainer/constants/margin_right = 40
 MarginContainer/constants/margin_top = 40
-VBoxContainer/constants/separation = 40
+VBoxContainer/constants/separation = 30

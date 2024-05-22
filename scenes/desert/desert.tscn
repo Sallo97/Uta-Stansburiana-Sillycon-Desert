@@ -100,7 +100,7 @@ shape = SubResource("BoxShape3D_u11cb")
 disabled = true
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 0.1
+wait_time = 0.001
 autostart = true
 
 [node name="Walls" type="StaticBody3D" parent="."]

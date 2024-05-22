@@ -86,7 +86,7 @@ func main_settings():
 	set_lizard_size()
 	update_animation_parameters(0)
 	@warning_ignore("narrowing_conversion")
-	lifetime = int(float(randi_range(Constants.min_lifetime, Constants.max_lifetime)) * (0.7 if morph == Constants.Morph.ORANGE else 1.0))
+	lifetime = int(float(randi_range(Constants.min_lifetime, Constants.max_lifetime)) * (0.6 if morph == Constants.Morph.ORANGE else 1.0) * SceneData.get_lifespan_multiplier(1.0))
 	@warning_ignore("narrowing_conversion")
 	speed = randi_range(Constants.min_speed, Constants.max_speed)
 	set_death_timer()
@@ -235,10 +235,13 @@ func initialize(other_lizard:Lizard = null):
 #---------------API FUNC-------------------------------
 
 func _on_area_3d_body_entered(body):
-	if(is_adult and body != self and body.is_in_group("Lizards") && can_interact): #
+	if(is_adult and body != self and body.is_in_group("Lizards") && can_interact && body.can_interact): #
 		InteractionManager.start_interaction(self, body)
 
 func _physics_process(delta):
+	if !is_inside_tree():
+		return
+
 	if position.y < -100:
 		LizardPool.instance().despawn(self)
 		print(self, " fell off! Despawning")
@@ -298,7 +301,7 @@ func _physics_process(delta):
 	if is_on_wall() && can_bounce:
 		if destination_point is Vector3:
 			can_bounce = false
-			destination_point = destination_point.bounce(get_wall_normal())
+			destination_point = destination_point.bounce(get_wall_normal().normalized())
 			var dest: Vector3 = destination_point
 			dest.y = position.y
 			look_at_from_position(global_position, dest)
@@ -330,10 +333,12 @@ func normal_velocity():
 	
 
 func on_other_lizard_entered_territory(other: Lizard):
+	if !other.is_adult || !can_interact:
+		return
 	if state == Constants.LizardState.PATROLLING && other.sex == Constants.Sex.MALE:
 		if other.morph == Constants.Morph.YELLOW:
 			match morph:
-				Constants.Morph.ORANGE when randf() > 0.8: # Probability that a yellow lizard enters unnoticed
+				Constants.Morph.ORANGE when randf() > 0.7: # Probability that a yellow lizard enters unnoticed
 					return
 				# Constants.Morph.BLUE when randf() > 0.8:
 				# 	return
@@ -342,6 +347,8 @@ func on_other_lizard_entered_territory(other: Lizard):
 
 
 func on_entered_territory(territory: Territory):
+	if !is_adult:
+		return
 	if (sex == Constants.Sex.FEMALE || morph == Constants.Morph.YELLOW) && state == Constants.LizardState.WANDERING:
 		if territory.owner_lizard.morph == Constants.Morph.BLUE && territory.females.size() > 0:
 			return
@@ -415,7 +422,7 @@ func hill_climb_pattern_1():
 	var current_cell = DistanceCalculator.instance().get_cell_at_position(self.global_position)
 	if !DistanceCalculator.instance().is_valid_cell(current_cell):
 		return
-	var ret_array = DistanceCalculator.instance().max_height_in_circle(current_cell, 5)
+	var ret_array = DistanceCalculator.instance().max_height_in_circle_approx(current_cell, 5)
 	var absolute_position = DistanceCalculator.instance().get_position_of_cell(ret_array[0])
 
 	#print_debug(DistanceCalculator.instance().get_cell_at_position(position))
@@ -483,9 +490,9 @@ func set_state(new_state: Constants.LizardState):
 		Constants.LizardState.SEARCHING:
 			match morph:
 				Constants.Morph.ORANGE:
-					behaviour_iterations = 15
+					behaviour_iterations = Constants.orange_hill_iterations
 				Constants.Morph.BLUE:
-					behaviour_iterations = 7
+					behaviour_iterations = Constants.blue_hill_iterations
 				_: assert(false) # IMPOSSIBLE!!!
 
 
@@ -610,7 +617,7 @@ func attack_intruder1():
 	pattern_step = 2
 
 func attack_intruder2():
-	if destination_point == null || destination_point.is_queued_for_deletion():
+	if destination_point == null || destination_point.is_queued_for_deletion() || !is_inside_tree():
 		destination_point = null
 		set_state(Constants.LizardState.IDLE)
 		return
