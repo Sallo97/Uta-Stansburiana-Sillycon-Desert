@@ -63,11 +63,9 @@ static func lizard_fight(l1:Lizard, l2:Lizard):
 	timer_attack.wait_time = 0.5
 	if win:
 		l1.update_animation_parameters(1)
-		l1.add_child(timer_attack)
 		timer_attack.timeout.connect(end_interaction.bindv([l1, l2, true]))
 	else:
 		l2.update_animation_parameters(1)
-		l2.add_child(timer_attack)
 		timer_attack.timeout.connect(end_interaction.bindv([l2, l1, false]))
 
 		

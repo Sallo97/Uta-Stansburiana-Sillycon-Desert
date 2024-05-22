@@ -820,6 +820,7 @@ visible = false
 
 [node name="Body" type="MeshInstance3D" parent="Pivot/lizard/baby_lizard"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00239721, 0.220049, 0.365171)
+visible = false
 mesh = SubResource("ArrayMesh_44na0")
 skeleton = NodePath("")
 
@@ -872,9 +873,11 @@ surface_material_override/0 = SubResource("StandardMaterial3D_e1i6b")
 
 [node name="CollisionGround" type="CollisionShape3D" parent="."]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 1.02598)
+visible = false
 shape = SubResource("BoxShape3D_epgmm")
 
 [node name="Area3D" type="Area3D" parent="."]
+visible = false
 
 [node name="CollisionInteraction" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00499201, 0, 2.00963)
@@ -883,6 +886,7 @@ shape = SubResource("BoxShape3D_de37r")
 [node name="RayCast3D" type="RayCast3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0.358032, -1.04256, 0.349536)
+visible = false
 debug_shape_custom_color = Color(0.443359, 0.413201, 0.29668, 1)
 
 [node name="LizardAnimations" type="AnimationPlayer" parent="."]
