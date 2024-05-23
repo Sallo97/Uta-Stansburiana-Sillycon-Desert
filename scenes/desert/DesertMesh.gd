@@ -49,7 +49,7 @@ func reset():
 	mesh_simplification = SceneData.get_mesh_subdivision(mesh_simplification)
 	Grid.instance().setup(self)
 
-	var noise_image: Image = generate_noise_map(10, 10, 0, Vector2(size.x + 2, size.y + 2))
+	var noise_image: Image = generate_noise_map(randi(), 10, 0, Vector2(size.x + 2, size.y + 2))
 	generatePlaneMeshXZ(noise_image)
 	create_trimesh_collision()
 	var static_body: StaticBody3D = get_node("./Desert_col")

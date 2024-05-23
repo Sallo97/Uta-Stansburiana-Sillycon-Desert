@@ -19,11 +19,15 @@ func _ready():
 func _process(delta):
 	Graphs.instance()._process(delta) # Don't ask, don't tell (_process is not called in Graphs for some reason)
 	if Input.is_action_just_pressed("spawn_orange"):
-		LizardPool.instance().spawn_fixed([Constants.Sex.MALE, Constants.Sex.FEMALE].pick_random(), Constants.Morph.ORANGE).position = sample_point()
+		LizardPool.instance().spawn_fixed(Constants.Sex.MALE, Constants.Morph.ORANGE).position = sample_point()
 	elif Input.is_action_just_pressed("spawn_blue"):
 		LizardPool.instance().spawn_fixed(Constants.Sex.MALE, Constants.Morph.BLUE).position = sample_point()
 	elif Input.is_action_just_pressed("spawn_yellow"):
-		LizardPool.instance().spawn_fixed([Constants.Sex.MALE, Constants.Sex.FEMALE].pick_random(), Constants.Morph.YELLOW).position = sample_point()
+		LizardPool.instance().spawn_fixed(Constants.Sex.MALE, Constants.Morph.YELLOW).position = sample_point()
+	elif Input.is_action_just_pressed("spawn_female_orange"):
+		LizardPool.instance().spawn_fixed(Constants.Sex.FEMALE, Constants.Morph.ORANGE).position = sample_point()
+	elif Input.is_action_just_pressed("spawn_female_yellow"):
+		LizardPool.instance().spawn_fixed(Constants.Sex.FEMALE, Constants.Morph.YELLOW).position = sample_point()
 
 # Every time the timer ticks it instantiate a new lizard
 func _on_timer_timeout():

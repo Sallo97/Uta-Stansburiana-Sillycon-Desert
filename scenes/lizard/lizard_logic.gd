@@ -464,7 +464,7 @@ func hill_climb_pattern_3():
 	# STEP 3 - Mi muovo verso destination_point, mi fermo quando lo raggiungo
 	# Dentro l'if sarebbe meglio dire che se la distanza tra self.position e' higher point e' 
 	# dentro un certo range, si ferma
-	if(abs(self.global_position.x - destination_point.x) < 0.005 && abs(self.global_position.z - destination_point.z) < 0.005):
+	if(abs(self.global_position.x - destination_point.x) < 0.001 && abs(self.global_position.z - destination_point.z) < 0.001):
 		# print_debug("Stopped: ", abs(self.global_position.x - destination_point.x), ", ", abs(self.global_position.z - destination_point.z))
 		set_state(Constants.LizardState.CREATING_TERRITORY)
 

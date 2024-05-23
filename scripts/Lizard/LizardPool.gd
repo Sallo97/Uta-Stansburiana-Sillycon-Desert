@@ -58,6 +58,7 @@ func __spawn() -> Lizard:
 	liz.scale = Vector3.ONE * 0.5
 	liz.set_state(Constants.LizardState.IDLE)
 	liz.territory = null
+	liz.current_territories = []
 	liz.set_physics_process(true)
 	liz.can_interact = true
 	liz.show()
