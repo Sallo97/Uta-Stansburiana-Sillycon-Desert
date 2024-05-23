@@ -47,7 +47,7 @@ static func deciding_interaction(l1:Lizard, l2:Lizard):
 	if(l1.sex != l2.sex):
 		lizard_love(l1, l2)
 	elif(l1.sex == Constants.Sex.MALE):
-		if randf() < 0.5:
+		if randf() < 0.7:
 			lizard_fight(l1, l2)
 		else:
 			lizard_meeting(l1, l2)
